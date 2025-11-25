@@ -1,0 +1,225 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  @apply bg-white text-gray-900 antialiased dark:bg-black dark:text-gray-100;
+}
+
+/* Prism code highlighting theme */
+@layer base {
+  :root {
+    --color-primary: rgb(52, 109, 219);
+  }
+}
+
+/* Code blocks - Prism styling */
+pre[class*='language-'] {
+  @apply my-6 overflow-x-auto rounded-lg border border-gray-200 dark:border-gray-800;
+  padding: 1rem 1.25rem !important;
+  font-size: 0.875rem !important;
+  line-height: 1.6;
+  background: #2d2d2d !important;
+}
+
+code[class*='language-'] {
+  font-family: var(--font-mono), 'Menlo', 'Monaco', 'Courier New', monospace;
+  text-shadow: none;
+}
+
+/* Light mode code blocks */
+@media (prefers-color-scheme: light) {
+  :root:not(.dark) pre[class*='language-'] {
+    background: #f5f5f5 !important;
+    border-color: #e5e5e5;
+  }
+}
+
+/* Dark mode code blocks */
+.dark pre[class*='language-'] {
+  background: #1e1e1e !important;
+  border-color: #333;
+}
+
+/* One Dark Pro Theme Colors */
+pre[class*='language-'] {
+  background: #282c34 !important;
+}
+
+code[class*='language-'] {
+  color: #abb2bf;
+}
+
+.token.comment,
+.token.prolog,
+.token.doctype,
+.token.cdata {
+  color: #5c6370;
+  font-style: italic;
+}
+
+.token.punctuation {
+  color: #abb2bf;
+}
+
+.token.property,
+.token.tag,
+.token.boolean,
+.token.number,
+.token.constant,
+.token.symbol,
+.token.deleted {
+  color: #d19a66;
+}
+
+.token.selector,
+.token.attr-name,
+.token.string,
+.token.char,
+.token.builtin,
+.token.inserted {
+  color: #98c379;
+}
+
+.token.operator,
+.token.entity,
+.token.url,
+.language-css .token.string,
+.style .token.string {
+  color: #56b6c2;
+}
+
+.token.atrule,
+.token.attr-value,
+.token.keyword {
+  color: #c678dd;
+}
+
+.token.function,
+.token.class-name {
+  color: #61afef;
+}
+
+.token.regex,
+.token.important,
+.token.variable {
+  color: #e06c75;
+}
+
+.token.decorator {
+  color: #e5c07b;
+}
+
+:not(pre) > code {
+  @apply rounded-md bg-gray-100 px-1.5 py-0.5 text-sm font-semibold text-gray-800 dark:bg-gray-800 dark:text-gray-200;
+  font-family: var(--font-mono), monospace;
+}
+
+:not(pre) > code::before,
+:not(pre) > code::after {
+  content: '`';
+}
+
+/* Math equations */
+.katex-display {
+  @apply my-6 overflow-x-auto overflow-y-hidden;
+}
+
+.katex {
+  @apply text-base;
+}
+
+/* Prose styling overrides */
+.prose {
+  @apply max-w-none;
+}
+
+.prose > :first-child {
+  margin-top: 0 !important;
+}
+
+.prose > :last-child {
+  margin-bottom: 0 !important;
+}
+
+.prose img {
+  @apply mx-auto rounded-lg;
+}
+
+.prose hr {
+  @apply my-8 border-gray-200 dark:border-gray-800;
+}
+
+.prose blockquote {
+  @apply border-l-4 border-primary-500 bg-gray-50 py-1 font-normal not-italic dark:bg-gray-900;
+}
+
+.prose thead {
+  @apply border-b border-gray-300 dark:border-gray-700;
+}
+
+.prose tbody tr {
+  @apply border-b border-gray-200 dark:border-gray-800;
+}
+
+.prose tbody tr:last-child {
+  border-bottom: none;
+}
+
+/* Better link styling */
+.prose a {
+  @apply font-medium text-primary-600 no-underline hover:text-primary-700 hover:underline dark:text-primary-400 dark:hover:text-primary-300;
+}
+
+/* Headings with better spacing */
+.prose h2 {
+  @apply mb-4 mt-10 border-b border-gray-200 pb-2 dark:border-gray-800;
+}
+
+.prose h3 {
+  @apply mb-3 mt-8;
+}
+
+.prose h4 {
+  @apply mb-2 mt-6;
+}
+
+/* Lists */
+.prose ul,
+.prose ol {
+  @apply my-6;
+}
+
+.prose li {
+  @apply my-2;
+}
+
+/* Tables */
+.prose table {
+  @apply my-6 w-full border-collapse;
+}
+
+.prose th {
+  @apply bg-gray-50 px-4 py-2 text-left font-semibold dark:bg-gray-900;
+}
+
+.prose td {
+  @apply px-4 py-2;
+}
+
+/* Table of contents */
+.toc {
+  @apply space-y-2 text-sm;
+}
+
+.toc a {
+  @apply block text-gray-600 transition-colors hover:text-primary-600 dark:text-gray-400 dark:hover:text-primary-400;
+}
+
+.toc a.active {
+  @apply font-semibold text-primary-600 dark:text-primary-400;
+}
