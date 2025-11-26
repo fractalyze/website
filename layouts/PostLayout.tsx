@@ -1,6 +1,6 @@
-import { ReactNode } from 'react'
-import Link from 'next/link'
-import { format } from 'date-fns'
+import {ReactNode} from 'react';
+import Link from 'next/link';
+import {format} from 'date-fns';
 
 interface PostLayoutProps {
   content: ReactNode
@@ -12,7 +12,9 @@ interface PostLayoutProps {
   toc?: any[]
 }
 
-const PostLayout = ({ content, title, date, lastmod, readingTime, tags, toc }: PostLayoutProps) => {
+const PostLayout = ({
+  content, title, date, lastmod, readingTime, tags, toc: _toc,
+}: PostLayoutProps) => {
   return (
     <article className="mx-auto max-w-3xl px-4 py-12 sm:px-6 lg:px-8">
       <header className="mb-10">
@@ -93,7 +95,7 @@ const PostLayout = ({ content, title, date, lastmod, readingTime, tags, toc }: P
         </Link>
       </div>
     </article>
-  )
-}
+  );
+};
 
-export default PostLayout
+export default PostLayout;

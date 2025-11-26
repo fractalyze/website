@@ -1,5 +1,5 @@
-import Link from 'next/link'
-import { format } from 'date-fns'
+import Link from 'next/link';
+import {format} from 'date-fns';
 
 interface BlogPostCardProps {
   slug: string
@@ -10,7 +10,7 @@ interface BlogPostCardProps {
   tags?: string[]
 }
 
-const BlogPostCard = ({ slug, title, summary, date, readingTime, tags }: BlogPostCardProps) => {
+const BlogPostCard = ({slug, title, summary, date, readingTime, tags}: BlogPostCardProps) => {
   return (
     <article className="group rounded-lg border border-gray-200 bg-white p-6 transition-all hover:border-primary-300 hover:shadow-md dark:border-gray-800 dark:bg-gray-950 dark:hover:border-primary-700">
       <Link href={`/blog/${slug}`}>
@@ -39,7 +39,7 @@ const BlogPostCard = ({ slug, title, summary, date, readingTime, tags }: BlogPos
         )}
       </Link>
     </article>
-  )
-}
+  );
+};
 
-export default BlogPostCard
+export default BlogPostCard;

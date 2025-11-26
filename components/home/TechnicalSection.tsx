@@ -76,5 +76,5 @@ export function TechnicalSection() {
         </div>
       </div>
     </section>
-  )
+  );
 }

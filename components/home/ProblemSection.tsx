@@ -42,5 +42,5 @@ export default function ProblemSection() {
         </div>
       </div>
     </section>
-  )
+  );
 }

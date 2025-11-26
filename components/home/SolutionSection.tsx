@@ -60,5 +60,5 @@ export function SolutionSection() {
         </div>
       </div>
     </section>
-  )
+  );
 }

@@ -1,21 +1,21 @@
-import { allBlogs } from '.contentlayer/generated'
-import { notFound } from 'next/navigation'
-import { MDXContent } from '@/components/MDXContent'
-import PostLayout from '@/layouts/PostLayout'
+import {allBlogs} from '.contentlayer/generated';
+import {notFound} from 'next/navigation';
+import {MDXContent} from '@/components/MDXContent';
+import PostLayout from '@/layouts/PostLayout';
 
 export async function generateStaticParams() {
   return allBlogs.map((post) => ({
     slug: post.slug.split('/'),
-  }))
+  }));
 }
 
-export async function generateMetadata({ params }: { params: Promise<{ slug: string[] }> }) {
-  const { slug: slugArray } = await params
-  const slug = slugArray?.join('/') || ''
-  const post = allBlogs.find((post) => post.slug === slug)
+export async function generateMetadata({params}: { params: Promise<{ slug: string[] }> }) {
+  const {slug: slugArray} = await params;
+  const slug = slugArray?.join('/') || '';
+  const post = allBlogs.find((post) => post.slug === slug);
 
   if (!post) {
-    return {}
+    return {};
   }
 
   return {
@@ -26,18 +26,18 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
       description: post.summary,
       type: 'article',
       publishedTime: post.date,
-      ...(post.lastmod && { modifiedTime: post.lastmod }),
+      ...(post.lastmod && {modifiedTime: post.lastmod}),
     },
-  }
+  };
 }
 
-export default async function BlogPost({ params }: { params: Promise<{ slug: string[] }> }) {
-  const { slug: slugArray } = await params
-  const slug = slugArray?.join('/') || ''
-  const post = allBlogs.find((post) => post.slug === slug)
+export default async function BlogPost({params}: { params: Promise<{ slug: string[] }> }) {
+  const {slug: slugArray} = await params;
+  const slug = slugArray?.join('/') || '';
+  const post = allBlogs.find((post) => post.slug === slug);
 
   if (!post) {
-    notFound()
+    notFound();
   }
 
   return (
@@ -50,5 +50,5 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
       toc={post.toc}
       content={<MDXContent code={post.body.code} />}
     />
-  )
+  );
 }

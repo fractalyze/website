@@ -9,6 +9,6 @@ const siteMetadata = {
   email: 'contact@fractalyze.io',
   github: 'https://github.com/fractalyze',
   locale: 'en-US',
-}
+};
 
-module.exports = siteMetadata
+module.exports = siteMetadata;

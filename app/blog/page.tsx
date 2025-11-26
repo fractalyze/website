@@ -1,16 +1,16 @@
-import { allBlogs } from '.contentlayer/generated'
-import { compareDesc } from 'date-fns'
-import BlogPostCard from '@/components/BlogPostCard'
+import {allBlogs} from '.contentlayer/generated';
+import {compareDesc} from 'date-fns';
+import BlogPostCard from '@/components/BlogPostCard';
 
 export const metadata = {
   title: 'Blog',
   description: 'Research and technical articles from the Fractalyze team',
-}
+};
 
 export default function BlogPage() {
   const posts = allBlogs
     .filter((post) => !post.draft)
-    .sort((a, b) => compareDesc(new Date(a.date), new Date(b.date)))
+    .sort((a, b) => compareDesc(new Date(a.date), new Date(b.date)));
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 lg:px-8">
@@ -43,5 +43,5 @@ export default function BlogPage() {
         )}
       </div>
     </div>
-  )
+  );
 }

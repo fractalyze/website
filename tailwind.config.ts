@@ -1,4 +1,4 @@
-import type { Config } from 'tailwindcss'
+import type {Config} from 'tailwindcss';
 
 const config: Config = {
   content: [
@@ -29,7 +29,7 @@ const config: Config = {
           900: '#1e3a8a',
         },
       },
-      typography: ({ theme }: any) => ({
+      typography: ({theme}: any) => ({
         DEFAULT: {
           css: {
             '--tw-prose-body': theme('colors.gray[700]'),
@@ -161,5 +161,5 @@ const config: Config = {
     },
   },
   plugins: [require('@tailwindcss/typography')],
-}
-export default config
+};
+export default config;
