@@ -1,3 +1,30 @@
+import {CodeBlock} from '@/components/CodeBlock';
+
+const PYTHON_CODE = `import zorch
+from zk_dtypes import babybear  # ZK field type (BabyBear)
+import zorch.numpy as znp  # NumPy for field/group operations
+
+class BrakedownCommitment:
+  ...
+
+class BrakedownProof:
+  ...
+
+  # High-level SDK for defining the proving scheme
+class Brakedown(zorch.PCS):
+    @zorch.jit  # JIT compilation to optimized binary
+    def commit(self, polynomial: znp.array) -> BrakedownCommitment:
+      ...
+
+    @zorch.jit
+    def open(self, commitment: BrakedownCommitment, points: znp.array) -> BrakedownProof:
+      ...
+
+# Configure prover with field, PCS, and others.
+prover = zorch.Prover(field=babybear, pcs=Brakedown(), ...)
+# Generate proof
+proof = prover.prove(input)`;
+
 export function SolutionSection() {
   return (
     <section className="border-t border-gray-100 py-32 dark:border-gray-900 sm:py-40">
@@ -6,8 +33,14 @@ export function SolutionSection() {
           Zorch: The Pytorch for Zero-Knowledge
         </h2>
         <p className="mx-auto mt-6 max-w-3xl text-center text-lg leading-relaxed text-gray-600 dark:text-gray-400 lg:text-xl">
-          Build in Python, Optimize by Compiler. We industrializes Zero-Knowledge proof systems.
+          Build in Python, Optimize by Compiler.
+          <br />
+          We industrializes Zero-Knowledge proof systems.
         </p>
+
+        <div className="mt-16">
+          <CodeBlock code={PYTHON_CODE} language="python" title="zorch_example.py" />
+        </div>
 
         <div className="mt-16 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4 lg:gap-12">
           <div className="rounded-2xl bg-gray-50/50 p-8 transition-all hover:bg-gray-50 dark:bg-gray-900/20 dark:hover:bg-gray-900/30 lg:p-10">
