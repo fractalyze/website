@@ -3,7 +3,7 @@ export function SolutionSection() {
     <section className="border-t border-gray-100 py-32 dark:border-gray-900 sm:py-40">
       <div className="mx-auto max-w-6xl">
         <h2 className="text-center text-4xl font-bold tracking-tight text-gray-900 dark:text-gray-100 sm:text-5xl lg:text-6xl">
-          Zorch: The TensorFlow for Zero-Knowledge
+          Zorch: The Pytorch for Zero-Knowledge
         </h2>
         <p className="mx-auto mt-6 max-w-3xl text-center text-lg leading-relaxed text-gray-600 dark:text-gray-400 lg:text-xl">
           Build in Python, Optimize by Compiler. We industrializes Zero-Knowledge proof systems.
@@ -15,10 +15,10 @@ export function SolutionSection() {
               Build
             </div>
             <h3 className="mt-4 text-xl font-bold text-gray-900 dark:text-gray-100 lg:text-2xl">
-              Python Framework
+              Abstract
             </h3>
             <p className="mt-3 text-base leading-relaxed text-gray-600 dark:text-gray-400">
-              Express proving schemes in familiar Python syntax
+              Express complex proving schemes using familiar Python syntax
             </p>
           </div>
 
@@ -27,10 +27,10 @@ export function SolutionSection() {
               Optimize
             </div>
             <h3 className="mt-4 text-xl font-bold text-gray-900 dark:text-gray-100 lg:text-2xl">
-              Automated
+              Efficient
             </h3>
             <p className="mt-3 text-base leading-relaxed text-gray-600 dark:text-gray-400">
-              Graph optimization handled by compiler intelligence
+              Compiler intelligence maximizes speed and cost-efficiency through optimization
             </p>
           </div>
 
@@ -39,10 +39,10 @@ export function SolutionSection() {
               Package
             </div>
             <h3 className="mt-4 text-xl font-bold text-gray-900 dark:text-gray-100 lg:text-2xl">
-              Hardware-Agnostic
+              Agnostic
             </h3>
             <p className="mt-3 text-base leading-relaxed text-gray-600 dark:text-gray-400">
-              Single codebase for all hardware targets
+              Packages a single codebase for seamless integration into any hardware environment
             </p>
           </div>
 
@@ -54,7 +54,7 @@ export function SolutionSection() {
               Universal
             </h3>
             <p className="mt-3 text-base leading-relaxed text-gray-600 dark:text-gray-400">
-              CPU, GPU, FPGA from one source
+              Enables instant, cross-platform execution on all targets (CPU, GPU, FPGA)
             </p>
           </div>
         </div>

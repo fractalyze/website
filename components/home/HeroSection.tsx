@@ -28,7 +28,7 @@ export function HeroSection() {
             rel="noopener noreferrer"
             className="rounded-2xl border-2 border-gray-300 px-8 py-4 text-base font-semibold text-gray-900 transition-all hover:border-gray-400 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-100 dark:hover:border-gray-600 dark:hover:bg-gray-900"
           >
-            View on GitHub
+            🐙 How Compiler works?
           </a>
         </div>
       </div>

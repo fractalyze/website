@@ -1,6 +1,6 @@
 # Fractalyze Website
 
-The official website for Fractalyze - Building Zorch, the TensorFlow for Zero-Knowledge.
+The official website for Fractalyze - Building Zorch, the Pytorch for Zero-Knowledge.
 
 ## Project Structure
 

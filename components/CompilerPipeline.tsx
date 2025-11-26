@@ -5,7 +5,7 @@ interface PipelineStage {
 }
 
 const stages: PipelineStage[] = [
-  {name: 'Python', description: 'Zorch High-level SDK'},
+  {name: 'Zorch', description: 'High-level SDK'},
   {name: 'Jaxpr', description: 'JAX IR'},
   {name: 'StableHLO', description: 'ZKX IR'},
   {name: 'HLO', description: 'ZKX IR'},

@@ -22,7 +22,7 @@ export function Footer() {
             </div>
           </div>
           <div className="flex flex-col items-center gap-2 text-sm text-gray-600 dark:text-gray-400 sm:items-end">
-            <div>© 2028 Fractalyze</div>
+            <div>© 2025 Fractalyze</div>
             <Link
               href={`mailto:${siteMetadata.email}`}
               className="hover:text-primary-600 dark:hover:text-primary-400"
