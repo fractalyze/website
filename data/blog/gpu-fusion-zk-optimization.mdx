@@ -1,0 +1,226 @@
+---
+title: 'Applying Fusion to ZK: Nearly 2× Performance Improvement Over ICICLE'
+date: '2025-11-11'
+tags: ['zkp', 'gpu', 'fusion', 'compiler', 'performance', 'optimization']
+draft: false
+summary: 'Demonstrating how compiler-driven loop fusion achieves 1.5-2× performance improvements over manual GPU programming frameworks like ICICLE, by minimizing memory transfers and kernel launches.'
+authors: ['Ryan Kim']
+---
+
+As introduced in [TensorFlow XLA: The Fusion Compiler for TensorFlow](https://www.geeksforgeeks.org/deep-learning/tensorflow-xla-the-fusion-compiler-for-tensorflow/), one of XLA's most important optimizations is **Fusion**. This article will briefly discuss what Fusion is, why it's crucial, and the actual performance benefits of applying it in the context of ZK.
+
+## What is Fusion?
+
+**Loop Fusion**, for example, means combining loops like the following:
+
+```c++
+for (int i = 0; i < n; i++) {
+  c[i] = a[i] + b[i];
+}
+
+for (int i = 0; i < n; i++) {
+  d[i] = c[i] * a[i];
+}
+```
+
+Into a single, fused loop:
+
+```c++
+for (int i = 0; i < n; i++) {
+  c[i] = (a[i] + b[i]) * a[i];
+}
+```
+
+In compilers like ZKX, operations like element-wise operations are primary candidates for fusion.
+
+For example, consider the following HLO-like operations:
+
+```hlo
+ENTRY %main {
+  %x = parameter(0)
+  %y = parameter(1)
+
+  %0 = babybear[n] add(%x, %y)
+  ROOT %1 = babybear[n] multiply(%0, %a)
+}
+```
+
+Through fusion, these operations are combined into a single one, as shown below:
+
+```hlo
+%f {
+  %x = parameter(0)
+  %y = parameter(1)
+
+  %0 = babybear[n] add(%x, %y)
+  ROOT %1 = babybear[n] multiply(%0, %a)
+}
+
+ENTRY %main {
+  %x = parameter(0)
+  %y = parameter(1)
+
+  %0 = babybear[n] fusion(%x, %y), kind=kLoop, calls=%f
+}
+```
+
+So, let's explore why combining operations is so important.
+
+## Why Fusion is Important?
+
+The problem we are tackling is **memory-bound**, so we must exploit the memory hierarchy to optimize memory transfers.
+
+![GPU Memory Hierarchy](/blog/fusion/gpu-memory-hierarchy.png)
+
+You can think of GPU data movement in three tiers. The lower you go, the **faster and smaller** it gets:
+
+1. **Host ↔ Device transfers**: PCIe/NVLink, etc. The most expensive (high latency, limited bandwidth).
+2. **Device Global Memory** accesses: high bandwidth but **off-chip**, so latency is still large.
+3. **On-chip resources**: L2/L1, **Shared Memory**, registers. Fastest.
+
+The key principle: **minimize round-trips in (1) and (2) and stay in (3) as long as possible**.
+
+### When do Host ↔ Device transfers happen?
+
+Whenever we copy data from the host to the GPU (e.g., using `cudaMemcpy` or `Unified Memory migration`) — or in the reverse direction — we incur expensive host-device transfers.
+
+### When do Global Memory accesses happen?
+
+To share data across kernel boundaries, intermediates must be written to Global Memory and then read back by the next kernel. This quickly accumulates cost.
+
+Once a kernel is launched, computation is distributed over Grid / Block / Thread. Within a kernel, Shared Memory and Caches handle local sharing. But if temporal or spatial locality is broken, Global round-trips become costly.
+
+### Revisiting Our Example
+
+```c++
+for (int i = 0; i < n; i++) {
+  c[i] = a[i] + b[i];
+}
+
+for (int i = 0; i < n; i++) {
+  d[i] = c[i] * a[i];
+}
+```
+
+Let's assume each loop is launched as a separate GPU kernel. Then two problems arise:
+
+1. **Two separate kernel launches** are required.
+2. The **intermediate array `c`** must be written to Global Memory so that the next kernel can read it back to compute `d`.
+
+Now, let's look at the fused version again:
+
+```c++
+for (int i = 0; i < n; i++) {
+  c[i] = (a[i] + b[i]) * a[i];
+}
+```
+
+If we apply fusion, **both of the problems above are solved**. This is a critical optimization because this computational pattern (a sequence of element-wise operations) is extremely common in ZK, particularly in procedures like **Sumcheck** and **Quotienting**.
+
+## Benchmark Results
+
+This principle seems simple, but it often breaks down when using frameworks like ICICLE for GPU programming. This is because each vector operation (vecop) is typically a separate kernel call, as seen in their [API documentation](https://dev.ingonyama.com/api/cpp/vec_ops).
+
+We ran a benchmark for the operation $x^2 - x$ (where $x \in \mathbb{F}^{2^k}$) on an **RTX 5090**:
+
+| k   | ZKX (ms) | ICICLE (ms) | ICICLE / ZKX |
+| --- | -------- | ----------- | ------------ |
+| 20  | 10.86    | 17.11       | **1.57×**    |
+| 21  | 21.40    | 35.33       | **1.65×**    |
+| 22  | 41.49    | 71.90       | **1.73×**    |
+| 23  | 81.81    | 143.85      | **1.76×**    |
+| 24  | 160.61   | 288.03      | **1.79×**    |
+| 25  | 320.26   | 582.06      | **1.82×**    |
+
+The results showed a **1.5-2× performance improvement** between the fused (ZKX) and unfused (ICICLE) versions.
+
+### Performance Analysis
+
+As the problem size grows (increasing $k$), the performance gap widens:
+
+- At $k=20$ (1M elements): **1.57× speedup**
+- At $k=25$ (32M elements): **1.82× speedup**
+
+This trend demonstrates that **fusion becomes more critical as problem sizes increase**, which is exactly the regime where ZK proving operates.
+
+## Why Manual Fusion Isn't Enough
+
+To be fair, the ICICLE team is aware of fusion's importance and provides a way for users to manually apply fusion using their [program API](https://dev.ingonyama.com/api/cpp/program).
+
+However, this manual approach only scratches the surface of what a compiler can automate. **Expecting users to:**
+
+- Understand intricate hardware architecture details
+- Manually handle the full suite of loop optimizations:
+  - **Tiling** for cache locality
+  - **Vectorization** for SIMD utilization
+  - **Loop unrolling** for reduced control overhead
+  - **Software pipelining** for latency hiding
+- Maintain performance across different GPU architectures
+
+...is an **extremely difficult and unreasonable burden**. This is precisely the work a compiler should do.
+
+## Compiler-Driven Optimization
+
+ZKX's compiler-based approach provides several advantages:
+
+### 1. Automatic Fusion Detection
+
+The compiler automatically identifies fusion opportunities by analyzing the computation graph. Patterns like:
+
+$$
+\text{output} = f(g(h(\text{input})))
+$$
+
+are automatically fused into a single kernel, eliminating intermediate memory operations.
+
+### 2. Architecture-Aware Code Generation
+
+Different GPU architectures (NVIDIA, AMD) have different optimal strategies for:
+- Thread block sizes
+- Shared memory usage
+- Register allocation
+- Memory access patterns
+
+The compiler generates optimized code for each target architecture automatically.
+
+### 3. Composition of Optimizations
+
+Fusion is just one of many optimizations. The compiler can compose:
+- Loop fusion
+- Constant propagation
+- Algebraic simplification
+- Memory layout optimization
+- Instruction scheduling
+
+...in ways that manual optimization cannot practically achieve.
+
+## Real-World Impact
+
+In ZK proving systems, operations like Sumcheck involve computing expressions of the form:
+
+$$
+\sum_{i=0}^{n-1} f(x_i, y_i, z_i, \ldots)
+$$
+
+where $f$ is a polynomial evaluation involving multiple field operations.
+
+Without fusion, each operation ($+$, $\times$, $-$, etc.) becomes a separate kernel launch with Global Memory round-trips. With fusion, the entire expression is computed in a single pass through the data, **dramatically reducing memory traffic**.
+
+For a typical STARK proof generation:
+- **Unfused approach**: Hundreds of kernel launches, each reading/writing Global Memory
+- **Fused approach**: Tens of fused kernels, with intermediate values staying in registers
+
+This translates to the **1.5-2× performance improvements** we demonstrated in our benchmarks.
+
+## Conclusion
+
+Fusion is a fundamental compiler optimization that becomes critical in memory-bound workloads like ZK proving. While manual fusion APIs provide some benefit, they:
+
+1. Require deep hardware expertise from users
+2. Don't compose well with other optimizations
+3. Are difficult to maintain across GPU architectures
+4. Can't achieve the same level of optimization as a full compiler
+
+Our benchmarks demonstrate **1.5-2× performance improvements** over ICICLE simply by applying automatic fusion, and this is just the beginning. As we continue to develop ZKX, we expect to achieve even greater speedups through the composition of multiple compiler optimizations.
+
+The future of high-performance ZK proving isn't in hand-tuned GPU kernels — it's in sophisticated compilers that automatically generate optimal code for any hardware target.
