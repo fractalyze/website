@@ -6,7 +6,13 @@ import remarkMath from 'remark-math';
 import rehypeSlug from 'rehype-slug';
 import rehypeAutolinkHeadings from 'rehype-autolink-headings';
 import rehypeKatex from 'rehype-katex';
-import rehypePrismPlus from 'rehype-prism-plus';
+import rehypePrismGenerator from 'rehype-prism-plus/generator';
+import {refractor} from 'refractor/lib/all.js';
+
+// Alias llvm as mlir since MLIR syntax is similar to LLVM IR
+refractor.alias('llvm', 'mlir');
+
+const rehypePrismPlus = rehypePrismGenerator(refractor);
 
 const computedFields = {
   readingTime: {type: 'json' as const, resolve: (doc: any) => readingTime(doc.body.raw)},
