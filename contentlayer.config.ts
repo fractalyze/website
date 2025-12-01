@@ -11,6 +11,10 @@ import {refractor} from 'refractor/lib/all.js';
 
 // Alias llvm as mlir since MLIR syntax is similar to LLVM IR
 refractor.alias('llvm', 'mlir');
+// Alias llvm as hlo since HLO syntax is similar to LLVM IR
+refractor.alias('llvm', 'hlo');
+// Alias cpp as c++
+refractor.alias('cpp', 'c++');
 
 const rehypePrismPlus = rehypePrismGenerator(refractor);
 
