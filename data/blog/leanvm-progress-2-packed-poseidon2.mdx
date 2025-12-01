@@ -17,10 +17,10 @@ This report covers our progress over the past two weeks across four major areas:
 
 Following the optimizations described below, we achieved **performance parity** with Plonky3 on Packed PrimeField operations:
 
-| Hardware | Width | Plonky3 | ZKIR | Ratio (Plonky3 / ZKIR) |
-|----------|-------|---------|------|----------------------|
-| AMD 9950X3D | 16 | 7.38 ms | 7.38 ms | 1.00 |
-| Mac M4 Pro | 4 | 5.51 ms | 5.58 ms | 0.98 |
+| Hardware    | Width | Plonky3 | ZKIR    | Ratio (Plonky3 / ZKIR) |
+| ----------- | ----- | ------- | ------- | ---------------------- |
+| AMD 9950X3D | 16    | 7.38 ms | 7.38 ms | 1.00                   |
+| Mac M4 Pro  | 4     | 5.51 ms | 5.58 ms | 0.98                   |
 
 *The table shows the total time for Width × 10,000 hash operations. The benchmark used **BabyBear**, but similar results are expected for **KoalaBear**.*
 
@@ -58,15 +58,9 @@ $$
 a \div 2^k \to a \gg k
 $$
 
-**4. Squared Difference Factorization**
+**4. Squared Difference Optimization**
 
-When computing $(a - b)^2$, we can optimize the reduction step as mentioned in our previous report. The pattern is:
-
-$$
-(a - b)^2 = a^2 - 2ab + b^2
-$$
-
-This allows us to delay modular reduction and reduce the number of expensive reduction operations.
+When computing $(a - b)^2$, we can optimize the reduction step as mentioned in our previous report. See [poseidon2-in-mlir](./leanvm-progress-1-poseidon2.mdx#poseidon2-in-mlir) in more details
 
 #### Architecture-Specific Optimizations
 
@@ -77,6 +71,7 @@ We implemented constant folding optimizations specifically for the `mod_arith` d
 **AVX-512 Pattern Matching**
 
 For x86 platforms with AVX-512 support (like the AMD 9950X3D), we added pattern matching to generate optimal SIMD instructions for:
+
 - Vector addition
 - Vector subtraction
 - Vector multiplication
@@ -98,6 +93,7 @@ For the first time, we have successfully implemented a **code generation pipelin
 ### Current Support
 
 The pipeline currently supports:
+
 - **Boolean types**
 - **Integer types**
 
@@ -139,7 +135,7 @@ module @jit_f attributes {mhlo.num_partitions = 1 : i32, mhlo.num_replicas = 1 :
 
 StableHLO is then lowered to **HLO** (High-Level Operations), which is closer to the computational representation:
 
-```
+```hlo
 ENTRY %main.4 (Arg_0.1: s32[]) -> s32[] {
   %Arg_0.1 = s32[] parameter(0), metadata={op_name="x"}
   %constant.2 = s32[] constant(1)
@@ -177,6 +173,7 @@ module {
 ```
 
 This MLIR representation explicitly shows:
+
 - Memory loads from input buffers
 - The arithmetic operation
 - Memory allocation for the output
@@ -187,12 +184,11 @@ From this MLIR representation, we can apply ZKX optimization passes and generate
 ### Future Roadmap
 
 Once we add prime-field type support, developers will be able to:
-- Write ZK circuits in **pure Python** using JAX
-- Leverage JAX's **automatic differentiation** for constraint system generation
-- Use JAX's **JIT compilation** for fast prototyping
+
+- Write ZK proving scheme in **pure Python** using JAX
 - Generate **production-optimized** prover code via ZKX
 
-This will dramatically improve the developer experience for ZK application development, similar to how JAX revolutionized deep learning model development.
+This will dramatically improve the developer experience for ZK application development.
 
 ## ZKX Opcode Expansion
 
@@ -216,12 +212,14 @@ These 12 opcodes are sufficient to implement the complete Groth16 proving algori
 To support **WHIR-p3** and other modern proving systems, we added 41 additional opcodes across several categories:
 
 #### Comparison and Conditional Logic
+
 - `compare` - element-wise comparison operations
 - `conditional` - if-then-else semantics
 - `select` - conditional value selection
 - `clamp` - value clamping to range
 
 #### Array Manipulation
+
 - `concatenate` - array concatenation
 - `dynamic-slice` - runtime-determined slicing
 - `dynamic-update-slice` - runtime updates
@@ -233,11 +231,13 @@ To support **WHIR-p3** and other modern proving systems, we added 41 additional 
 - `transpose` - dimension permutation
 
 #### Reduction and Aggregation
+
 - `reduce` - generic reduction operation
 - `maximum` - maximum reduction
 - `minimum` - minimum reduction
 
 #### Bitwise Operations
+
 - `and` - bitwise AND
 - `or` - bitwise OR
 - `xor` - bitwise XOR
@@ -249,6 +249,7 @@ To support **WHIR-p3** and other modern proving systems, we added 41 additional 
 - `population-count` - count set bits
 
 #### Advanced Operations
+
 - `abs` - absolute value
 - `sign` - sign extraction
 - `remainder` - modulo operation
@@ -282,14 +283,17 @@ This is an **integer-based early version** that will be migrated to proper prime
 Poseidon2 requires three sets of round constants:
 
 **Initial Round Constants (IRC)**
+
 - 4 rounds × 16 constants
 - Applied during initial external rounds
 
 **Internal Round Constants (IxRC)**
+
 - 13 scalar constants
 - Applied during internal rounds
 
 **Terminal Round Constants (TRC)**
+
 - 4 rounds × 16 constants
 - Applied during terminal external rounds
 
@@ -410,6 +414,7 @@ def permute(self, state):
 This integer-based implementation will be migrated to use native prime-field types once that support is added to the JAX integration (estimated within 2 weeks).
 
 Once complete, this will demonstrate:
+
 - Writing ZK hash functions in **pure Python**
 - Automatic compilation to **optimized MLIR**
 - Cross-platform code generation for **CPU and GPU**
@@ -430,6 +435,7 @@ This progress report demonstrates significant advances across multiple fronts:
 These developments bring us closer to our vision of **making ZK development as accessible as deep learning**, where developers can write high-level Python code and automatically get production-quality, cross-platform optimized implementations.
 
 In the next progress report, we expect to share:
+
 - Prime-field type support in JAX
 - GPU code generation for Poseidon2
 - Additional proving system support (PLONK, STARKs)

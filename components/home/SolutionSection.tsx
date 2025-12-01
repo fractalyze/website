@@ -10,7 +10,7 @@ class BrakedownCommitment:
 class BrakedownProof:
   ...
 
-  # High-level SDK for defining the proving scheme
+# High-level SDK for defining the proving scheme
 class Brakedown(zorch.PCS):
     @zorch.jit  # JIT compilation to optimized binary
     def commit(self, polynomial: znp.array) -> BrakedownCommitment:
