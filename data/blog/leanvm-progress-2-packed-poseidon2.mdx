@@ -17,10 +17,10 @@ This report covers our progress over the past two weeks across four major areas:
 
 Following the optimizations described below, we achieved **performance parity** with Plonky3 on Packed PrimeField operations:
 
-| Hardware | Width | Plonky3 | ZKIR | Ratio (Plonky3 / ZKIR) |
-|----------|-------|---------|------|----------------------|
-| AMD 9950X3D | 16 | 7.38 ms | 7.38 ms | 1.00 |
-| Mac M4 Pro | 4 | 5.51 ms | 5.58 ms | 0.98 |
+| Hardware    | Width | Plonky3 | ZKIR    | Ratio (Plonky3 / ZKIR) |
+| ----------- | ----- | ------- | ------- | ---------------------- |
+| AMD 9950X3D | 16    | 7.38 ms | 7.38 ms | 1.00                   |
+| Mac M4 Pro  | 4     | 5.51 ms | 5.58 ms | 0.98                   |
 
 *The table shows the total time for Width × 10,000 hash operations. The benchmark used **BabyBear**, but similar results are expected for **KoalaBear**.*
 
