@@ -51,7 +51,7 @@ One key feature of HLO is that it explicitly specifies each operation's **input/
 
 Below is an example of the QAP portion of the Groth16 prover expressed in HLO:
 
-```llvm
+```hlo
 %Az = bn254.sf[8388608] dot(%A, %z.in_mont)
 %Bz = bn254.sf[8388608] dot(%B, %z.in_mont)
 %Cz = bn254.sf[8388608] multiply(%Az, %Bz)

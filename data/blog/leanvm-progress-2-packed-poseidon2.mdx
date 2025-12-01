@@ -139,7 +139,7 @@ module @jit_f attributes {mhlo.num_partitions = 1 : i32, mhlo.num_replicas = 1 :
 
 StableHLO is then lowered to **HLO** (High-Level Operations), which is closer to the computational representation:
 
-```
+```hlo
 ENTRY %main.4 (Arg_0.1: s32[]) -> s32[] {
   %Arg_0.1 = s32[] parameter(0), metadata={op_name="x"}
   %constant.2 = s32[] constant(1)
