@@ -255,7 +255,7 @@ This approach reduces runtime overhead and further **optimizes proof generation 
 
 The `Az + Bz` section is the **only part** where RabbitSNARK is slower than RapidSNARK.
 
-When parallelizing SpMV with multiple threads, frameworks often use a **row-based partitioning strategy**.
+When parallelizing **SpMV(Sparse Matrix Vector multiplication)** with multiple threads, MLIR often use a **row-based partitioning strategy**.
 
 However, the distribution of rows per thread is highly imbalanced, severely reducing parallel efficiency.
 
