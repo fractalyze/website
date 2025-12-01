@@ -62,13 +62,13 @@ We're currently implementing similar optimizations in ZKIR and will share the re
 
 ## WHIR-p3 in Python
 
-[XLA](https://openxla.org/xla) is a runtime compiler used in deep learning. It defines **[HLO (High-Level Operations)](https://openxla.org/xla/operation_semantics)** and allows compilation from **Python → [Jaxpr](https://docs.jax.dev/en/latest/jaxpr.html) → HLO → [MLIR](https://mlir.llvm.org/) → LLVM IR → binary** via the [JAX](https://docs.jax.dev/en/latest/notebooks/thinking_in_jax.html) library.
+[XLA] is a runtime compiler used in deep learning. It defines **[HLO]** and allows compilation from **Python → [Jaxpr] → HLO → [MLIR] → LLVM IR → binary** via the [JAX] library.
 
 Our team has been **developing a ZK-specific runtime compiler called ZKX** by forking XLA. Using ZKX, we already achieved **SOTA Groth16 performance on CPU**.
 
-The next goal is to **express [WHIR-p3](https://github.com/tcoratger/whir-p3) in Python**. To that end, we are **forking and adapting JAX** for ZKX compatibility.
+The next goal is to **express [WHIR-p3] in Python**. To that end, we are **forking and adapting JAX** for ZKX compatibility.
 In parallel, we're porting **WHIR-p3 (including Poseidon2)** to Python using JAX.
-For example, the Rust implementation of [poly/dense.rs](https://github.com/tcoratger/whir-p3/blob/3c2952f/src/poly/dense.rs) can be expressed in JAX as [follows](#python-code).
+For example, the Rust implementation of [poly/dense.rs] can be expressed in JAX as [follows](#python-code).
 
 ## MLIR code
 
@@ -512,7 +512,7 @@ func.func @permute_10000(%state : !state) attributes { llvm.emit_c_interface } {
 
 ## Python code
 
-This is a Python implementation of [poly/dense.rs](https://github.com/tcoratger/whir-p3/blob/3c2952f/src/poly/dense.rs) from WHIR-p3:
+This is a Python implementation of [poly/dense.rs] from WHIR-p3:
 
 ```python
 import jax
@@ -615,3 +615,11 @@ def mul(a, b):
   jax_array_b = jnp.array(b)
   return jnp.polymul(jax_array_a, jax_array_b)
 ```
+
+[HLO]: https://openxla.org/xla/operation_semantics
+[JAX]: https://docs.jax.dev/en/latest/notebooks/thinking_in_jax.html
+[Jaxpr]: https://docs.jax.dev/en/latest/jaxpr.html
+[MLIR]: https://mlir.llvm.org/
+[poly/dense.rs]: https://github.com/tcoratger/whir-p3/blob/3c2952f/src/poly/dense.rs
+[WHIR-p3]: https://github.com/tcoratger/whir-p3
+[XLA]: https://openxla.org/xla

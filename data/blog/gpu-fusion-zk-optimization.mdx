@@ -7,7 +7,7 @@ summary: 'Demonstrating how compiler-driven loop fusion achieves 1.5-2× perform
 authors: ['Ryan Kim']
 ---
 
-As introduced in [TensorFlow XLA: The Fusion Compiler for TensorFlow](https://www.geeksforgeeks.org/deep-learning/tensorflow-xla-the-fusion-compiler-for-tensorflow/), one of XLA's most important optimizations is **Fusion**. This article will briefly discuss what Fusion is, why it's crucial, and the actual performance benefits of applying it in the context of ZK.
+As introduced in [TensorFlow XLA: The Fusion Compiler for TensorFlow], one of XLA's most important optimizations is **Fusion**. This article will briefly discuss what Fusion is, why it's crucial, and the actual performance benefits of applying it in the context of ZK.
 
 ## What is Fusion?
 
@@ -119,7 +119,7 @@ If we apply fusion, **both of the problems above are solved**. This is a critica
 
 ## Benchmark Results
 
-This principle seems simple, but it often breaks down when using frameworks like ICICLE for GPU programming. This is because each vector operation (vecop) is typically a separate kernel call, as seen in their [API documentation](https://dev.ingonyama.com/api/cpp/vec_ops).
+This principle seems simple, but it often breaks down when using frameworks like ICICLE for GPU programming. This is because each vector operation (vecop) is typically a separate kernel call, as seen in their [API documentation].
 
 We ran a benchmark for the operation $x^2 - x$ (where $x \in \mathbb{F}^{2^k}$) on an **RTX 5090**:
 
@@ -145,7 +145,7 @@ This trend demonstrates that **fusion becomes more critical as problem sizes inc
 
 ## Why Manual Fusion Isn't Enough
 
-To be fair, the ICICLE team is aware of fusion's importance and provides a way for users to manually apply fusion using their [program API](https://dev.ingonyama.com/api/cpp/program).
+To be fair, the ICICLE team is aware of fusion's importance and provides a way for users to manually apply fusion using their [program API].
 
 However, this manual approach only scratches the surface of what a compiler can automate. **Expecting users to:**
 
@@ -179,3 +179,7 @@ Fusion is a fundamental compiler optimization that becomes critical in memory-bo
 Our benchmarks demonstrate **1.5-2× performance improvements** over ICICLE simply by applying fusion, and this is just the beginning. As we continue to develop ZKX, we expect to achieve even greater speedups through the composition of multiple compiler optimizations.
 
 The future of high-performance ZK proving isn't in hand-tuned GPU kernels — it's in sophisticated compilers that automatically generate optimal code for any hardware target.
+
+[API documentation]: https://dev.ingonyama.com/api/cpp/vec_ops
+[program API]: https://dev.ingonyama.com/api/cpp/program
+[TensorFlow XLA: The Fusion Compiler for TensorFlow]: https://www.geeksforgeeks.org/deep-learning/tensorflow-xla-the-fusion-compiler-for-tensorflow/
