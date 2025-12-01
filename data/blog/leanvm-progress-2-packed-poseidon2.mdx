@@ -58,15 +58,9 @@ $$
 a \div 2^k \to a \gg k
 $$
 
-**4. Squared Difference Factorization**
+**4. Squared Difference Optimization**
 
-When computing $(a - b)^2$, we can optimize the reduction step as mentioned in our previous report. The pattern is:
-
-$$
-(a - b)^2 = a^2 - 2ab + b^2
-$$
-
-This allows us to delay modular reduction and reduce the number of expensive reduction operations.
+When computing $(a - b)^2$, we can optimize the reduction step as mentioned in our previous report. See [poseidon2-in-mlir](./leanvm-progress-1-poseidon2.mdx#poseidon2-in-mlir) in more details
 
 #### Architecture-Specific Optimizations
 
@@ -191,12 +185,10 @@ From this MLIR representation, we can apply ZKX optimization passes and generate
 
 Once we add prime-field type support, developers will be able to:
 
-- Write ZK circuits in **pure Python** using JAX
-- Leverage JAX's **automatic differentiation** for constraint system generation
-- Use JAX's **JIT compilation** for fast prototyping
+- Write ZK proving scheme in **pure Python** using JAX
 - Generate **production-optimized** prover code via ZKX
 
-This will dramatically improve the developer experience for ZK application development, similar to how JAX revolutionized deep learning model development.
+This will dramatically improve the developer experience for ZK application development.
 
 ## ZKX Opcode Expansion
 
