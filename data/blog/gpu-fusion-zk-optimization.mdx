@@ -150,67 +150,24 @@ To be fair, the ICICLE team is aware of fusion's importance and provides a way f
 However, this manual approach only scratches the surface of what a compiler can automate. **Expecting users to:**
 
 - Understand intricate hardware architecture details
-- Manually handle the full suite of loop optimizations:
-  - **Tiling** for cache locality
-  - **Vectorization** for SIMD utilization
-  - **Loop unrolling** for reduced control overhead
-  - **Software pipelining** for latency hiding
-- Maintain performance across different GPU architectures
+- Manually handle the full suite of loop optimizations such as **Tiling**, **Vectorization**, **Loop Unrolling** or **Software Pipelining**
 
 ...is an **extremely difficult and unreasonable burden**. This is precisely the work a compiler should do.
 
 ## Compiler-Driven Optimization
 
-ZKX's compiler-based approach provides several advantages:
+The compiler automatically identifies fusion opportunities by analyzing the computation graph.
 
-### 1. Automatic Fusion Detection
-
-The compiler automatically identifies fusion opportunities by analyzing the computation graph. Patterns like:
-
-$$
-\text{output} = f(g(h(\text{input})))
-$$
-
-are automatically fused into a single kernel, eliminating intermediate memory operations.
-
-### 2. Architecture-Aware Code Generation
-
-Different GPU architectures (NVIDIA, AMD) have different optimal strategies for:
-- Thread block sizes
-- Shared memory usage
-- Register allocation
-- Memory access patterns
-
-The compiler generates optimized code for each target architecture automatically.
-
-### 3. Composition of Optimizations
+Multiple kernels are automatically fused into a single kernel, eliminating intermediate memory operations.
 
 Fusion is just one of many optimizations. The compiler can compose:
-- Loop fusion
-- Constant propagation
+
+- Constant folding
 - Algebraic simplification
 - Memory layout optimization
-- Instruction scheduling
+- Additional loop optimizations
 
 ...in ways that manual optimization cannot practically achieve.
-
-## Real-World Impact
-
-In ZK proving systems, operations like Sumcheck involve computing expressions of the form:
-
-$$
-\sum_{i=0}^{n-1} f(x_i, y_i, z_i, \ldots)
-$$
-
-where $f$ is a polynomial evaluation involving multiple field operations.
-
-Without fusion, each operation ($+$, $\times$, $-$, etc.) becomes a separate kernel launch with Global Memory round-trips. With fusion, the entire expression is computed in a single pass through the data, **dramatically reducing memory traffic**.
-
-For a typical STARK proof generation:
-- **Unfused approach**: Hundreds of kernel launches, each reading/writing Global Memory
-- **Fused approach**: Tens of fused kernels, with intermediate values staying in registers
-
-This translates to the **1.5-2× performance improvements** we demonstrated in our benchmarks.
 
 ## Conclusion
 
@@ -218,9 +175,7 @@ Fusion is a fundamental compiler optimization that becomes critical in memory-bo
 
 1. Require deep hardware expertise from users
 2. Don't compose well with other optimizations
-3. Are difficult to maintain across GPU architectures
-4. Can't achieve the same level of optimization as a full compiler
 
-Our benchmarks demonstrate **1.5-2× performance improvements** over ICICLE simply by applying automatic fusion, and this is just the beginning. As we continue to develop ZKX, we expect to achieve even greater speedups through the composition of multiple compiler optimizations.
+Our benchmarks demonstrate **1.5-2× performance improvements** over ICICLE simply by applying fusion, and this is just the beginning. As we continue to develop ZKX, we expect to achieve even greater speedups through the composition of multiple compiler optimizations.
 
 The future of high-performance ZK proving isn't in hand-tuned GPU kernels — it's in sophisticated compilers that automatically generate optimal code for any hardware target.
