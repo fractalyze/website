@@ -68,7 +68,7 @@ Our team has been **developing a ZK-specific runtime compiler called ZKX** by fo
 
 The next goal is to **express [WHIR-p3](https://github.com/tcoratger/whir-p3) in Python**. To that end, we are **forking and adapting JAX** for ZKX compatibility.
 In parallel, we're porting **WHIR-p3 (including Poseidon2)** to Python using JAX.
-For example, the Rust implementation of [poly/dense.rs](https://github.com/tcoratger/whir-p3/blob/main/src/poly/dense.rs) can be expressed in JAX as [follows](#python-code).
+For example, the Rust implementation of [poly/dense.rs](https://github.com/tcoratger/whir-p3/blob/3c2952f/src/poly/dense.rs) can be expressed in JAX as [follows](#python-code).
 
 ## MLIR code
 
@@ -512,7 +512,7 @@ func.func @permute_10000(%state : !state) attributes { llvm.emit_c_interface } {
 
 ## Python code
 
-This is a Python implementation of [poly/dense.rs](https://github.com/tcoratger/whir-p3/blob/main/src/poly/dense.rs) from WHIR-p3:
+This is a Python implementation of [poly/dense.rs](https://github.com/tcoratger/whir-p3/blob/3c2952f/src/poly/dense.rs) from WHIR-p3:
 
 ```python
 import jax
