@@ -32,25 +32,29 @@ For example, consider computing $(x - y)^2$ for $0 \le x, y < P$:
 The standard approach performs:
 
 1. Compute $v = P + x - y$
-2. Apply $\mathsf{reduce}(v)$
+2. Apply $\mathsf{reduce_1}(v)$
 3. Compute $v^2$
-4. Apply $\mathsf{reduce}(v^2)$
+4. Apply $\mathsf{reduce_2}(v^2)$
 
 Where the reduction function is defined as:
 
 $$
-\mathsf{reduce}(v) =
-\begin{cases}
-v - P & \text{if } v \ge P \\
-v & \text{otherwise}
-\end{cases}
+\mathsf{reduce_1}(a) \to b
 $$
+
+where $0 \le a < 2P$ and $0 \le b < P$
+
+$$
+\mathsf{reduce_2}(a) \to b
+$$
+
+where $0 \le a < P^2$ and $0 \le b < P$
 
 Plonky3 skips step (2) and instead performs:
 
 1. Compute $v = x - y$
 2. Compute $v^2$
-3. Apply $\mathsf{reduce}(v^2)$
+3. Apply $\mathsf{reduce_2}(v^2)$
 
 Since $v$ after step (1) lies within $-P < v < P$, omitting the first reduction does not affect correctness — the result $v^2$ still satisfies $0 \le v^2 < P^2$.
 
