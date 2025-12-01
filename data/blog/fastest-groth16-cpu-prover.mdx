@@ -39,7 +39,7 @@ To address these issues, **Chris Lattner (creator of LLVM)** proposed **MLIR**, 
 
 ### HLO (High Level Operation)
 
-HLO is an **intermediate representation** used in XLA. When users write deep learning models in Python, they are first transformed into HLO, which can then be lowered to MLIR for **machine-dependent optimization**.
+[HLO](https://openxla.org/xla/operation_semantics) is an **intermediate representation** used in XLA. When users write deep learning models in Python, they are first transformed into HLO, which can then be lowered to MLIR for **machine-dependent optimization**.
 
 As mentioned earlier, in deep learning, models are defined in Python and then compiled for the target environment. Similarly, in RabbitSNARK's current PoC stage, we use **HLO to describe the Groth16 proving scheme**.
 
@@ -89,17 +89,17 @@ The optimized HLO is then lowered to machine code using backends such as **Trito
 
 ### ZKX, ZKIR, RabbitSNARK
 
-**ZKX (ZK Accelerator)** is a specialized **ZK runtime compiler** developed by Fractalyze, modeled after XLA.
+**[ZKX (ZK Accelerator)](https://github.com/fractalyze/zkx)** is a specialized **ZK runtime compiler** developed by Fractalyze, modeled after XLA.
 
 Just as XLA abstracts over different machine architectures (CPU, GPU, TPU) to generate high-performance code, ZKX aims to **automatically generate efficient ZK proving code across diverse hardware environments**.
 
-A core component of ZKX is **ZKIR (ZK Intermediate Representation)**.
+A core component of ZKX is **[ZKIR (ZK Intermediate Representation)](https://github.com/fractalyze/zkir)**.
 
 Based on [MLIR](https://mlir.llvm.org/), ZKIR is a domain-specific intermediate representation designed to support **domain-aware optimizations and lowering**.
 
 Much like how MLIR defines various domain-specific dialects to enable generic optimizations and target-specific code generation, ZKIR abstracts ZK proving computation patterns and transforms them into optimized machine code.
 
-**RabbitSNARK** is a **Groth16 CPU prover** built using **ZKX and ZKIR**.
+**[RabbitSNARK](https://github.com/fractalyze/rabbitsnark)** is a **Groth16 CPU prover** built using **ZKX and ZKIR**.
 
 It compiles Groth16 proving logic, expressed in ZKIR, into highly optimized code for a variety of machine architectures—enabling **platform-independent, high-performance proving**.
 
