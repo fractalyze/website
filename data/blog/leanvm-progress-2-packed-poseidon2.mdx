@@ -30,61 +30,42 @@ Compared to our [previous benchmark](./leanvm-progress-1-poseidon2) where we sho
 
 To achieve this performance improvement, we implemented several algebraic rewrites and architecture-specific optimizations in the ZKIR compiler pass:
 
-#### Algebraic Rewrites
+**1. [Unrolling Square-and-Mul](https://github.com/fractalyze/zkir/pull/86/commits/0f202a7)**
 
-**1. Exponent Optimization**
-
-For small constant exponents, we rewrite expensive exponentiation operations into cheaper multiplication sequences:
+For field exponents, we had a square-and-mul algorithm but it was still not fast enough. Unrolling the while loop when the exponent is constant gave us a nice boost. Now, we can just do `field.powui %a, %arbitrary_constant` and have unrolled square-and-mul.
 
 $$
-a^3 \to a^2 \times a
+a^5 \to (a^2)^2 \times a
 $$
 
-This optimization is particularly important in Poseidon2's S-box operation, which computes $x^7$ for each element.
+This optimization is particularly important in Poseidon2's S-box operation, which computes $x^7$.
 
-**2. Constant Multiplication Rewriting**
+**2. [Rewriting Power-of-Two Division](https://github.com/fractalyze/zkir/pull/86/commits/40ab415)**
 
-Multiplications with small constants are converted to cheaper shift and add operations:
+When doing modular multiplication over inverse power of two, we can do better than standard montgomery multiplication. We added a logic to detect such constant operand and rewrite this operation to a more efficient algorithm.
 
-$$
-3 \times a \to 2a + a
-$$
+**3. [Removing Redundant Reduction](https://github.com/fractalyze/zkir/pull/86/commits/65aef19)**
 
-**3. Power-of-Two Division**
+When computing modular $(a - b)^2$, we don't actually need to reduce $a-b$'s range from $(-P,P) \rightarrow [0, P)$ since the next operation is squaring. 
 
-Division by powers of two is optimized to arithmetic right shifts:
+**4. [Vector/Tensor Constant Folding](https://github.com/fractalyze/zkir/pull/86/commits/4b67526)**
 
-$$
-a \div 2^k \to a \gg k
-$$
+We enabled constant folding of tensor and vector types specifically for the `mod_arith` dialect, allowing compile-time evaluation of modular arithmetic operations on constants.
 
-**4. Squared Difference Optimization**
+**5. [Specializing for AVX-512](https://github.com/fractalyze/zkir/pull/86/commits/7cc8987)**
 
-When computing $(a - b)^2$, we can optimize the reduction step as mentioned in our previous report. See [poseidon2-in-mlir](./leanvm-progress-1-poseidon2.mdx#poseidon2-in-mlir) in more details
+For x86 platforms with AVX-512 support (like the AMD 9950X3D), we rewrite standard arithmetics to custom dual-lane SIMD instructions for peak CPU utilization. This is particularly beneficial when there is a lot of chained operations since the lane splitting at each operation border cancels out thanks to MLIR Pattern Rewriting.
 
-#### Architecture-Specific Optimizations
+```
+       a_odd  *  b_odd 
+      /                \
+a * b                    ab_high, ab_low
+      \                / 
+       a_even * b_even
+```
+**6. [Specializing for ARM-NEON](https://github.com/fractalyze/zkir/tree/feat/benchmark-arm-neon-poseidon2)**
 
-**Vector Constant Folding**
-
-We implemented constant folding optimizations specifically for the `mod_arith` dialect, allowing compile-time evaluation of modular arithmetic operations on constant vectors.
-
-**AVX-512 Pattern Matching**
-
-For x86 platforms with AVX-512 support (like the AMD 9950X3D), we added pattern matching to generate optimal SIMD instructions for:
-
-- Vector addition
-- Vector subtraction
-- Vector multiplication
-
-**ARM NEON Support**
-
-For ARM platforms (Mac M4 Pro, AWS Graviton), we developed custom multiplication operations that leverage NEON SIMD instructions. This optimization is currently under code review and pending merge.
-
-**Matrix-Vector Product Optimization**
-
-When the matrix is known at compile time (as in Poseidon2's MDS matrices), we can generate specialized code that unrolls loops and optimizes memory access patterns.
-
-These optimizations collectively enabled us to match Plonky3's highly-optimized Rust implementation while maintaining our compiler-based approach's benefits of cross-platform portability and automated code generation.
+For ARM platforms (Mac M4 Pro, AWS Graviton), we implemented a separate lowering logic that leverages NEON SIMD instructions. This optimization is currently under code review and pending merge.
 
 ## JAX Integration
 
