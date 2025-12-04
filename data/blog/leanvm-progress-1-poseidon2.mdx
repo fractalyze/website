@@ -9,9 +9,9 @@ authors: ['Ryan Kim']
 
 ## Poseidon2 in MLIR
 
-In hash-based STARK systems, the hash function dominates performance — and **Poseidon2** is the most commonly used hash. Therefore, improving Poseidon2 performance directly translates to faster hash-based STARKs.
+In hash-based STARK systems, the hash function dominates performance — and **Poseidon2** is the most commonly used hash. Optimizing Poseidon2 directly translates to faster STARKs, while also stress-testing and maturing our MLIR infrastructure.
 
-Over the past two weeks, one of our team members implemented [Poseidon2 in MLIR](#mlir-code), and the result outperformed **Plonky3** on both AMD and Apple Silicon environments:
+For this, we implemented [Poseidon2 in MLIR](#mlir-code), which outperformed **Plonky3** (with SIMD disabled) on both AMD and Apple Silicon:
 
 |             | Plonky3 | ZKIR    | Ratio (Plonky3 / ZKIR) |
 | ----------- | ------- | ------- | ---------------------- |
@@ -20,7 +20,7 @@ Over the past two weeks, one of our team members implemented [Poseidon2 in MLIR]
 
 *(The table shows the total time for 10,000 hash operations. The benchmark used **BabyBear**, but similar results are expected for **KoalaBear**.)*
 
-We also benchmarked with **Packed PrimeField**, where performance is currently slower:
+In practice, **Packed PrimeField** performance matters more for production workloads. Unfortunately, ZKIR is currently slower here:
 
 |             | Plonky3 | ZKIR    | Ratio (Plonky3 / ZKIR) |
 | ----------- | ------- | ------- | ---------------------- |
