@@ -7,9 +7,12 @@ summary: 'Achieving performance parity with Plonky3 on Packed Poseidon2, impleme
 authors: ['Ryan Kim']
 ---
 
-In our [previous progress report](./leanvm-progress-1-poseidon2), we demonstrated initial Poseidon2 implementation in MLIR that outperformed Plonky3 on regular PrimeField operations. However, we noted performance gaps on Packed PrimeField due to missing engineering optimizations.
+In our [previous report](./leanvm-progress-1-poseidon2), we showed that our MLIR-based Poseidon2 outperformed Plonky3 on regular PrimeField operations, but lagged behind on Packed PrimeField. This report covers improvements on four major areas:
 
-This report covers our progress over the past two weeks across four major areas: achieving performance parity with Plonky3 on Packed Poseidon2, integrating JAX for code generation, expanding ZKX opcodes to support additional provers, and implementing Poseidon2 in pure JAX.
+- [Closing the Packed PrimeField performance gap](#packed-poseidon2-in-mlir)
+- [JAX integration for code generation](#jax-integration)
+- [ZKX opcode expansion for additional provers](#zkx-opcode-expansion)
+- [Pure-JAX Poseidon2 implementation](#poseidon2-in-jax)
 
 ## Packed Poseidon2 in MLIR
 
