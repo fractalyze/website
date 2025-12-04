@@ -27,12 +27,23 @@ export function Header() {
             <ul className="flex space-x-6">
               {headerNavLinks.map((link) => (
                 <li key={link.title}>
-                  <Link
-                    href={link.href}
-                    className="text-gray-700 hover:text-primary-600 dark:text-gray-300 dark:hover:text-primary-400"
-                  >
-                    {link.title}
-                  </Link>
+                  {link.external ? (
+                    <a
+                      href={link.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-gray-700 hover:text-primary-600 dark:text-gray-300 dark:hover:text-primary-400"
+                    >
+                      {link.title}
+                    </a>
+                  ) : (
+                    <Link
+                      href={link.href}
+                      className="text-gray-700 hover:text-primary-600 dark:text-gray-300 dark:hover:text-primary-400"
+                    >
+                      {link.title}
+                    </Link>
+                  )}
                 </li>
               ))}
             </ul>
