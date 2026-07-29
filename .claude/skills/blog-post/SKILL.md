@@ -1,0 +1,114 @@
+---
+name: blog-post
+description: Turn a plain Markdown draft into a published post in this repo — derives the slug, fills the frontmatter Contentlayer requires, relocates and rewrites image paths, and verifies the post builds and appears on the site. Use when the user hands over a .md/.mdx draft to publish, asks to add an article to the blog, or says "이 글 블로그에 올려줘" / "publish this post".
+---
+
+# Publishing a blog post
+
+The blog is file-based: a post is one `.mdx` file under `data/blog/`, compiled by
+Contentlayer at build time. There is no CMS and no database. Pushing to `main`
+deploys to production (fractalyze.io) through the connected Vercel project.
+
+## What you are given, and what you produce
+
+Input is usually a Markdown draft written somewhere else — no frontmatter, or
+frontmatter in a different shape, and images sitting next to it or hotlinked.
+
+Output is `data/blog/<slug>.mdx` with the frontmatter below, images under
+`public/blog/<slug>/`, and a build that renders the post.
+
+## The slug is the URL
+
+The filename becomes the path: `data/blog/packed-poseidon2.mdx` serves at
+`/blog/packed-poseidon2`. Derive it from the title in lower kebab-case, trimming
+filler. Keep it short and stable — **changing it later breaks every inbound link**,
+so confirm the slug with the user before writing if the title is long or awkward.
+
+Check for a collision first: `ls data/blog/`.
+
+## Frontmatter
+
+```yaml
+---
+title: 'Packed Poseidon2 and JAX Code Generation'
+date: '2026-07-30'
+tags: ['zkp', 'poseidon2', 'jax']
+draft: false
+category: 'Progress'
+summary: 'One or two sentences. This is what the card on /blog and the home page shows, and what search engines quote.'
+authors: ['Ryan Kim']
+image: '/blog/packed-poseidon2/cover.png'
+---
+```
+
+| Field | Required | Notes |
+|---|---|---|
+| `title` | yes | Rendered as the page heading; no Markdown syntax inside |
+| `date` | yes | `YYYY-MM-DD`. Drives ordering, the visible date, and previous/next links |
+| `summary` | no, but always write one | Card copy is clamped to three lines — aim for 150–220 characters |
+| `category` | no | `Research` \| `Progress` \| `Company`. Defaults to `Research`. Drives the filter chips on `/blog` |
+| `tags` | no | Stored but not currently displayed anywhere |
+| `draft` | no | `true` hides the post from `/blog` and the home page; the URL still resolves |
+| `authors` | no | Free-form strings, not validated against `data/authors/` |
+| `image` | no | Card thumbnail. Falls back to `/images/blog/default-cover.webp` |
+| `lastmod` | no | `YYYY-MM-DD` |
+
+Ask the user for `date` and `category` if the draft does not imply them. Do not
+invent a `summary` that overstates a result — lift it from the opening paragraph.
+
+## Images
+
+Put every image the post uses under `public/blog/<slug>/` and reference it from
+the body with a root-relative path:
+
+```markdown
+![Runtime comparison on c7g](/blog/packed-poseidon2/runtime-c7g.png)
+```
+
+Rewrite whatever the draft used — relative paths, absolute local paths, or URLs
+pointing at a wiki or Notion export. Download remote images rather than
+hotlinking them; the originals disappear. Give each file a descriptive
+lower-kebab-case name; do not carry over names like
+`Screenshot_2026-07-30_at_10.09.35_AM.png`.
+
+Large source images belong in `public/` unoptimized only if small. Anything over
+roughly 500KB should be resized to at most 2× its display width and converted to
+webp before committing.
+
+## Body conversion
+
+The pipeline is MDX with GFM, math, and Prism highlighting, so most Markdown
+passes through untouched. Watch for these:
+
+- **Fence every code block with its language** (` ```rust `, ` ```python `,
+  ` ```mlir `). Unlabelled blocks fall back to JavaScript highlighting and look
+  wrong. `mlir` and `hlo` are aliased to LLVM, `c++` to `cpp`.
+- **Math** uses `$…$` inline and `$$…$$` display, rendered by KaTeX.
+- **MDX treats `<` and `{` as syntax.** Bare generics (`Vec<u32>`) or braces in
+  prose break the build — wrap them in backticks.
+- **Start the body at `##`.** The `title` frontmatter already renders the `h1`.
+- Tables, blockquotes, and nested lists are styled; horizontal rules are not used
+  in this design.
+
+## Verify before you call it done
+
+```bash
+srun npm run build
+```
+
+Contentlayer prints the document count; a schema error names the offending file
+and field. Then check the post actually surfaces:
+
+```bash
+curl -s localhost:3000/blog/<slug> -o /dev/null -w '%{http_code}\n'
+curl -s localhost:3000/blog | grep -c '<slug>'
+```
+
+A post with `draft: true` will build but will not appear in either listing —
+that is expected, not a failure.
+
+## Publishing
+
+Commit the `.mdx` and its images together, then push. A branch push gives a
+Vercel preview URL; merging to `main` publishes to fractalyze.io. Do not push to
+`main` directly without the user asking for it.
