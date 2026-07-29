@@ -15,8 +15,8 @@ const cards = [
     image: '/images/compiler/why-xla.webp',
   },
   {
-    title: 'Hand-written kernels know our math, one kernel at a time',
-    body: 'A hand-tuned kernel couples one operation, whether MSM, NTT, or a hash, to one GPU. Research moves fast and hardware faster, so that code rarely lives long enough to reuse.',
+    title: 'Hand-written kernels, one kernel at a time',
+    body: 'A hand-tuned kernel knows the math, but couples one operation, whether MSM, NTT, or a hash, to one GPU. Research moves fast and hardware faster, so that code rarely lives long enough to reuse.',
     tags: ['icicle', 'sppark'],
     image: '/images/compiler/why-icicle.webp',
   },
@@ -77,7 +77,7 @@ export function WhyCompilerSection() {
           </p>
         </div>
 
-        <div className="grid w-[81.25rem] max-w-full grid-cols-2 items-start gap-5">
+        <div className="grid w-[81.25rem] max-w-full grid-cols-2 gap-5">
           {cards.map((card) => (
             <article key={card.title} className="overflow-hidden rounded-2xl border border-line bg-paper">
               <div className="relative h-[15rem] w-full">
