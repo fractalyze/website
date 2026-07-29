@@ -58,9 +58,21 @@ invent a `summary` that overstates a result — lift it from the opening paragra
 
 ## Choosing the cover
 
-Every post needs an `image`. Pick one from `public/blog/covers/` rather than
-sourcing a new picture — the set was cut from the design and shares its
-treatment, so any of them sits correctly next to the others on `/blog`.
+Every post needs an `image`, and it is the first thing a reader sees. Work down
+this list and stop at the first step that yields one:
+
+1. A fitting cover already in `public/blog/covers/` — see the table below.
+2. A search, if an image API key is in the environment — see [Sourcing a new
+   one](#sourcing-a-new-one).
+3. **Ask the user for an image URL.** Say plainly that the library has no good
+   match and no search key is configured, and ask them to paste a link or point
+   at a file. Then download it and put it through the same crop and encode.
+
+Never quietly fall back to `/images/blog/default-cover.webp` because the first
+two steps came up empty — that ships a post wearing another post's picture. Ask.
+
+The library was cut from the design and shares its treatment, so any of its
+frames sits correctly next to the others on `/blog`.
 
 | File | Shows | Reach for it when |
 |---|---|---|
@@ -98,7 +110,9 @@ lines` for batching — but never at the cost of the tone.
 
 **Where to search.** Openverse needs no key but holds almost nothing in this
 aesthetic: filtered to commercially licensed photographs it returns single digits
-per query. Use Pexels or Unsplash, both free:
+per query. Use Pexels or Unsplash, both free. **If neither key is set, do not
+substitute Openverse or the default cover — go to step 3 and ask the user for a
+URL.**
 
 ```bash
 # Pexels — key in PEXELS_API_KEY
@@ -121,8 +135,9 @@ and taste is not delegable. Then crop to 906×400 (centre crop unless the subjec
 sits off-centre), save as webp at quality ~84 into `public/blog/covers/`, and add
 a row to the table above so the next post can see it exists.
 
-`image` may be omitted; it falls back to `/images/blog/default-cover.webp`, which
-is the soft-spectrum frame. Treat that as a stopgap, not a choice.
+`image` may be omitted; it falls back to `/images/blog/default-cover.webp`. That
+default exists so a half-written draft still renders, not as an answer to "which
+cover" — reach step 3 above before you let a post ship on it.
 
 ## Images in the body
 
