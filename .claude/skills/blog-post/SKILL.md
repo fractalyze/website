@@ -78,11 +78,48 @@ posts actually about the team; a stock face on a compiler benchmark reads as
 filler. Vary the choice across consecutive posts so the listing does not show the
 same picture twice in a row.
 
-If none fit, the tone to match is **spectral refraction over a restrained, mostly
-desaturated frame** — light split through glass or crystal, no text, no logos, no
-saturated brand colours competing with the accent lilac. Crop to 906×400 and save
-as webp at quality ~84. Add it to `public/blog/covers/` and to this table so the
-next post can reuse it.
+### Sourcing a new one
+
+The library is a starting set, not a ceiling. Once a post has no good match —
+which happens quickly, since repeating a cover two posts apart is obvious —
+search for a new one rather than reaching for the nearest miss.
+
+**The tone to match:** spectral refraction over a restrained, mostly desaturated
+frame. Light split through glass or crystal, deep shadow, one band of colour
+doing the work. No text, no logos, no product shots, no saturated colour
+competing with the accent lilac, no stock-photo staging (handshakes, pointing at
+monitors).
+
+**Search terms that land in it,** roughly ordered by hit rate: `prism light
+refraction`, `crystal caustics`, `dichroic glass`, `light through fluted glass`,
+`spectrum on concrete`, `iridescent film macro`. Bend the term toward the post's
+subject when there is an honest link — `lattice` for polynomial work, `parallel
+lines` for batching — but never at the cost of the tone.
+
+**Where to search.** Openverse needs no key but holds almost nothing in this
+aesthetic: filtered to commercially licensed photographs it returns single digits
+per query. Use Pexels or Unsplash, both free:
+
+```bash
+# Pexels — key in PEXELS_API_KEY
+curl -s -H "Authorization: $PEXELS_API_KEY" \
+  "https://api.pexels.com/v1/search?query=prism+light+refraction&orientation=landscape&per_page=15" \
+  | jq -r '.photos[] | "\(.id)\t\(.width)x\(.height)\t\(.src.original)"'
+
+# Unsplash — key in UNSPLASH_ACCESS_KEY
+curl -s "https://api.unsplash.com/search/photos?query=prism+light+refraction&orientation=landscape&per_page=15" \
+  -H "Authorization: Client-ID $UNSPLASH_ACCESS_KEY" \
+  | jq -r '.results[] | "\(.id)\t\(.width)x\(.height)\t\(.urls.raw)"'
+```
+
+Both licences permit commercial use without attribution. Keys are authoring-time
+only — keep them in the environment, never in the repo.
+
+**Always show candidates before committing one.** Download three or four, build a
+contact sheet, and let the user choose; a cover is the first thing a reader sees
+and taste is not delegable. Then crop to 906×400 (centre crop unless the subject
+sits off-centre), save as webp at quality ~84 into `public/blog/covers/`, and add
+a row to the table above so the next post can see it exists.
 
 `image` may be omitted; it falls back to `/images/blog/default-cover.webp`, which
 is the soft-spectrum frame. Treat that as a stopgap, not a choice.
