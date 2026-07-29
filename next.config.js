@@ -25,7 +25,11 @@ const nextConfig = {
       {
         // Same revalidation cost applies to the cover art, and the image
         // optimizer takes its own cache lifetime from what the source declares.
-        source: '/blog/:path*',
+        //
+        // Matched on the extension because post images and post pages share the
+        // /blog prefix: `/blog/:path*` also catches every article, and handed
+        // readers a week-old copy of one for a week after it changed.
+        source: '/blog/:file(.*\\.(?:png|jpe?g|gif|webp|avif|svg))',
         headers: [{key: 'Cache-Control', value: 'public, max-age=604800'}],
       },
     ];
