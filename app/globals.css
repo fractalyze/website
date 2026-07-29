@@ -4,6 +4,13 @@
 
 html {
   scroll-behavior: smooth;
+  /*
+   * The design is drawn on a 1920px canvas and every size in the theme is in rem,
+   * so scaling the root size scales the whole layout proportionally: 16px at 1920
+   * and down from there, which keeps the gutter-to-content ratio the design uses
+   * instead of letting a 1400px container run edge to edge on a narrower screen.
+   */
+  font-size: clamp(12px, calc(100vw / 120), 16px);
 }
 
 body {

@@ -35,7 +35,7 @@ function StackBox({box}: {box: Box}) {
   return (
     <div
       className={`flex w-full flex-col items-center justify-center rounded-lg px-5 py-4 ${toneClass[box.tone]} ${
-        box.tall ? 'h-[114px]' : ''
+        box.tall ? 'h-[7.125rem]' : ''
       }`}
     >
       <span
@@ -45,17 +45,29 @@ function StackBox({box}: {box: Box}) {
       >
         {box.label}
       </span>
-      {box.sublabel && <span className="text-[11px] leading-[12px] text-muted">{box.sublabel}</span>}
+      {box.sublabel && <span className="text-[0.6875rem] leading-[0.75rem] text-muted">{box.sublabel}</span>}
     </div>
   );
 }
 
-function Connector() {
+// Dashed 1.5px rules with a triangular arrow head, as drawn in the design.
+function Connector({lines = 1}: {lines?: 1 | 2}) {
+  const xs = lines === 2 ? [8.5, 28.5] : [18.5];
   return (
-    <div className="flex h-10 items-center justify-center gap-5" aria-hidden>
-      <span className="h-full w-px bg-line-strong" />
-      <span className="h-full w-px bg-line-strong" />
-    </div>
+    <svg
+      viewBox="0 0 37 40"
+      className="h-10 w-[2.3125rem] shrink-0"
+      fill="none"
+      stroke="currentColor"
+      aria-hidden
+    >
+      {xs.map((x) => (
+        <g key={x}>
+          <line x1={x} y1="0" x2={x} y2="33" strokeWidth="1.5" strokeDasharray="3 3" />
+          <path d={`M${x - 3.5} 32 L${x + 3.5} 32 L${x} 40 Z`} fill="currentColor" stroke="none" />
+        </g>
+      ))}
+    </svg>
   );
 }
 
@@ -67,9 +79,9 @@ function Diagram({
   targets: {head?: Box; device: Box}[];
 }) {
   return (
-    <div className="flex w-full flex-col items-center gap-2 rounded-xl border border-line bg-paper p-5">
+    <div className="flex w-full flex-col items-center gap-2 rounded-xl border border-line bg-paper p-5 text-ink">
       <StackBox box={stack[0]} />
-      <Connector />
+      <Connector lines={2} />
       {stack.slice(1).map((box) => (
         <StackBox key={box.label} box={box} />
       ))}
@@ -101,7 +113,7 @@ export function ComputingLayerSection() {
           </p>
         </div>
 
-        <div className="flex w-[1300px] max-w-full items-stretch gap-8">
+        <div className="flex w-[81.25rem] max-w-full items-stretch gap-8">
           <div className="flex flex-1 flex-col gap-5 rounded-2xl border border-line bg-surface p-8">
             <span className="w-fit rounded-full border border-line bg-paper px-4 py-1.5 text-caption text-muted">
               Today

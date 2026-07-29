@@ -11,16 +11,17 @@ const socialIcons = [
 ] as const;
 
 export function Footer() {
-  const social = socialIcons
-    .map((entry) => ({...entry, href: siteMetadata.social?.[entry.key] ?? ''}))
-    .filter((entry) => entry.href);
+  const social = socialIcons.map((entry) => ({
+    ...entry,
+    href: siteMetadata.social?.[entry.key] ?? '',
+  }));
 
   return (
     <footer className="bg-paper px-section py-20">
       <div className="mx-auto flex max-w-content flex-col gap-8">
         <div className="flex items-center justify-between">
           <Link href="/" aria-label="Fractalyze">
-            <img src="/logo/Fractalyze-logo-b.svg" alt="Fractalyze" className="h-[18px] w-auto" />
+            <img src="/logo/Fractalyze-logo-b.svg" alt="Fractalyze" className="h-[1.125rem] w-auto" />
           </Link>
           <nav>
             <ul className="flex items-center gap-5">
@@ -38,23 +39,27 @@ export function Footer() {
           </nav>
         </div>
 
-        {social.length > 0 && (
-          <ul className="flex items-center gap-5">
-            {social.map(({key, label, Icon, href}) => (
+        <ul className="flex items-center gap-5 text-subtle">
+          {social.map(({key, label, Icon, href}) =>
+            href ? (
               <li key={key}>
                 <a
                   href={href}
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label={label}
-                  className="block text-subtle transition-colors hover:text-ink"
+                  className="block transition-colors hover:text-ink"
                 >
                   <Icon />
                 </a>
               </li>
-            ))}
-          </ul>
-        )}
+            ) : (
+              <li key={key} aria-hidden>
+                <Icon />
+              </li>
+            )
+          )}
+        </ul>
 
         <div className="flex flex-col gap-2 border-t border-line py-5">
           <a

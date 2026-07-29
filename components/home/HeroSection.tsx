@@ -11,7 +11,7 @@ export function HeroSection() {
             <br />
             for Cryptography
           </h1>
-          <div className="flex w-[390px] flex-col gap-5">
+          <div className="flex w-[24.375rem] flex-col gap-5">
             <p className="text-body-lg text-ink">
               We build, optimize, and operate production cryptography systems — powered by our
               compiler and orchestration stack.
@@ -21,7 +21,7 @@ export function HeroSection() {
             </div>
           </div>
         </div>
-        <div className="relative h-[400px] w-full overflow-hidden rounded-[20px]">
+        <div className="relative h-[25rem] w-full overflow-hidden rounded-[1.25rem]">
           <Image
             src="/images/home/hero.webp"
             alt=""

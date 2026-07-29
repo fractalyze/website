@@ -37,7 +37,7 @@ export function ResearchBlogSection() {
               className="overflow-hidden rounded-2xl border border-line bg-surface"
             >
               <Link href={`/blog/${post.slug}`} className="block">
-                <div className="relative h-[200px] w-full">
+                <div className="relative h-[12.5rem] w-full">
                   <Image
                     src={post.image}
                     alt=""

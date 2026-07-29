@@ -64,8 +64,8 @@ const config: Config = {
         },
       },
       maxWidth: {
-        content: '1400px',
-        measure: '896px',
+        content: '87.5rem',
+        measure: '56rem',
       },
       spacing: {
         section: '6.25rem',

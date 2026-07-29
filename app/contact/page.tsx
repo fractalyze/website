@@ -17,13 +17,13 @@ export default function ContactPage() {
         </p>
       </div>
 
-      <div className="mx-auto mt-10 w-full max-w-[800px]">
+      <div className="mx-auto mt-10 w-full max-w-[50rem]">
         {formUrl ? (
           <iframe
             src={formUrl}
             title="Contact Fractalyze"
             loading="lazy"
-            className="h-[720px] w-full rounded-2xl border border-line"
+            className="h-[45rem] w-full rounded-2xl border border-line"
           />
         ) : (
           <div className="rounded-2xl border border-line bg-surface p-8 text-center">

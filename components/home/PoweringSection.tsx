@@ -52,11 +52,11 @@ export function PoweringSection() {
           </p>
         </div>
 
-        <div className="flex w-[1000px] max-w-full flex-col gap-20">
+        <div className="flex w-[62.5rem] max-w-full flex-col gap-20">
           {domains.map((domain, index) => (
             <div key={domain.title} className="flex items-center gap-20">
               <div
-                className={`flex w-[460px] flex-col gap-3 ${index % 2 === 1 ? 'order-2' : ''}`}
+                className={`flex w-[28.75rem] flex-col gap-3 ${index % 2 === 1 ? 'order-2' : ''}`}
               >
                 <h3 className="text-title-2 font-medium text-ink">{domain.title}</h3>
                 <p className="text-body-lg text-ink">{domain.description}</p>
@@ -66,7 +66,7 @@ export function PoweringSection() {
                   ))}
                 </ul>
               </div>
-              <div className="relative h-[240px] w-[460px] overflow-hidden rounded-2xl border border-line">
+              <div className="relative h-[15rem] w-[28.75rem] overflow-hidden rounded-2xl border border-line">
                 <Image
                   src={domain.image}
                   alt=""

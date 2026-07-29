@@ -40,7 +40,7 @@ export function WorkingWithUsSection() {
               key={engagement.title}
               className="overflow-hidden rounded-2xl border border-line bg-paper"
             >
-              <div className="relative h-[240px] w-full">
+              <div className="relative h-[15rem] w-full">
                 <Image
                   src={engagement.image}
                   alt=""

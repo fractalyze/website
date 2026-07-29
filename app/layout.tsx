@@ -1,6 +1,5 @@
 import type {Metadata} from 'next';
 import {DM_Mono} from 'next/font/google';
-import 'pretendard/dist/web/variable/pretendardvariable-dynamic-subset.css';
 import './globals.css';
 import 'katex/dist/katex.min.css';
 import {Header} from '@/components/Header';
@@ -51,6 +50,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang={siteMetadata.language}>
+      <head>
+        <link rel="stylesheet" href="/fonts/pretendard/pretendard.css" />
+      </head>
       <body className={`${dmMono.variable} font-sans`}>
         <div className="flex min-h-screen flex-col">
           <Header />
