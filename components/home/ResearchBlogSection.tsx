@@ -31,7 +31,14 @@ export function ResearchBlogSection() {
           View blog details
         </Link>
 
-        <div className="grid w-full grid-cols-3 gap-5">
+        {/* A lone post would otherwise sit in the first of three columns with
+            two empty ones beside it; putting it in the middle one centres it
+            without changing the width it shares with a full row. */}
+        <div
+          className={`grid w-full grid-cols-3 gap-5 ${
+            posts.length === 1 ? '[&>*]:col-start-2' : ''
+          }`}
+        >
           {posts.map((post) => (
             <article
               key={post.slug}

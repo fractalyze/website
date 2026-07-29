@@ -41,7 +41,7 @@ export default async function BlogPage({
                 <Link
                   href={active ? '/blog' : `/blog?category=${entry}`}
                   aria-current={active ? 'true' : undefined}
-                  className={`block rounded-full border px-4 py-1.5 text-caption transition-colors ${
+                  className={`block rounded-full border px-5 py-2 text-label transition-colors ${
                     active
                       ? 'border-ink bg-ink text-paper'
                       : 'border-line bg-paper text-muted hover:border-ink hover:text-ink'
