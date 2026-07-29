@@ -68,7 +68,7 @@ export function BenchmarkSection() {
             {rows.map(({benchmark, baseline, times, faster, length}) => (
               <li
                 key={`${benchmark.workload}/${baseline.name}`}
-                className={`${GRID} h-[3.125rem] border-t border-line`}
+                className={`${GRID} h-[3.125rem]`}
               >
                 {/* Cells truncate rather than wrap, so the name and the baseline
                     each carry their own text, and the row carries how it was
