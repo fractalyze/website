@@ -12,15 +12,15 @@ interface BlogPostCardProps {
 
 const BlogPostCard = ({slug, title, summary, date, readingTime, tags}: BlogPostCardProps) => {
   return (
-    <article className="group rounded-lg border border-gray-200 bg-white p-6 transition-all hover:border-primary-300 hover:shadow-md dark:border-gray-800 dark:bg-gray-950 dark:hover:border-primary-700">
+    <article className="group rounded-lg border border-gray-200 bg-white p-6 transition-all hover:border-primary-300 hover:shadow-md">
       <Link href={`/blog/${slug}`}>
-        <h2 className="text-xl font-bold text-gray-900 group-hover:text-primary-600 dark:text-gray-100 dark:group-hover:text-primary-400">
+        <h2 className="text-xl font-bold text-gray-900 group-hover:text-primary-600">
           {title}
         </h2>
         {summary && (
-          <p className="mt-2 text-sm text-gray-700 dark:text-gray-300 line-clamp-3">{summary}</p>
+          <p className="mt-2 text-sm text-gray-700 line-clamp-3">{summary}</p>
         )}
-        <div className="mt-4 flex items-center gap-4 text-sm text-gray-600 dark:text-gray-400">
+        <div className="mt-4 flex items-center gap-4 text-sm text-gray-600">
           <time dateTime={date}>{format(new Date(date), 'MMMM d, yyyy')}</time>
           <span>·</span>
           <span>{readingTime.text}</span>
@@ -30,7 +30,7 @@ const BlogPostCard = ({slug, title, summary, date, readingTime, tags}: BlogPostC
             {tags.map((tag) => (
               <span
                 key={tag}
-                className="rounded-full bg-gray-100 px-3 py-1 text-xs font-medium text-gray-700 dark:bg-gray-800 dark:text-gray-300"
+                className="rounded-full bg-gray-100 px-3 py-1 text-xs font-medium text-gray-700"
               >
                 {tag}
               </span>

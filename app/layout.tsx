@@ -1,22 +1,16 @@
 import type {Metadata} from 'next';
-import {IBM_Plex_Sans, IBM_Plex_Mono} from 'next/font/google';
+import {DM_Mono} from 'next/font/google';
+import 'pretendard/dist/web/variable/pretendardvariable-dynamic-subset.css';
 import './globals.css';
 import 'katex/dist/katex.min.css';
 import {Header} from '@/components/Header';
 import {Footer} from '@/components/Footer';
-import {ThemeProviders} from './theme-providers';
 import siteMetadata from '@/data/siteMetadata';
 import {Analytics} from '@vercel/analytics/next';
 
-const ibmPlexSans = IBM_Plex_Sans({
+const dmMono = DM_Mono({
   subsets: ['latin'],
-  weight: ['400', '500', '600', '700'],
-  variable: '--font-sans',
-});
-
-const ibmPlexMono = IBM_Plex_Mono({
-  subsets: ['latin'],
-  weight: ['400', '500', '600'],
+  weight: ['400', '500'],
   variable: '--font-mono',
 });
 
@@ -56,15 +50,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang={siteMetadata.language} suppressHydrationWarning>
-      <body className={`${ibmPlexSans.variable} ${ibmPlexMono.variable} font-sans`}>
-        <ThemeProviders>
-          <div className="flex min-h-screen flex-col">
-            <Header />
-            <main className="flex-grow">{children}</main>
-            <Footer />
-          </div>
-        </ThemeProviders>
+    <html lang={siteMetadata.language}>
+      <body className={`${dmMono.variable} font-sans`}>
+        <div className="flex min-h-screen flex-col">
+          <Header />
+          <main className="flex-grow">{children}</main>
+          <Footer />
+        </div>
         <Analytics />
       </body>
     </html>

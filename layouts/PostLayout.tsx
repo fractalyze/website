@@ -21,7 +21,7 @@ const PostLayout = ({
         <div className="mb-6">
           <Link
             href="/blog"
-            className="inline-flex items-center text-sm font-medium text-gray-600 transition-colors hover:text-primary-600 dark:text-gray-400 dark:hover:text-primary-400"
+            className="inline-flex items-center text-sm font-medium text-gray-600 transition-colors hover:text-primary-600"
           >
             <svg
               className="mr-2 h-4 w-4"
@@ -39,18 +39,18 @@ const PostLayout = ({
             Back to blog
           </Link>
         </div>
-        <h1 className="mb-4 text-3xl font-bold leading-tight tracking-tight text-gray-900 dark:text-gray-100 sm:text-4xl">
+        <h1 className="mb-4 text-3xl font-bold leading-tight tracking-tight text-gray-900 sm:text-4xl">
           {title}
         </h1>
-        <div className="flex flex-wrap items-center gap-3 text-sm text-gray-600 dark:text-gray-400">
+        <div className="flex flex-wrap items-center gap-3 text-sm text-gray-600">
           <time dateTime={date} className="font-medium">
             {format(new Date(date), 'MMMM d, yyyy')}
           </time>
-          <span className="text-gray-300 dark:text-gray-700">•</span>
+          <span className="text-gray-300">•</span>
           <span>{readingTime.text}</span>
           {lastmod && lastmod !== date && (
             <>
-              <span className="text-gray-300 dark:text-gray-700">•</span>
+              <span className="text-gray-300">•</span>
               <span>Updated {format(new Date(lastmod), 'MMMM d, yyyy')}</span>
             </>
           )}
@@ -60,7 +60,7 @@ const PostLayout = ({
             {tags.map((tag) => (
               <span
                 key={tag}
-                className="inline-flex items-center rounded-full bg-primary-50 px-3 py-1 text-xs font-medium text-primary-700 ring-1 ring-inset ring-primary-700/10 dark:bg-primary-400/10 dark:text-primary-400 dark:ring-primary-400/20"
+                className="inline-flex items-center rounded-full bg-primary-50 px-3 py-1 text-xs font-medium text-primary-700 ring-1 ring-inset ring-primary-700/10"
               >
                 {tag}
               </span>
@@ -69,14 +69,14 @@ const PostLayout = ({
         )}
       </header>
 
-      <div className="prose dark:prose-invert">
+      <div className="prose">
         {content}
       </div>
 
-      <div className="mt-12 border-t border-gray-200 pt-8 dark:border-gray-800">
+      <div className="mt-12 border-t border-gray-200 pt-8">
         <Link
           href="/blog"
-          className="inline-flex items-center text-sm font-medium text-primary-600 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300"
+          className="inline-flex items-center text-sm font-medium text-primary-600 hover:text-primary-700"
         >
           <svg
             className="mr-2 h-4 w-4"

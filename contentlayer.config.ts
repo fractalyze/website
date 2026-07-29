@@ -64,6 +64,7 @@ export const Blog = defineDocumentType(() => ({
     tags: {type: 'list', of: {type: 'string'}, required: false},
     draft: {type: 'boolean', required: false},
     summary: {type: 'string', required: false},
+    image: {type: 'string', required: false, default: '/images/blog/default-cover.webp'},
     authors: {type: 'list', of: {type: 'string'}, required: false, default: ['default']},
     layout: {type: 'string', required: false, default: 'PostLayout'},
   },

@@ -1,55 +1,31 @@
 import Link from 'next/link';
-import {ThemeSwitch} from './ThemeSwitch';
 import headerNavLinks from '@/data/headerNavLinks';
+import {ContactButton} from './ContactButton';
 
 export function Header() {
   return (
-    <header className="sticky top-0 z-50 border-b border-gray-200 bg-white/80 backdrop-blur-sm dark:border-gray-800 dark:bg-black/80">
-      <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
-        <div>
+    <header className="bg-paper px-28">
+      <div className="mx-auto flex h-20 max-w-content items-center justify-between">
+        <div className="flex items-center gap-20">
           <Link href="/" aria-label="Fractalyze">
-            <div className="flex items-center">
-              <img
-                src="/logo/Fractalyze-logo-b.svg"
-                alt="Fractalyze"
-                className="h-6 dark:hidden"
-              />
-              <img
-                src="/logo/Fractalyze-logo-w.svg"
-                alt="Fractalyze"
-                className="hidden h-6 dark:block"
-              />
-            </div>
+            <img src="/logo/Fractalyze-logo-b.svg" alt="Fractalyze" className="h-[26px] w-auto" />
           </Link>
-        </div>
-        <div className="flex items-center space-x-4 sm:space-x-6">
-          <nav className="hidden sm:block">
-            <ul className="flex space-x-6">
+          <nav>
+            <ul className="flex items-center gap-6">
               {headerNavLinks.map((link) => (
                 <li key={link.title}>
-                  {link.external ? (
-                    <a
-                      href={link.href}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-gray-700 hover:text-primary-600 dark:text-gray-300 dark:hover:text-primary-400"
-                    >
-                      {link.title}
-                    </a>
-                  ) : (
-                    <Link
-                      href={link.href}
-                      className="text-gray-700 hover:text-primary-600 dark:text-gray-300 dark:hover:text-primary-400"
-                    >
-                      {link.title}
-                    </Link>
-                  )}
+                  <Link
+                    href={link.href}
+                    className="block px-4 py-2 text-body font-medium text-ink transition-opacity hover:opacity-70"
+                  >
+                    {link.title}
+                  </Link>
                 </li>
               ))}
             </ul>
           </nav>
-          <ThemeSwitch />
         </div>
+        <ContactButton />
       </div>
     </header>
   );

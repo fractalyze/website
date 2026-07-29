@@ -7,14 +7,48 @@ const config: Config = {
     './app/**/*.{js,ts,jsx,tsx,mdx}',
     './layouts/**/*.{js,ts,jsx,tsx,mdx}',
   ],
-  darkMode: 'class',
   theme: {
     extend: {
       fontFamily: {
-        sans: ['var(--font-sans)', 'system-ui', 'sans-serif'],
+        display: ['"Times New Roman"', 'Times', 'serif'],
+        sans: ['"Pretendard Variable"', 'Pretendard', 'system-ui', 'sans-serif'],
         mono: ['var(--font-mono)', 'monospace'],
       },
+      // Type scale transcribed from the 260728 design. Line heights are baked in
+      // because the design pairs each size with a fixed leading.
+      fontSize: {
+        'display-1': ['5rem', {lineHeight: '4.5rem'}],
+        'display-2': ['4.5rem', {lineHeight: '4.95rem'}],
+        'display-3': ['3.25rem', {lineHeight: '3.575rem'}],
+        'display-4': ['2.5rem', {lineHeight: '2.75rem'}],
+        'title-1': ['2rem', {lineHeight: '2.2rem'}],
+        'title-2': ['1.75rem', {lineHeight: '1.925rem'}],
+        'title-3': ['1.5rem', {lineHeight: '1.65rem'}],
+        'title-4': ['1.25rem', {lineHeight: '1.375rem'}],
+        'body-lg': ['1.125rem', {lineHeight: '1.6875rem'}],
+        body: ['1rem', {lineHeight: '1.5rem'}],
+        'body-sm': ['0.875rem', {lineHeight: '1.3125rem'}],
+        caption: ['0.8125rem', {lineHeight: '1.21875rem'}],
+        micro: ['0.75rem', {lineHeight: '0.825rem'}],
+      },
       colors: {
+        ink: '#000000',
+        paper: '#FFFFFF',
+        surface: {
+          DEFAULT: '#F5F5F5',
+          raised: '#FEFEFE',
+          sunken: '#E8E8E8',
+        },
+        muted: '#666666',
+        subtle: '#999999',
+        accent: '#D0CEEC',
+        line: {
+          DEFAULT: '#E0E0E0',
+          strong: '#BBBBBB',
+          dark: '#333333',
+          darker: '#0F0F0F',
+        },
+        // Retained for the blog/prose styles until the blog redesign lands.
         primary: {
           DEFAULT: 'rgb(52, 109, 219)',
           50: '#eff6ff',
@@ -28,6 +62,16 @@ const config: Config = {
           800: '#1e40af',
           900: '#1e3a8a',
         },
+      },
+      maxWidth: {
+        content: '1400px',
+        measure: '896px',
+      },
+      spacing: {
+        section: '6.25rem',
+      },
+      borderRadius: {
+        '4xl': '1.25rem',
       },
       typography: ({theme}: any) => ({
         DEFAULT: {
@@ -47,21 +91,6 @@ const config: Config = {
             '--tw-prose-pre-bg': theme('colors.gray[800]'),
             '--tw-prose-th-borders': theme('colors.gray[300]'),
             '--tw-prose-td-borders': theme('colors.gray[200]'),
-            '--tw-prose-invert-body': theme('colors.gray[300]'),
-            '--tw-prose-invert-headings': theme('colors.white'),
-            '--tw-prose-invert-links': theme('colors.primary[400]'),
-            '--tw-prose-invert-bold': theme('colors.white'),
-            '--tw-prose-invert-counters': theme('colors.gray[400]'),
-            '--tw-prose-invert-bullets': theme('colors.gray[600]'),
-            '--tw-prose-invert-hr': theme('colors.gray[700]'),
-            '--tw-prose-invert-quotes': theme('colors.gray[100]'),
-            '--tw-prose-invert-quote-borders': theme('colors.gray[700]'),
-            '--tw-prose-invert-captions': theme('colors.gray[400]'),
-            '--tw-prose-invert-code': theme('colors.white'),
-            '--tw-prose-invert-pre-code': theme('colors.gray[300]'),
-            '--tw-prose-invert-pre-bg': 'rgb(0 0 0 / 50%)',
-            '--tw-prose-invert-th-borders': theme('colors.gray[600]'),
-            '--tw-prose-invert-td-borders': theme('colors.gray[700]'),
             fontSize: '1rem',
             lineHeight: '1.75',
             p: {

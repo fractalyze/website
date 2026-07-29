@@ -4,11 +4,19 @@ const siteMetadata = {
   headerTitle: 'Fractalyze',
   description: 'Building Zorch - The Pytorch for Zero-Knowledge. Accelerating the Verifiable Internet.',
   language: 'en-us',
-  theme: 'system',
   siteUrl: 'https://fractalyze.com',
   email: 'contact@fractalyze.io',
   github: 'https://github.com/fractalyze',
   locale: 'en-US',
+  // Hosted Tally form behind the Contact Us call to action; falls back to email when empty.
+  contactFormUrl: '',
+  // Only entries with a URL are rendered in the footer.
+  social: {
+    instagram: '',
+    linkedin: '',
+    x: '',
+    youtube: '',
+  },
 };
 
 module.exports = siteMetadata;
