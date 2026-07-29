@@ -25,12 +25,15 @@ const rows = benchmarks
 
 const GRID = 'grid grid-cols-[15rem_1fr_7rem] items-center gap-4';
 
+/** The operation and, where one applies, the size it was run at. */
+const label = ({workload, size}: Benchmark) => (size ? `${workload}(${size})` : workload);
+
 /**
  * How the run was set up, for the hover title.
  *
- * The instance, the clock, and any hardware caveat are all provenance a reader
- * needs only when they question a number, and putting three lines of it under
- * every workload buried the chart. They stay one hover away instead.
+ * What was run, what the clock covered, and any hardware caveat are all
+ * provenance a reader needs only when they question a number, and putting three
+ * lines of it under every workload buried the chart. They stay one hover away.
  */
 const provenance = ({instance, basis, note}: Benchmark) =>
   [instance, basis, note].filter(Boolean).join(' · ');
@@ -75,10 +78,10 @@ export function BenchmarkSection() {
                     measured. */}
                 <div className="min-w-0" title={provenance(benchmark)}>
                   <span
-                    title={benchmark.workload}
+                    title={label(benchmark)}
                     className="block truncate text-body font-semibold leading-[1.1rem] text-ink"
                   >
-                    {benchmark.workload}
+                    {label(benchmark)}
                   </span>
                   <span
                     title={`vs ${baseline.name}`}

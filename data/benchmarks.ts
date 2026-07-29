@@ -12,9 +12,17 @@ export type Baseline = {
 };
 
 export type Benchmark = {
+  /** Identifier the operation goes by in the provers being compared. */
   workload: string;
-  /** Problem size or input the run was measured on. */
-  instance: string;
+  /**
+   * Problem size, printed in parentheses after the name.
+   *
+   * Only the kernels have one. A prover stage is whatever the block it ran on
+   * happened to need, so there is no size to state and no parentheses to print.
+   */
+  size?: string;
+  /** What was actually run — a block, a shard, a circuit. */
+  instance?: string;
   /** Our time, against which every baseline on the row is compared. */
   ms: number;
   /** One bar is drawn per entry, so a workload may be measured against several. */
@@ -27,45 +35,46 @@ export type Benchmark = {
 
 export const benchmarks: Benchmark[] = [
   {
-    workload: 'msm(bn254 g1, 2^24)',
-    instance: '2²⁴',
+    workload: 'msm_bn254_g1',
+    size: '2^24',
     ms: 248.12,
     baselines: [{name: 'ICICLE Gnark', ms: 53.49}],
     basis: 'kernel',
   },
   {
-    workload: 'msm(bn254 g2, 2^24)',
-    instance: '2²⁴',
+    workload: 'msm_bn254_g2',
+    size: '2^24',
     ms: 960.7,
     baselines: [{name: 'ICICLE Gnark', ms: 156.46}],
     basis: 'wall-clock',
     note: 'timed against ICICLE v4',
   },
   {
-    workload: 'ntt(bn254, 2^24)',
-    instance: '2²⁴',
+    workload: 'ntt_bn254',
+    size: '2^24',
     ms: 7.66,
     baselines: [{name: 'ICICLE Gnark', ms: 16.23}],
     basis: 'kernel',
   },
   {
-    workload: 'ntt(koalabear, 2^24)',
-    instance: '2²⁴',
+    workload: 'ntt_koalabear',
+    size: '2^24',
     ms: 0.6607,
     baselines: [{name: 'SP1', ms: 0.24}],
     basis: 'kernel',
     note: 'sppark',
   },
   {
-    workload: 'ntt(gf(2^32), 2^23)',
-    instance: '2²³',
+    workload: 'ntt_gf2_32',
+    size: '2^23',
     ms: 4.568,
     baselines: [{name: 'Binius GPU', ms: 8.402}],
     basis: 'kernel',
   },
   {
     workload: 'groth16_prove',
-    instance: 'SP1 verifier circuit, 2²⁴ domain',
+    size: '2^24',
+    instance: 'SP1 verifier circuit',
     ms: 1573,
     baselines: [{name: 'ICICLE Gnark', ms: 2355}],
     basis: 'wall-clock',
