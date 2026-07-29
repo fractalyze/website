@@ -18,7 +18,7 @@ export function BenchmarkSection() {
 
         <div className="w-[75rem] max-w-full rounded-2xl border border-line bg-surface p-10">
           <ul>
-            {benchmarks.map((benchmark, index) => (
+            {benchmarks.map((benchmark) => (
               <li key={benchmark.workload} className="flex h-[3.125rem] items-center gap-4">
                 <div className="w-[15rem] shrink-0">
                   <span className="block text-body font-semibold leading-[1.1rem] text-ink">
@@ -32,12 +32,7 @@ export function BenchmarkSection() {
                   <span
                     data-grow
                     className="h-6 shrink-0 bg-accent"
-                    style={
-                      {
-                        width: `${benchmark.percent}%`,
-                        '--grow-delay': `${index * 60}ms`,
-                      } as React.CSSProperties
-                    }
+                    style={{width: `${benchmark.percent}%`}}
                   />
                   <span className="text-body font-semibold leading-[1.1rem] text-ink">
                     {benchmark.percent}%

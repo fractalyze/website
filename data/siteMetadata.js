@@ -15,7 +15,7 @@ const siteMetadata = {
   // Only entries with a URL are rendered in the footer.
   social: {
     linkedin: 'https://www.linkedin.com/company/fractalyze',
-    x: 'https://x.com/fractal_intern',
+    x: 'https://x.com/fractalyze_io',
     github: 'https://github.com/fractalyze',
   },
 };
