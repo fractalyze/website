@@ -28,10 +28,11 @@ const config: Config = {
         'body-lg': ['1.125rem', {lineHeight: '1.6875rem'}],
         body: ['1rem', {lineHeight: '1.5rem'}],
         'body-sm': ['0.875rem', {lineHeight: '1.3125rem'}],
-        // Button text scales with the rest of the page but stops at a legible
-        // size; the design's 14px would otherwise render at 10.5px on a 1440
-        // screen.
-        label: ['max(0.875rem,12px)', {lineHeight: '1.3125rem'}],
+        // Buttons and nav links. The design sets these at 14px, which is what
+        // 0.875rem comes to once the root reaches its ceiling; the floor holds
+        // that size on the narrower desktops where the root scales down, rather
+        // than letting a control shrink to 10.5px along with the page.
+        label: ['max(0.875rem,14px)', {lineHeight: '1.3125rem'}],
         caption: ['0.8125rem', {lineHeight: '1.21875rem'}],
         micro: ['0.75rem', {lineHeight: '0.825rem'}],
       },

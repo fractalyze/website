@@ -4,7 +4,7 @@ import {ContactButton} from './ContactButton';
 
 export function Header() {
   return (
-    <header className="bg-paper px-28">
+    <header className="sticky top-0 z-50 bg-paper px-28">
       <div className="mx-auto flex h-20 max-w-content items-center justify-between">
         <div className="flex items-center gap-20">
           <Link href="/" aria-label="Fractalyze">
@@ -20,7 +20,7 @@ export function Header() {
                 <li key={link.title}>
                   <Link
                     href={link.href}
-                    className="flex min-h-6 items-center px-4 py-2 text-body font-medium text-ink transition-opacity hover:opacity-70"
+                    className="flex min-h-6 items-center px-4 py-2 text-label font-medium text-ink transition-opacity hover:opacity-70"
                   >
                     {link.title}
                   </Link>

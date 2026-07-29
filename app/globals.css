@@ -17,6 +17,13 @@ body {
   @apply bg-paper text-ink antialiased;
 }
 
+/* The header is sticky and 5rem tall, so a heading reached through its anchor
+   would come to rest underneath it. Only the element the fragment names needs
+   the clearance. */
+:target {
+  scroll-margin-top: 6rem;
+}
+
 /* Article body. Sizes and vertical rhythm come from the typography plugin
    config; only what the plugin cannot express lives here. */
 .prose {
