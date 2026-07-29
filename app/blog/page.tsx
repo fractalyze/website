@@ -13,7 +13,7 @@ export const metadata = {
     title: 'Blog',
     description: 'Research and technical articles from the Fractalyze team',
     url: '/blog',
-    images: ['/images/blog/default-cover.webp'],
+    images: ['/images/og.jpg'],
   },
 };
 

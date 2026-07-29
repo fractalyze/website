@@ -24,11 +24,13 @@ export async function generateMetadata({params}: { params: Promise<{ slug: strin
     return {};
   }
 
-  // A shared link with no picture is a link nobody clicks, so the post's own
-  // cover doubles as its card art. Twitter is spelled out rather than left to
-  // fall through to the root, which would caption every article with the site
-  // description.
-  const cover = post.image ?? '/images/blog/default-cover.webp';
+  // The shared card art, not the post's cover: covers are cut to the 906x400
+  // slot they fill on a listing, and a card drawn at 1200x630 would stretch
+  // them. A post gets its own once one exists at that size.
+  //
+  // Twitter is spelled out rather than left to fall through to the root, which
+  // would caption every article with the site description.
+  const card = '/images/og.jpg';
   const path = `/blog/${post.slug}`;
 
   return {
@@ -40,7 +42,7 @@ export async function generateMetadata({params}: { params: Promise<{ slug: strin
       description: post.summary,
       type: 'article',
       url: path,
-      images: [cover],
+      images: [card],
       publishedTime: post.date,
       ...(post.lastmod && {modifiedTime: post.lastmod}),
     },
@@ -48,7 +50,7 @@ export async function generateMetadata({params}: { params: Promise<{ slug: strin
       card: 'summary_large_image',
       title: post.title,
       description: post.summary,
-      images: [cover],
+      images: [card],
     },
   };
 }
@@ -75,7 +77,7 @@ export default async function BlogPost({params}: { params: Promise<{ slug: strin
     '@type': 'Article',
     headline: post.title,
     description: post.summary,
-    image: new URL(post.image, siteMetadata.siteUrl).toString(),
+    image: new URL('/images/og.jpg', siteMetadata.siteUrl).toString(),
     datePublished: post.date,
     dateModified: post.lastmod ?? post.date,
     author: (post.authors ?? [siteMetadata.author]).map((name) => ({

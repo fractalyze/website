@@ -13,8 +13,11 @@ const dmMono = DM_Mono({
   variable: '--font-mono',
 });
 
-// Card art for anywhere a page has none of its own.
-const SOCIAL_IMAGE = '/images/blog/default-cover.webp';
+// Share cards are drawn at 1200x630, which no cover in the library reaches —
+// they are cut to 906x400 for the slot they occupy on a listing. This one is
+// cut from the home hero for the card and nothing else. JPEG because a handful
+// of crawlers still refuse webp, and a card that renders beats a smaller file.
+const SOCIAL_IMAGE = '/images/og.jpg';
 
 export const metadata: Metadata = {
   // Every relative URL below, and in each page's own metadata, is resolved

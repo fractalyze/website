@@ -139,6 +139,14 @@ a row to the table above so the next post can see it exists.
 default exists so a half-written draft still renders, not as an answer to "which
 cover" — reach step 3 above before you let a post ship on it.
 
+### The cover is not the share card
+
+`image` fills the 906×400 slot on a listing. The picture in a link preview on
+Slack or X is drawn at 1200×630 and comes from `public/images/og.jpg`, which
+every page shares — a cover stretched to that size looks soft. Leave the two
+alone unless a post arrives with art cut at 1200×630 of its own, and then give
+it its own `openGraph.images` rather than widening the cover.
+
 ## Images in the body
 
 Put every image the post uses under `public/blog/<slug>/` and reference it from

@@ -15,7 +15,7 @@ export const metadata = {
     description:
       'Build cryptographic applications in Python. Compile them into highly optimized execution for modern hardware.',
     url: '/compiler',
-    images: ['/images/blog/default-cover.webp'],
+    images: ['/images/og.jpg'],
   },
 };
 
