@@ -17,38 +17,123 @@ body {
   @apply bg-paper text-ink antialiased;
 }
 
-/* Code blocks - Prism styling */
+/* Article body. The design sets one rhythm between every block rather than
+   varying the space by element, so the plugin's own margins are replaced. */
+.prose {
+  @apply max-w-none text-body text-ink;
+}
+
+.prose > * + * {
+  margin-top: 1.25rem;
+}
+
+.prose p,
+.prose ul,
+.prose ol,
+.prose pre,
+.prose table,
+.prose blockquote,
+.prose h1,
+.prose h2,
+.prose h3,
+.prose h4,
+.prose li {
+  margin: 0;
+}
+
+.prose h2 {
+  @apply text-title-3 font-semibold leading-[1.1];
+}
+
+.prose h3 {
+  @apply text-body-lg font-semibold leading-[1.2];
+}
+
+.prose h4 {
+  @apply text-body font-semibold leading-[1.1];
+}
+
+.prose ul {
+  @apply list-disc pl-5;
+}
+
+.prose ol {
+  @apply list-decimal pl-5;
+}
+
+.prose a {
+  @apply font-medium text-ink underline underline-offset-2 hover:opacity-70;
+}
+
+.prose strong {
+  @apply font-semibold;
+}
+
+.prose img {
+  @apply mx-auto rounded-lg;
+}
+
+.prose hr {
+  @apply border-line;
+}
+
+.prose blockquote {
+  @apply border-l-2 border-line-strong pl-5 not-italic text-muted;
+}
+
+/* Tables: a rule under the header and under each row, generous row height. */
+.prose table {
+  @apply w-full border-collapse text-body;
+}
+
+.prose thead th {
+  @apply border-b border-line px-5 py-4 text-left font-semibold;
+}
+
+.prose tbody td {
+  @apply border-b border-line px-5 py-4 align-top;
+}
+
+.prose tbody tr:last-child td {
+  @apply border-b-0;
+}
+
+/* Code */
+.prose :not(pre) > code {
+  @apply rounded bg-surface px-1.5 py-0.5 text-[0.9em] font-medium text-ink;
+  font-family: var(--font-mono), monospace;
+}
+
+.prose :not(pre) > code::before,
+.prose :not(pre) > code::after {
+  content: '`';
+}
+
 pre[class*='language-'] {
-  @apply my-6 overflow-x-auto rounded-lg border border-line;
-  padding: 1rem 1.25rem !important;
-  font-size: 0.875rem !important;
-  line-height: 1.6;
+  @apply overflow-x-auto rounded-lg bg-surface;
+  padding: 1.25rem !important;
+  margin: 0;
 }
 
 code[class*='language-'] {
   font-family: var(--font-mono), 'Menlo', 'Monaco', 'Courier New', monospace;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: #24292f;
   text-shadow: none;
 }
 
-/* One Dark Pro Theme Colors */
-pre[class*='language-'] {
-  background: #282c34 !important;
-}
-
-code[class*='language-'] {
-  color: #abb2bf;
-}
-
+/* Light syntax palette, tuned to stay quiet against the grey block. */
 .token.comment,
 .token.prolog,
 .token.doctype,
 .token.cdata {
-  color: #5c6370;
+  color: #6e7781;
   font-style: italic;
 }
 
 .token.punctuation {
-  color: #abb2bf;
+  color: #24292f;
 }
 
 .token.property,
@@ -58,7 +143,7 @@ code[class*='language-'] {
 .token.constant,
 .token.symbol,
 .token.deleted {
-  color: #d19a66;
+  color: #0550ae;
 }
 
 .token.selector,
@@ -67,7 +152,7 @@ code[class*='language-'] {
 .token.char,
 .token.builtin,
 .token.inserted {
-  color: #98c379;
+  color: #0a3069;
 }
 
 .token.operator,
@@ -75,136 +160,31 @@ code[class*='language-'] {
 .token.url,
 .language-css .token.string,
 .style .token.string {
-  color: #56b6c2;
+  color: #cf222e;
 }
 
 .token.atrule,
 .token.attr-value,
 .token.keyword {
-  color: #c678dd;
+  color: #cf222e;
 }
 
 .token.function,
 .token.class-name {
-  color: #61afef;
+  color: #8250df;
 }
 
 .token.regex,
 .token.important,
 .token.variable {
-  color: #e06c75;
-}
-
-.token.decorator {
-  color: #e5c07b;
-}
-
-:not(pre) > code {
-  @apply rounded-md bg-surface px-1.5 py-0.5 text-sm font-semibold text-ink;
-  font-family: var(--font-mono), monospace;
-}
-
-:not(pre) > code::before,
-:not(pre) > code::after {
-  content: '`';
+  color: #953800;
 }
 
 /* Math equations */
 .katex-display {
-  @apply my-6 overflow-x-auto overflow-y-hidden;
+  @apply overflow-x-auto overflow-y-hidden;
 }
 
 .katex {
   @apply text-base;
-}
-
-/* Prose styling overrides */
-.prose {
-  @apply max-w-none;
-}
-
-.prose > :first-child {
-  margin-top: 0 !important;
-}
-
-.prose > :last-child {
-  margin-bottom: 0 !important;
-}
-
-.prose img {
-  @apply mx-auto rounded-lg;
-}
-
-.prose hr {
-  @apply my-8 border-line;
-}
-
-.prose blockquote {
-  @apply border-l-4 border-primary-500 bg-surface py-1 font-normal not-italic;
-}
-
-.prose thead {
-  @apply border-b border-line-strong;
-}
-
-.prose tbody tr {
-  @apply border-b border-line;
-}
-
-.prose tbody tr:last-child {
-  border-bottom: none;
-}
-
-/* Better link styling */
-.prose a {
-  @apply font-medium text-primary-600 no-underline hover:text-primary-700 hover:underline;
-}
-
-/* Headings with better spacing */
-.prose h2 {
-  @apply mb-4 mt-10 border-b border-line pb-2;
-}
-
-.prose h3 {
-  @apply mb-3 mt-8;
-}
-
-.prose h4 {
-  @apply mb-2 mt-6;
-}
-
-/* Lists */
-.prose ul,
-.prose ol {
-  @apply my-6;
-}
-
-.prose li {
-  @apply my-2;
-}
-
-/* Tables */
-.prose table {
-  @apply my-6 w-full border-collapse;
-}
-
-.prose th {
-  @apply bg-surface px-4 py-2 text-left font-semibold;
-}
-
-.prose td {
-  @apply px-4 py-2;
-}
-
-/* Table of contents */
-.toc {
-  @apply space-y-2 text-sm;
-}
-
-.toc a {
-  @apply block text-muted transition-colors hover:text-primary-600;
-}
-
-.toc a.active {
-  @apply font-semibold text-primary-600;
 }

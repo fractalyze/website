@@ -1,7 +1,12 @@
 import {allBlogs} from '.contentlayer/generated';
 import {notFound} from 'next/navigation';
+import {compareDesc} from 'date-fns';
 import {MDXContent} from '@/components/MDXContent';
 import PostLayout from '@/layouts/PostLayout';
+
+const published = allBlogs
+  .filter((post) => !post.draft)
+  .sort((a, b) => compareDesc(new Date(a.date), new Date(b.date)));
 
 export async function generateStaticParams() {
   return allBlogs.map((post) => ({
@@ -40,14 +45,18 @@ export default async function BlogPost({params}: { params: Promise<{ slug: strin
     notFound();
   }
 
+  // Newest first, so the neighbour above a post is the newer one.
+  const index = published.findIndex((entry) => entry.slug === slug);
+  const newer = index > 0 ? published[index - 1] : null;
+  const older = index >= 0 && index < published.length - 1 ? published[index + 1] : null;
+
   return (
     <PostLayout
       title={post.title}
       date={post.date}
-      lastmod={post.lastmod}
       readingTime={post.readingTime}
-      tags={post.tags}
-      toc={post.toc}
+      previous={older && {slug: older.slug, title: older.title}}
+      next={newer && {slug: newer.slug, title: newer.title}}
       content={<MDXContent code={post.body.code} />}
     />
   );

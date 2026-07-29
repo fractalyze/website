@@ -65,6 +65,7 @@ export const Blog = defineDocumentType(() => ({
     draft: {type: 'boolean', required: false},
     summary: {type: 'string', required: false},
     image: {type: 'string', required: false, default: '/images/blog/default-cover.webp'},
+    category: {type: 'enum', options: ['Research', 'Progress', 'Company'], required: false, default: 'Research'},
     authors: {type: 'list', of: {type: 'string'}, required: false, default: ['default']},
     layout: {type: 'string', required: false, default: 'PostLayout'},
   },

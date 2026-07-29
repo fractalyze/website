@@ -2,97 +2,87 @@ import {ReactNode} from 'react';
 import Link from 'next/link';
 import {format} from 'date-fns';
 
+type Sibling = {slug: string; title: string} | null;
+
 interface PostLayoutProps {
   content: ReactNode
   title: string
   date: string
-  lastmod?: string
-  readingTime: any
-  tags?: string[]
-  toc?: any[]
+  readingTime: {minutes: number}
+  previous?: Sibling
+  next?: Sibling
 }
 
-const PostLayout = ({
-  content, title, date, lastmod, readingTime, tags, toc: _toc,
-}: PostLayoutProps) => {
+function MenuIcon() {
   return (
-    <article className="mx-auto max-w-3xl px-4 py-12 sm:px-6 lg:px-8">
-      <header className="mb-10">
-        <div className="mb-6">
-          <Link
-            href="/blog"
-            className="inline-flex items-center text-sm font-medium text-gray-600 transition-colors hover:text-primary-600"
-          >
-            <svg
-              className="mr-2 h-4 w-4"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M10 19l-7-7m0 0l7-7m-7 7h18"
-              />
-            </svg>
-            Back to blog
-          </Link>
-        </div>
-        <h1 className="mb-4 text-3xl font-bold leading-tight tracking-tight text-gray-900 sm:text-4xl">
-          {title}
-        </h1>
-        <div className="flex flex-wrap items-center gap-3 text-sm text-gray-600">
-          <time dateTime={date} className="font-medium">
-            {format(new Date(date), 'MMMM d, yyyy')}
-          </time>
-          <span className="text-gray-300">•</span>
-          <span>{readingTime.text}</span>
-          {lastmod && lastmod !== date && (
-            <>
-              <span className="text-gray-300">•</span>
-              <span>Updated {format(new Date(lastmod), 'MMMM d, yyyy')}</span>
-            </>
-          )}
-        </div>
-        {tags && tags.length > 0 && (
-          <div className="mt-6 flex flex-wrap gap-2">
-            {tags.map((tag) => (
-              <span
-                key={tag}
-                className="inline-flex items-center rounded-full bg-primary-50 px-3 py-1 text-xs font-medium text-primary-700 ring-1 ring-inset ring-primary-700/10"
-              >
-                {tag}
-              </span>
-            ))}
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" className="h-6 w-6" aria-hidden>
+      <path d="M4 7h16M4 12h16M4 17h16" strokeWidth={1.5} strokeLinecap="round" />
+    </svg>
+  );
+}
+
+function ArrowIcon({direction}: {direction: 'left' | 'right'}) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      className={`h-6 w-6 ${direction === 'left' ? 'rotate-180' : ''}`}
+      aria-hidden
+    >
+      <path
+        d="M4 12h16m0 0-6-6m6 6-6 6"
+        strokeWidth={1.5}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+const PostLayout = ({content, title, date, readingTime, previous, next}: PostLayoutProps) => {
+  return (
+    <article className="bg-paper px-section py-20">
+      <div className="mx-auto flex w-[68.75rem] max-w-full flex-col gap-10">
+        <header className="flex flex-col gap-4">
+          <h1 className="text-[2rem] font-semibold leading-[1.1] text-ink">{title}</h1>
+          <hr className="border-t-2 border-ink" />
+          <div className="flex items-center gap-4 text-body-sm text-ink">
+            <time dateTime={date}>{format(new Date(date), 'MMMM d, yyyy')}</time>
+            <span className="h-4 w-px bg-line-strong" />
+            <span>{Math.ceil(readingTime.minutes)} min read</span>
           </div>
-        )}
-      </header>
+        </header>
 
-      <div className="prose">
-        {content}
-      </div>
+        <div className="prose">{content}</div>
 
-      <div className="mt-12 border-t border-gray-200 pt-8">
-        <Link
-          href="/blog"
-          className="inline-flex items-center text-sm font-medium text-primary-600 hover:text-primary-700"
-        >
-          <svg
-            className="mr-2 h-4 w-4"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M10 19l-7-7m0 0l7-7m-7 7h18"
-            />
-          </svg>
-          Back to blog
-        </Link>
+        <nav className="flex items-center justify-between border-t border-line pt-6 text-body-sm text-ink">
+          <Link href="/blog" className="flex items-center gap-1 transition-opacity hover:opacity-70">
+            <MenuIcon />
+            View List
+          </Link>
+          <div className="flex items-center gap-4">
+            {previous && (
+              <Link
+                href={`/blog/${previous.slug}`}
+                className="flex items-center gap-2 transition-opacity hover:opacity-70"
+              >
+                <ArrowIcon direction="left" />
+                Previous Post
+              </Link>
+            )}
+            {previous && next && <span className="h-4 w-px bg-line-strong" />}
+            {next && (
+              <Link
+                href={`/blog/${next.slug}`}
+                className="flex items-center gap-2 transition-opacity hover:opacity-70"
+              >
+                Next Post
+                <ArrowIcon direction="right" />
+              </Link>
+            )}
+          </div>
+        </nav>
       </div>
     </article>
   );
