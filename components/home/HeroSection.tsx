@@ -5,8 +5,8 @@ export function HeroSection() {
   return (
     <section className="bg-paper px-section py-20">
       <div className="mx-auto flex max-w-content flex-col items-center gap-20">
-        <div className="flex w-full items-center gap-20">
-          <h1 className="flex-1 font-display text-display-1 uppercase text-ink">
+        <div className="flex w-full items-center justify-between gap-20">
+          <h1 className="shrink-0 whitespace-nowrap font-display text-display-1 uppercase text-ink">
             The Computing Layer
             <br />
             for Cryptography
@@ -17,7 +17,7 @@ export function HeroSection() {
               compiler and orchestration stack.
             </p>
             <div>
-              <ContactButton variant="solid" />
+              <ContactButton variant="solid" className="w-[8.25rem] justify-center" />
             </div>
           </div>
         </div>

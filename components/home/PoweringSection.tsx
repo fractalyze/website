@@ -60,7 +60,7 @@ export function PoweringSection() {
               >
                 <h3 className="text-title-2 font-medium text-ink">{domain.title}</h3>
                 <p className="text-body-lg text-ink">{domain.description}</p>
-                <ul className="text-body text-ink">
+                <ul className="list-disc pl-5 text-body text-ink">
                   {domain.items.map((item) => (
                     <li key={item}>{item}</li>
                   ))}

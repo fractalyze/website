@@ -8,7 +8,11 @@ export function Header() {
       <div className="mx-auto flex h-20 max-w-content items-center justify-between">
         <div className="flex items-center gap-20">
           <Link href="/" aria-label="Fractalyze">
-            <img src="/logo/Fractalyze-logo-b.svg" alt="Fractalyze" className="h-[1.625rem] w-auto" />
+            <img
+              src="/logo/fractalyze-logo-black.svg"
+              alt="Fractalyze"
+              className="h-[2.625rem] w-auto"
+            />
           </Link>
           <nav>
             <ul className="flex items-center gap-6">

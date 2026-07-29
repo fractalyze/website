@@ -12,9 +12,9 @@ export default function Home() {
     <>
       <HeroSection />
       <ProductionGapSection />
-      <PoweringSection />
-      <CompilerOrchestrationSection />
       <ComputingLayerSection />
+      <CompilerOrchestrationSection />
+      <PoweringSection />
       <WorkingWithUsSection />
       <ResearchBlogSection />
       <ClosingBandSection />

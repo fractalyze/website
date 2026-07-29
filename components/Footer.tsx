@@ -21,7 +21,11 @@ export function Footer() {
       <div className="mx-auto flex max-w-content flex-col gap-8">
         <div className="flex items-center justify-between">
           <Link href="/" aria-label="Fractalyze">
-            <img src="/logo/Fractalyze-logo-b.svg" alt="Fractalyze" className="h-[1.125rem] w-auto" />
+            <img
+              src="/logo/fractalyze-logo-black.svg"
+              alt="Fractalyze"
+              className="h-[1.75rem] w-auto"
+            />
           </Link>
           <nav>
             <ul className="flex items-center gap-5">

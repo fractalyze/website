@@ -11,7 +11,7 @@ export function ClosingBandSection() {
         className="-z-10 object-cover"
       />
       <div className="mx-auto flex max-w-measure flex-col items-center gap-5 text-center">
-        <img src="/logo/Fractalyze-logo-w.svg" alt="Fractalyze" className="h-[1.5625rem] w-auto" />
+        <img src="/logo/fractalyze-logo-white.svg" alt="Fractalyze" className="h-[2.5rem] w-auto" />
         <h2 className="font-display text-display-3 text-paper">Cryptography replaces trust</h2>
         <p className="text-body text-paper">
           Fractalyze transforms trust-based digital systems into cryptographically verifiable
