@@ -28,6 +28,10 @@ const config: Config = {
         'body-lg': ['1.125rem', {lineHeight: '1.6875rem'}],
         body: ['1rem', {lineHeight: '1.5rem'}],
         'body-sm': ['0.875rem', {lineHeight: '1.3125rem'}],
+        // Button text scales with the rest of the page but stops at a legible
+        // size; the design's 14px would otherwise render at 10.5px on a 1440
+        // screen.
+        label: ['max(0.875rem,12px)', {lineHeight: '1.3125rem'}],
         caption: ['0.8125rem', {lineHeight: '1.21875rem'}],
         micro: ['0.75rem', {lineHeight: '0.825rem'}],
       },
