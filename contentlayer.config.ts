@@ -4,7 +4,6 @@ import GithubSlugger from 'github-slugger';
 import remarkGfm from 'remark-gfm';
 import remarkMath from 'remark-math';
 import rehypeSlug from 'rehype-slug';
-import rehypeAutolinkHeadings from 'rehype-autolink-headings';
 import rehypeKatex from 'rehype-katex';
 import rehypePrismGenerator from 'rehype-prism-plus/generator';
 import {refractor} from 'refractor/lib/all.js';
@@ -101,8 +100,9 @@ export default makeSource({
   mdx: {
     remarkPlugins: [remarkGfm, remarkMath],
     rehypePlugins: [
+      // rehypeSlug alone: ids keep in-page anchors working without turning every
+      // heading into a link.
       rehypeSlug,
-      [rehypeAutolinkHeadings, {behavior: 'wrap'}],
       rehypeKatex,
       [rehypePrismPlus, {defaultLanguage: 'js', ignoreMissing: true}],
     ],

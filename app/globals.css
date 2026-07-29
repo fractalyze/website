@@ -17,59 +17,14 @@ body {
   @apply bg-paper text-ink antialiased;
 }
 
-/* Article body. The design sets one rhythm between every block rather than
-   varying the space by element, so the plugin's own margins are replaced. */
+/* Article body. Sizes and vertical rhythm come from the typography plugin
+   config; only what the plugin cannot express lives here. */
 .prose {
-  @apply max-w-none text-body text-ink;
-}
-
-.prose > * + * {
-  margin-top: 1.25rem;
-}
-
-.prose p,
-.prose ul,
-.prose ol,
-.prose pre,
-.prose table,
-.prose blockquote,
-.prose h1,
-.prose h2,
-.prose h3,
-.prose h4,
-.prose li {
-  margin: 0;
-}
-
-.prose h2 {
-  @apply text-title-3 font-semibold leading-[1.1];
-}
-
-.prose h3 {
-  @apply text-body-lg font-semibold leading-[1.2];
-}
-
-.prose h4 {
-  @apply text-body font-semibold leading-[1.1];
-}
-
-.prose ul {
-  @apply list-disc pl-5;
-}
-
-.prose ol {
-  @apply list-decimal pl-5;
+  @apply max-w-none;
 }
 
 .prose a {
   @apply font-medium text-ink underline underline-offset-2 hover:opacity-70;
-}
-
-/* Headings are wrapped in an anchor for deep links; they must not read as links. */
-.prose :is(h1, h2, h3, h4) a {
-  font: inherit;
-  color: inherit;
-  text-decoration: none;
 }
 
 .prose strong {
@@ -88,9 +43,9 @@ body {
   @apply border-l-2 border-line-strong pl-5 not-italic text-muted;
 }
 
-/* Tables: a rule under the header and under each row, generous row height. */
+/* Scrolls instead of forcing the article column wider than its measure. */
 .prose table {
-  @apply w-full border-collapse text-body;
+  @apply block w-full overflow-x-auto border-collapse text-body;
 }
 
 .prose thead th {

@@ -22,7 +22,7 @@ export const metadata: Metadata = {
   icons: {
     icon: '/favicon.ico',
     shortcut: '/favicon.ico',
-    apple: '/logo/Fractalyze-symbol-b.png',
+    apple: '/apple-touch-icon.png',
   },
   openGraph: {
     title: siteMetadata.title,

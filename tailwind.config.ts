@@ -80,120 +80,60 @@ const config: Config = {
       borderRadius: {
         '4xl': '1.25rem',
       },
-      typography: ({theme}: any) => ({
+      // Long-form defaults: the design mock spaces every block equally, which
+      // reads fine in a short sample and poorly across a full article. Headings
+      // get room above them, paragraphs breathe, and the measure stays open.
+      typography: {
         DEFAULT: {
           css: {
-            '--tw-prose-body': theme('colors.gray[700]'),
-            '--tw-prose-headings': theme('colors.gray[900]'),
-            '--tw-prose-links': theme('colors.primary[600]'),
-            '--tw-prose-bold': theme('colors.gray[900]'),
-            '--tw-prose-counters': theme('colors.gray[500]'),
-            '--tw-prose-bullets': theme('colors.gray[300]'),
-            '--tw-prose-hr': theme('colors.gray[200]'),
-            '--tw-prose-quotes': theme('colors.gray[900]'),
-            '--tw-prose-quote-borders': theme('colors.gray[200]'),
-            '--tw-prose-captions': theme('colors.gray[500]'),
-            '--tw-prose-code': theme('colors.gray[900]'),
-            '--tw-prose-pre-code': theme('colors.gray[200]'),
-            '--tw-prose-pre-bg': theme('colors.gray[800]'),
-            '--tw-prose-th-borders': theme('colors.gray[300]'),
-            '--tw-prose-td-borders': theme('colors.gray[200]'),
+            '--tw-prose-body': '#000000',
+            '--tw-prose-headings': '#000000',
+            '--tw-prose-links': '#000000',
+            '--tw-prose-bold': '#000000',
+            '--tw-prose-counters': '#666666',
+            '--tw-prose-bullets': '#999999',
+            '--tw-prose-hr': '#E0E0E0',
+            '--tw-prose-quotes': '#666666',
+            '--tw-prose-quote-borders': '#BBBBBB',
+            '--tw-prose-captions': '#666666',
+            '--tw-prose-code': '#000000',
+            '--tw-prose-th-borders': '#E0E0E0',
+            '--tw-prose-td-borders': '#E0E0E0',
             fontSize: '1rem',
             lineHeight: '1.75',
-            p: {
-              marginTop: '1.5em',
-              marginBottom: '1.5em',
-            },
-            a: {
-              color: 'var(--tw-prose-links)',
-              textDecoration: 'none',
-              fontWeight: '500',
-              '&:hover': {
-                textDecoration: 'underline',
-              },
-            },
-            'h1, h2, h3, h4': {
-              fontWeight: '700',
-              letterSpacing: '-0.025em',
-            },
+            p: {marginTop: '1.25rem', marginBottom: '1.25rem'},
             h2: {
               fontSize: '1.5rem',
-              marginTop: '2em',
-              marginBottom: '0.75em',
+              lineHeight: '1.3',
+              fontWeight: '600',
+              marginTop: '3rem',
+              marginBottom: '1rem',
             },
             h3: {
               fontSize: '1.25rem',
-              marginTop: '1.75em',
-              marginBottom: '0.5em',
-            },
-            code: {
-              color: 'var(--tw-prose-code)',
+              lineHeight: '1.4',
               fontWeight: '600',
-              fontSize: '0.875rem',
+              marginTop: '2.25rem',
+              marginBottom: '0.75rem',
             },
-            'code::before': {
-              content: '"`"',
-            },
-            'code::after': {
-              content: '"`"',
-            },
-            'pre code::before': {
-              content: 'none',
-            },
-            'pre code::after': {
-              content: 'none',
-            },
-            pre: {
-              backgroundColor: 'var(--tw-prose-pre-bg)',
-              color: 'var(--tw-prose-pre-code)',
-              fontSize: '0.875em',
-              lineHeight: '1.7',
-              padding: '1rem 1.5rem',
-              borderRadius: '0.5rem',
-            },
-            table: {
-              fontSize: '0.9375rem',
-            },
-            thead: {
-              borderBottomColor: 'var(--tw-prose-th-borders)',
-            },
-            'thead th': {
+            h4: {
+              fontSize: '1.0625rem',
+              lineHeight: '1.5',
               fontWeight: '600',
-              paddingBottom: '0.75rem',
+              marginTop: '1.75rem',
+              marginBottom: '0.5rem',
             },
-            'tbody tr': {
-              borderBottomColor: 'var(--tw-prose-td-borders)',
-            },
-            'tbody td': {
-              paddingTop: '0.75rem',
-              paddingBottom: '0.75rem',
-            },
+            'ul, ol': {marginTop: '1.25rem', marginBottom: '1.25rem'},
+            li: {marginTop: '0.5rem', marginBottom: '0.5rem'},
+            'li > p': {marginTop: '0.5rem', marginBottom: '0.5rem'},
+            blockquote: {marginTop: '1.75rem', marginBottom: '1.75rem'},
+            pre: {marginTop: '1.75rem', marginBottom: '1.75rem'},
+            table: {marginTop: '1.75rem', marginBottom: '1.75rem'},
+            hr: {marginTop: '2.5rem', marginBottom: '2.5rem'},
+            img: {marginTop: '1.75rem', marginBottom: '1.75rem'},
           },
         },
-        lg: {
-          css: {
-            fontSize: '1.0625rem',
-            lineHeight: '1.75',
-            p: {
-              marginTop: '1.5em',
-              marginBottom: '1.5em',
-            },
-            h2: {
-              fontSize: '1.75rem',
-              marginTop: '2em',
-              marginBottom: '0.875em',
-            },
-            h3: {
-              fontSize: '1.375rem',
-              marginTop: '1.75em',
-              marginBottom: '0.625em',
-            },
-            pre: {
-              padding: '1.25rem 1.75rem',
-            },
-          },
-        },
-      }),
+      },
     },
   },
   plugins: [require('@tailwindcss/typography')],
