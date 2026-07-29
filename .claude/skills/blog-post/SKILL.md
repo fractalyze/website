@@ -50,13 +50,44 @@ image: '/blog/packed-poseidon2/cover.png'
 | `tags` | no | Stored but not currently displayed anywhere |
 | `draft` | no | `true` hides the post from `/blog` and the home page; the URL still resolves |
 | `authors` | no | Free-form strings, not validated against `data/authors/` |
-| `image` | no | Card thumbnail. Falls back to `/images/blog/default-cover.webp` |
+| `image` | no, but always set one | Card thumbnail — see [Choosing the cover](#choosing-the-cover) |
 | `lastmod` | no | `YYYY-MM-DD` |
 
 Ask the user for `date` and `category` if the draft does not imply them. Do not
 invent a `summary` that overstates a result — lift it from the opening paragraph.
 
-## Images
+## Choosing the cover
+
+Every post needs an `image`. Pick one from `public/blog/covers/` rather than
+sourcing a new picture — the set was cut from the design and shares its
+treatment, so any of them sits correctly next to the others on `/blog`.
+
+| File | Shows | Reach for it when |
+|---|---|---|
+| `abstract-prism-facets.webp` | Dark geometric planes, hard spectral edges | Compilers, IR, low-level performance |
+| `abstract-prism-blur.webp` | Soft out-of-focus spectrum | Theory, protocols, anything without a concrete subject |
+| `abstract-fluted-glass.webp` | Ridged glass, repeating refraction | Parallelism, batching, throughput |
+| `window-over-mountains.webp` | Aircraft window over terrain | Scale, distance covered, progress reports |
+| `pair-at-laptop.webp` | Two people working together | Engagements, collaboration, hiring |
+| `atrium-stairs.webp` | Figure on stairs in a bright atrium | Company direction, milestones |
+| `whiteboard-session.webp` | Presenting at a whiteboard | Talks, workshops, teaching |
+| `focused-at-laptop.webp` | One person working, low light | Deep work, research notes |
+
+Prefer the abstract four for technical posts and keep the people photographs for
+posts actually about the team; a stock face on a compiler benchmark reads as
+filler. Vary the choice across consecutive posts so the listing does not show the
+same picture twice in a row.
+
+If none fit, the tone to match is **spectral refraction over a restrained, mostly
+desaturated frame** — light split through glass or crystal, no text, no logos, no
+saturated brand colours competing with the accent lilac. Crop to 906×400 and save
+as webp at quality ~84. Add it to `public/blog/covers/` and to this table so the
+next post can reuse it.
+
+`image` may be omitted; it falls back to `/images/blog/default-cover.webp`, which
+is the soft-spectrum frame. Treat that as a stopgap, not a choice.
+
+## Images in the body
 
 Put every image the post uses under `public/blog/<slug>/` and reference it from
 the body with a root-relative path:
