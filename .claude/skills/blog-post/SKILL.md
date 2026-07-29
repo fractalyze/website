@@ -34,7 +34,7 @@ title: 'Packed Poseidon2 and JAX Code Generation'
 date: '2026-07-30'
 tags: ['zkp', 'poseidon2', 'jax']
 draft: false
-category: 'Progress'
+category: 'Product'
 summary: 'One or two sentences. This is what the card on /blog and the home page shows, and what search engines quote.'
 authors: ['Ryan Kim']
 image: '/blog/packed-poseidon2/cover.png'
@@ -46,7 +46,7 @@ image: '/blog/packed-poseidon2/cover.png'
 | `title` | yes | Rendered as the page heading; no Markdown syntax inside |
 | `date` | yes | `YYYY-MM-DD`. Drives ordering, the visible date, and previous/next links |
 | `summary` | no, but always write one | Card copy is clamped to three lines — aim for 150–220 characters |
-| `category` | no | `Research` \| `Progress` \| `Company`. Defaults to `Research`. Drives the filter chips on `/blog` |
+| `category` | no | `Tech` \| `Business` \| `Product`. Defaults to `Tech`. Drives the filter chips on `/blog` |
 | `tags` | no | Stored but not currently displayed anywhere |
 | `draft` | no | `true` hides the post from `/blog` and the home page; the URL still resolves |
 | `authors` | no | Free-form strings, not validated against `data/authors/` |

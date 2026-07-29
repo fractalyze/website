@@ -1,0 +1,122 @@
+---
+title: 'Why Cryptographic Computation Needs a Compiler'
+date: '2026-07-29'
+tags: ['zkp', 'compiler', 'xla', 'jax', 'gpu', 'zorch']
+draft: false
+category: 'Tech'
+summary: 'ZK research and GPU architectures are both moving faster than kernel code can follow, so every new scheme becomes another fork of an implementation someone already wrote. The case for planting field arithmetic into an ML compiler instead of writing the kernels again.'
+authors: ['Ryan Kim']
+image: '/blog/covers/abstract-prism-facets.webp'
+---
+
+## 1. Languages and Compilers Are Products of Their Era
+
+New programming languages are not born out of taste. They are born **to absorb whatever cost has become most expensive in their era.**
+
+C++ (1985) is a product of the era when software scale outgrew C's ability to organize it. It absorbed the cost of software complexity through abstraction that gives up no performance — zero-overhead abstraction. Python (1991) arrived when hardware had become fast enough that a developer's time was more expensive than CPU time. It bet everything on productivity and glue, absorbing the cost of human time. Go (2009) pulled concurrency down into a language primitive (goroutines) for the era of multicore, networked servers, and large teams. Rust (2010), in an era when decades of C/C++ memory bugs were being billed as security incidents, moved safety not to a GC but to compile time (ownership).
+
+To build a compiler is to build a language, and to build a language is **to make the computation of your era run on the hardware of your era.**
+
+So we have to ask: in today's era of AI agents, what has become the most expensive cost?
+
+## 2. Diagnosis of the Era: Research and Hardware Are Both Moving Faster Than Ever
+
+Follow the last few years of ZK research and it reads as one course correction after another. We moved from large fields to small fields; code-based schemes rose with post-quantum readiness as the rationale. Sumcheck moved to the center of prover design — Thaler's survey [*Sum-check Is All You Need*](https://eprint.iacr.org/2025/2041) (ePrint 2025/2041) organizes this shift — and work like Flock is exploring the potential of binary fields. Nothing guarantees that any of these is the endpoint.
+
+This speed is not a feeling — it's a number. Papers matching "zero-knowledge" on ePrint grew from 66 in 2015 to 250 in 2025, roughly 3.8x in a decade. ZK's share of all cryptography papers doubled over the same period, from 5.3% to 10.7%, and 2026 has already logged 173 papers through July — a pace of 300+ per year. On arXiv, the count grew 35x over the same period, from 5 to 177 — a signal that ZK is spilling beyond ePrint into the systems and ML communities.
+
+![ePrint papers matching "zero-knowledge" per year, 2015 to 2026](/blog/why-cryptography-needs-a-compiler/eprint-zk-papers.png)
+
+![Zero-knowledge papers as a share of all ePrint cryptography papers](/blog/why-cryptography-needs-a-compiler/eprint-zk-share.png)
+
+![arXiv papers matching "zero-knowledge" per year](/blog/why-cryptography-needs-a-compiler/arxiv-zk-papers.png)
+
+Hardware moves at the same speed. NVIDIA overhauled its architecture roughly every two years from Kepler (2012) to Blackwell (2024), and at Computex 2024 it made a **one-year rhythm** official — Blackwell Ultra (2025), Rubin (2026), Rubin Ultra (2027), and Feynman (2028) are already on the roadmap. Same story for CUDA. Through CUDA 11, a major version arrived every 2–3 years; 13.x has shipped four minor versions in about eleven months. And this change lands directly on ZK. CUDA 13.3 exposed the carry-less multiply-accumulate instruction `clmad` in PTX — polynomial multiplication over GF(2), the heart of binary-field arithmetic. NVIDIA's [announcement blog](https://developer.nvidia.com/blog/building-faster-cryptography-with-carryless-multiplication-in-nvidia-cuda-13-3) names ZK proving as a use case directly, reporting that GF(2^128) sumcheck runs 3–4x faster on an RTX 5090 and 4–13x faster on a B200 versus the bitsliced implementations that came before. An operation that was emulated in software yesterday becomes a hardware instruction today. Before software catches up with the hardware, the hardware moves again.
+
+![NVIDIA architecture releases from Kepler to Feynman](/blog/why-cryptography-needs-a-compiler/nvidia-cadence.png)
+
+![CUDA release cadence by major version](/blog/why-cryptography-needs-a-compiler/cuda-releases.png)
+
+At the same time, I would diagnose clear unexplored territory in today's stack. Fiat-Shamir-based NIZKs force sequential computation — and the problem is worse in the sumcheck family, which needs a challenge every round. Tensor core utilization is low — ZK's field arithmetic rides the 32-bit integer pipeline, and there are measurements showing that while recent generations poured their silicon growth into tensor cores, integer-pipeline performance has stayed flat for several generations ([ZKProphet](https://arxiv.org/abs/2509.22684), IISWC 2025). GPUs get faster every generation, but ZK can't use the part that's getting faster. Nor is there any scheme that seriously exploits multi-GPU via NCCL and the like.
+
+In a domain where research and hardware move simultaneously, at this speed — what position does the code end up in?
+
+## 3. Software That Doesn't Get Reused
+
+AI has certainly made development faster. And yet the distance from paper to production prover remains far longer than in deep learning. Why?
+
+Try a thought experiment. **Say you're building a new proving scheme.** You won't start from scratch — you'll take arkworks, plonky3, binius, or stwo as your raw material. What happens next?
+
+The reality is not import but **fork and copy.** Look at Poseidon2 alone. arkworks doesn't have Poseidon2 at all (only the original Poseidon), while Plonky3 carries separate implementations specialized per field — BabyBear, KoalaBear, Mersenne31, Goldilocks — down to AVX2/AVX-512/NEON variants. And tricks live inside them. Plonky3's BabyBear implementation, for instance, **searched** for internal diffusion-matrix diagonal entries of the form ±2^k so that the multiplications resolve into shifts and adds and skip Montgomery reduction entirely ([`baby-bear/src/poseidon2.rs`](https://github.com/Plonky3/Plonky3/blob/c838a4cd116d1feb7a9e0d7ac54f5672a97235f4/baby-bear/src/poseidon2.rs)). This matrix–ISA co-design exists nowhere outside Plonky3. And it's not just code that gets locked in — **domain knowledge** does too. Hardware-independent optimization formulas, like the fact that the two bit-reverse permutations cancel when an IFFT is followed by an FFT, exist only in certain people's heads and certain repos. If you've never encountered the formula, it's hard to even know an optimization opportunity exists — and this kind of opportunity cost never shows up in a profile. This is why everyone ends up re-solving optimizations that were already solved.
+
+It happens even within a single team. One risc0 repo contains **four copies** of the same BabyBear Poseidon2 — [Rust (host)](https://github.com/risc0/risc0/blob/3bbcd44d6459b9ef6ac0df3846dc9215514934e8/risc0/zkp/src/core/hash/poseidon2/mod.rs), [CUDA](https://github.com/risc0/risc0/blob/3bbcd44d6459b9ef6ac0df3846dc9215514934e8/risc0/sys/kernels/zkp/cuda/supra/poseidon2.cu), [Metal](https://github.com/risc0/risc0/blob/3bbcd44d6459b9ef6ac0df3846dc9215514934e8/risc0/sys/kernels/zkp/metal/poseidon2.metal), and [C++ (witness generation)](https://github.com/risc0/risc0/blob/3bbcd44d6459b9ef6ac0df3846dc9215514934e8/risc0/circuit/rv32im-sys/cxx/zkp/poseidon2.cpp). It shares zero lines of code with Plonky3's implementation over the same field. SP1 is even more dramatic. Its CPU prover's primitives are re-exports of Plonky3 (the description of [`slop/crates/poseidon2`](https://github.com/succinctlabs/sp1/blob/a630089d9ff484ec6f2feade8d0afbb1447eed11/slop/crates/poseidon2/Cargo.toml) reads "Re-exports p3_poseidon2 from Plonky3"), while its GPU prover [re-implements the same pipeline from scratch in CUDA C++](https://github.com/succinctlabs/sp1/tree/a630089d9ff484ec6f2feade8d0afbb1447eed11/sp1-gpu/crates/sys). The two directory trees — basefold, challenger, merkle_tree, logup_gkr — mirror each other almost directory for directory, and the Fiat-Shamir challenger exists on both sides as a class with **the same name** ([`DuplexChallenger`](https://github.com/succinctlabs/sp1/blob/a630089d9ff484ec6f2feade8d0afbb1447eed11/sp1-gpu/crates/sys/include/challenger/challenger.cuh)), once in Rust and once in CUDA. The same logic is not reused; it is **repeated.**
+
+![SP1's Rust and CUDA directory trees mirroring each other](/blog/why-cryptography-needs-a-compiler/sp1-mirror-tree.png)
+
+Does AI fix this? It accelerates it. Hand the work to an AI agent and it reaches down into arkworks and plonky3 to modify them whenever needed, and the fork **drifts** further and further from its upstream. No human can review all of those edits, so past some point the code can neither pull in upstream's improvements nor give its own improvements back.
+
+There is a structural reason this keeps happening. No library supports every field. arkworks ships only the large pairing-friendly fields — no BabyBear, no Goldilocks. Plonky3 is the mirror image: small fields only, no BN254. stwo carries only the M31 family; binius only binary towers. The four libraries' field lists don't merely fail to overlap — they are each other's holes. So HorizenLabs, building the Poseidon2 reference implementation, had to define BabyBear themselves on top of arkworks, and Plonky3, needing BN254, built a wrapper around arkworks (p3-bn254) — each library patching the other's holes by hand. You, too, the moment you need a field your library doesn't carry — a new curve, a new extension, a new modulus — will end up implementing the field yourself. And because **general-purpose languages and compilers know nothing of field semantics**, there is no safety net for this work. To the compiler, `a * b % p` is just three integer operations. The fact that p is prime and a, b are elements of F_p does not exist as a type.
+
+The moment you implement the field yourself, everything beneath it becomes your responsibility. Inverse alone comes in batch inversion, Fermat, and extended Euclid. Reduction alone comes in Montgomery, Barrett, and Solinas. MSM must run Pippenger in different variants on CPU and GPU.
+
+**All I wanted was MSM, NTT, and a + b** — and yet what the developer must attend to is no longer the math but the entire genealogy of implementations. Rewrite is the symptom; **fragmentation is the disease.** In the era of AI agents, when writing code has never been cheaper, the most expensive cost is — paradoxically — exactly this: the cost of understanding, verifying, and maintaining scattered code.
+
+## 4. Hardware Sets the Formulas: CPU and GPU Have Different Definitions of "Fast"
+
+Return to the SP1 case from the previous section. Why implement the same math twice — Rust (CPU) and C++ (GPU)? It is not a matter of language preference. **It is because "fast" is achieved differently on the two kinds of hardware.**
+
+Of course, using fewer instructions and fitting the cache helps on any hardware. What differs is the **dominant term.** A CPU is a machine where a few powerful cores, with comparatively abundant memory at hand, hide latency — branch prediction, deep cache hierarchies, and out-of-order execution are its tools. A GPU is a throughput machine that must feed thousands of cores without pause, and its bottleneck is not computation but **supply** — HBM bandwidth, and CPU↔GPU transfer bandwidth. Compute (FLOPs) is abundant. ZK workloads of the sumcheck era are especially so. [Ingonyama profiled sumcheck kernels with Nsight Compute](https://hackmd.io/@Ingonyama/Hardware-Friendliness-HyperPlonk-Part2) and concluded that "performance is limited by memory access, not computational power" — the workload is dominated by elementwise operations over small fields, and NTT is one giant memory shuffle. Not every kernel is like this, of course. There are also measurements showing that 256-bit big-field arithmetic is bound by the integer pipeline instead (ZKProphet). The fact that the bottleneck's location differs per kernel and per field size — that fact itself becomes important below. For the same reason, MSM runs different Pippenger variants on CPU and GPU.
+
+So the formulas of GPU memory optimization converge on one principle: **never write data back to HBM.** Fusion chains operations together while keeping intermediates in registers and shared memory; tiling traps reused data on-chip. Nor do the formulas live only in memory. Lazy/optimal reduction — given a+b and a+c, reduce only the reused a — is a different kind of formula, one that cuts the number of operations themselves. Different in kind, but with one thing in common: where to fuse and which value to reduce is decided not by any individual kernel but by **the shape of the whole graph.**
+
+Step back and the structure becomes visible. **Optimization formulas come in two layers.** The math-defined formulas from Section 3 (hardware-independent optimizations like bit-reverse cancellation), and the hardware-defined formulas of this section (fusion, tiling). Neither is a new invention. They are known formulas, and the crux is applying them across the entire computation graph **without missing a single site.**
+
+But today's tools cannot do that. Hand-written kernel libraries (ICICLE, sppark) know our math but are trapped at function scope — fusion requires merging functions, lazy reduction requires crossing function boundaries, and the library boundary blocks exactly that. Same with AI. It is good at local optimization — finding and fixing hot paths with ncu and perf — but cannot do the global optimization that requires seeing the whole graph. Exhaustive application is neither a human's job nor AI's job. **It is the compiler's job.**
+
+The decisive problem comes next. **The parameters of these formulas are set by the architecture.** Shared memory size, register file, tensor core shape, TMA — they change every generation. When the generation changes, yesterday's optimal tiling is today's waste. You don't even need to cross a generation. Your development RTX 5090 and your production A100 differ starting from shared memory (100 KB vs 164 KB per SM — H100 is 228 KB), and in bandwidth and SM count too. A tile tuned for the datacenter card must be re-tuned for the consumer card. Now imagine hardware that isn't a GPU at all (FPGA/ASIC). The moment you bake the formulas into source code, you must re-derive them every time the hardware moves.
+
+The source must stay at the level of the math, and hardware decisions must be re-made at every compile. The thing that does that is a compiler.
+
+## 5. Here's How We Designed It
+
+A machine that applies formulas exhaustively across a whole graph already exists, in fact. **The ML compiler — XLA.** Over the past decade, deep learning perfected the art of delegating fusion, layout, scheduling, and distributed execution to a compiler. But that machine only knows the math of floats. **What we did was plant the math of fields into it.**
+
+Why did we choose XLA instead of building a compiler from the ground up? First, **the problem has the same structure.** A small set of mathematically heavy primitives with an explosion of compositions on top — ML exploded architectures (VGG, ResNet, Transformer) on top of matmul and convolution; ZK explodes schemes on top of field arithmetic. Problems of the same structure yield to solutions of the same structure. Second, **we inherit a decade of hardening.** The fusion engine, layout assignment, buffer liveness analysis, SPMD partitioning — these are passes tempered by billions of inferences a day. We did not rebuild them. Put a field tensor where the float tensor was, adapt the legality checks to field math, and the same engine that fused a Transformer's attention now fuses a sumcheck round. Third, **the frontend comes along for free.** Thanks to JAX's tracing, researchers write the math in Python and the compiler takes the graph and owns the hardware — the very reason ML chose Python, as we saw in Section 1, replays itself here.
+
+The design philosophy above it fits in one line: **SNARK = PCS + IOP.** When a scheme changes, what changes is the composition of rounds (the glue); what does not change is the primitives beneath (field arithmetic, commitments). So we separated the part that changes from the part that doesn't. Just as deep learning sees a model as a sequence of layers, we see a prover as a **chain of IOP rounds** (Σ IOP) — a new scheme becomes a rearrangement of stages, not a new library.
+
+The philosophy is visible verbatim in the code. Zorch's proving driver is literally a loop that folds rounds:
+
+```python
+# zorch/prove.py — scheme-agnostic multi-round proving driver
+def fold_rounds(rnd, state, transcript, rounds):
+    msgs = []
+    for _ in range(rounds):
+        state, transcript, msg = rnd(state, transcript)
+        msgs.append(msg)
+    return state, transcript, msgs
+```
+
+A `Round` is a composable unit, like deep learning's `nn.Module`, and a chain is itself a `Round`, so chains nest — the per-variable step that folds one variable is a `Round`, and the whole sumcheck that bundles them is also a `Round`. Which is why the entire SP1 Hypercube prover assembles as a single chain of stages:
+
+```python
+# sp1_zorch/shard_prover/prove_shard.py — SP1 Hypercube as a chain of stages
+return ProveChain([
+    TraceCommitStage(...),   # trace commit
+    LogupGkrStage(...),      # LogUp-GKR
+    ZerocheckStage(...),     # zerocheck
+    JaggedPcsStage(...),     # jagged PCS open
+])
+```
+
+The result: developers write the math in Python, and the compiler owns the GPU. Zorch and FRX are fully open source, and you can start at **https://awesome-zorch.fractalyze.io/**. Which means you can go home and run it today.
+
+## 6. We Listen, Then We Build
+
+This essay is less an argument than an invitation.
+
+A domain-specific compiler proves its worth as the problem grows. As the computations to be proven get bigger — zkML and beyond — the hand-chasing approach will be the first to collapse. And we believe today's stack is not using GPUs fully — tensor cores go unused, and there is no model parallelism (multi-GPU/cluster). But this is only our hypothesis, and there are certainly requirements we cannot see.
+
+So here is the ask. Try it, and tell us what's missing through GitHub issues. This is how we designed it — but **if you don't use it, the design is wrong.**
+
+One last question, and we're done. When the next scheme lands — are you going to rewrite again?
