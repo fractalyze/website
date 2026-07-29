@@ -17,10 +17,13 @@ export function Reveal({children, className, delay = 0}: Props) {
 
   useEffect(() => {
     const el = ref.current;
-    if (!el || typeof IntersectionObserver === 'undefined') {
-      setShown(true);
-      return;
-    }
+    if (!el || typeof IntersectionObserver === 'undefined') return;
+
+    // Anything already on screen stays as the server drew it. Arming it here
+    // would blank it a frame after paint, and there is nothing to animate into
+    // for content the reader is already looking at.
+    const trigger = window.innerHeight * 0.88;
+    if (el.getBoundingClientRect().top < trigger) return;
 
     setArmed(true);
 
