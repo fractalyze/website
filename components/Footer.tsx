@@ -1,13 +1,12 @@
 import Link from 'next/link';
 import siteMetadata from '@/data/siteMetadata';
 import headerNavLinks from '@/data/headerNavLinks';
-import {InstagramIcon, LinkedInIcon, XIcon, YouTubeIcon} from './icons/SocialIcons';
+import {GitHubIcon, LinkedInIcon, XIcon} from './icons/SocialIcons';
 
 const socialIcons = [
-  {key: 'instagram', label: 'Instagram', Icon: InstagramIcon},
   {key: 'linkedin', label: 'LinkedIn', Icon: LinkedInIcon},
   {key: 'x', label: 'X', Icon: XIcon},
-  {key: 'youtube', label: 'YouTube', Icon: YouTubeIcon},
+  {key: 'github', label: 'GitHub', Icon: GitHubIcon},
 ] as const;
 
 export function Footer() {
