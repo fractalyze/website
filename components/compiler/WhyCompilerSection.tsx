@@ -86,7 +86,8 @@ export function WhyCompilerSection() {
           {cards.map((card) => (
             <article key={card.title} className="overflow-hidden rounded-2xl border border-line bg-paper">
               <div className="relative h-[15rem] w-full">
-                <Image src={card.image} alt="" fill sizes="640px" className="object-cover" />
+                <Image src={card.image} alt="" fill sizes="640px" className="object-cover"
+            placeholder="blur" />
               </div>
               <div className="flex flex-col gap-4 p-5">
                 <h3 className="text-title-2 font-medium text-ink">{card.title}</h3>

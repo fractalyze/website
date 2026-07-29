@@ -23,7 +23,8 @@ export function HeroSection() {
           </div>
         </div>
         <div className="relative h-[25rem] w-full overflow-hidden rounded-[1.25rem]">
-          <Image src={heroImage} alt="" fill priority sizes="1400px" className="object-cover" />
+          <Image src={heroImage} alt="" fill priority sizes="1400px" className="object-cover"
+            placeholder="blur" />
         </div>
       </div>
     </section>

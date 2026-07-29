@@ -11,6 +11,7 @@ export function ClosingBandSection() {
         fill
         sizes="100vw"
         className="-z-10 object-cover"
+            placeholder="blur"
       />
       <Reveal className="mx-auto flex max-w-measure flex-col items-center gap-5 text-center">
         <img src="/logo/fractalyze-logo-white.svg" alt="Fractalyze" className="h-[2.5rem] w-auto" />

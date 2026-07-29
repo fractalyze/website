@@ -78,6 +78,7 @@ export function PoweringSection() {
                   fill
                   sizes="460px"
                   className="object-cover"
+            placeholder="blur"
                 />
               </div>
             </div>

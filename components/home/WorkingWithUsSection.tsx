@@ -51,6 +51,7 @@ export function WorkingWithUsSection() {
                   fill
                   sizes="453px"
                   className="object-cover"
+            placeholder="blur"
                 />
               </div>
               <div className="flex flex-col gap-4 p-8">

@@ -22,6 +22,12 @@ const nextConfig = {
         source: '/fonts/:path*',
         headers: [{key: 'Cache-Control', value: 'public, max-age=31536000, immutable'}],
       },
+      {
+        // Same revalidation cost applies to the cover art, and the image
+        // optimizer takes its own cache lifetime from what the source declares.
+        source: '/blog/:path*',
+        headers: [{key: 'Cache-Control', value: 'public, max-age=604800'}],
+      },
     ];
   },
 };

@@ -35,6 +35,7 @@ export function CompilerHeroSection() {
             priority
             sizes="506px"
             className="object-cover"
+            placeholder="blur"
           />
         </div>
       </div>
