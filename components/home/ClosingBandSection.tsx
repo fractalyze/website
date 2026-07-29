@@ -1,10 +1,11 @@
 import Image from 'next/image';
+import bandImage from '@/assets/images/home/cta-band.webp';
 
 export function ClosingBandSection() {
   return (
     <section className="relative isolate px-section py-section">
       <Image
-        src="/images/home/cta-band.webp"
+        src={bandImage}
         alt=""
         fill
         sizes="100vw"

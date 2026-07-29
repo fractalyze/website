@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import heroImage from '@/assets/images/home/hero.webp';
 import {ContactButton} from '@/components/ContactButton';
 
 export function HeroSection() {
@@ -22,14 +23,7 @@ export function HeroSection() {
           </div>
         </div>
         <div className="relative h-[25rem] w-full overflow-hidden rounded-[1.25rem]">
-          <Image
-            src="/images/home/hero.webp"
-            alt=""
-            fill
-            priority
-            sizes="1400px"
-            className="object-cover"
-          />
+          <Image src={heroImage} alt="" fill priority sizes="1400px" className="object-cover" />
         </div>
       </div>
     </section>

@@ -1,23 +1,26 @@
 import Image from 'next/image';
+import buildImage from '@/assets/images/home/working-build.webp';
+import optimizeImage from '@/assets/images/home/working-optimize.webp';
+import operateImage from '@/assets/images/home/working-operate.webp';
 
 const engagements = [
   {
     title: 'Build',
     description:
       'We design and build next generation cryptographic systems with your team, from proving systems to private AI and beyond. We cover everything from architecture to implementation.',
-    image: '/images/home/working-build.webp',
+    image: buildImage,
   },
   {
     title: 'Optimize',
     description:
       'We dig into your existing ZK, FHE, MPC and cryptographic workloads and rebuild their performance with our compiler stack and hardware acceleration.',
-    image: '/images/home/working-optimize.webp',
+    image: optimizeImage,
   },
   {
     title: 'Operate',
     description:
       'We stay with the system after launch. We run it, improve it, and scale it in production as your workload grows.',
-    image: '/images/home/working-operate.webp',
+    image: operateImage,
   },
 ];
 

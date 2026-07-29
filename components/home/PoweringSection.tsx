@@ -1,4 +1,8 @@
 import Image from 'next/image';
+import confidentialFinance from '@/assets/images/home/domain-confidential-finance.webp';
+import aiInfrastructure from '@/assets/images/home/domain-ai-infrastructure.webp';
+import digitalIdentity from '@/assets/images/home/domain-digital-identity.webp';
+import secureCollaboration from '@/assets/images/home/domain-secure-collaboration.webp';
 
 const domains = [
   {
@@ -6,13 +10,13 @@ const domains = [
     description:
       'Privacy-preserving financial systems for institutions, markets, and everyday users.',
     items: ['Stablecoins & Payments', 'RWA & Tokenization', 'KYC & Compliance', 'Institutional DeFi'],
-    image: '/images/home/domain-confidential-finance.webp',
+    image: confidentialFinance,
   },
   {
     title: 'AI Infrastructure',
     description: 'Build private, verifiable, and trustworthy AI and agent systems at scale.',
     items: ['Private AI & Inference', 'Verifiable AI', 'Autonomous Agents', 'AI Workflows'],
-    image: '/images/home/domain-ai-infrastructure.webp',
+    image: aiInfrastructure,
   },
   {
     title: 'Digital Identity',
@@ -23,7 +27,7 @@ const domains = [
       'KYC & Onboarding',
       'Privacy-Preserving Verification',
     ],
-    image: '/images/home/domain-digital-identity.webp',
+    image: digitalIdentity,
   },
   {
     title: 'Secure Collaboration',
@@ -35,7 +39,7 @@ const domains = [
       'Joint Computation',
       'Multi-Party Workflows',
     ],
-    image: '/images/home/domain-secure-collaboration.webp',
+    image: secureCollaboration,
   },
 ];
 

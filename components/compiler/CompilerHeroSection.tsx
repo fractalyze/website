@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import compilerHero from '@/assets/images/compiler/hero.webp';
 import siteMetadata from '@/data/siteMetadata';
 import {ArrowTailIcon} from '@/components/icons/CompilerIcons';
 
@@ -28,7 +29,7 @@ export function CompilerHeroSection() {
         </div>
         <div className="relative h-[25rem] w-[31.625rem] shrink-0 overflow-hidden rounded-[1.25rem]">
           <Image
-            src="/images/compiler/hero.webp"
+            src={compilerHero}
             alt=""
             fill
             priority

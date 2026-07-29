@@ -1,4 +1,8 @@
 import Image from 'next/image';
+import whyGcc from '@/assets/images/compiler/why-gcc.webp';
+import whyXla from '@/assets/images/compiler/why-xla.webp';
+import whyIcicle from '@/assets/images/compiler/why-icicle.webp';
+import whyAi from '@/assets/images/compiler/why-ai.webp';
 import {CheckMark, CrossMark, PartialMark} from '@/components/icons/CompilerIcons';
 
 const cards = [
@@ -6,25 +10,25 @@ const cards = [
     title: "General-purpose compilers can't see the math",
     body: 'To GCC, a * b % p is three integer instructions. C and Rust give you no way to say that p is a prime modulus, and no analysis recovers what the language could not express.',
     tags: ['gcc', 'rustc', 'clang'],
-    image: '/images/compiler/why-gcc.webp',
+    image: whyGcc,
   },
   {
     title: 'ML compilers see math a different math',
     body: 'XLA reshapes whole programs around tensor algebra over floats. Nothing in it can say "this u32 is a field element," so an optimization like lazy reduction never comes up.',
     tags: ['xla', 'tvm', 'triton'],
-    image: '/images/compiler/why-xla.webp',
+    image: whyXla,
   },
   {
     title: 'Hand-written kernels, one kernel at a time',
     body: 'A hand-tuned kernel knows the math, but couples one operation, whether MSM, NTT, or a hash, to one GPU. Research moves fast and hardware faster, so that code rarely lives long enough to reuse.',
     tags: ['icicle', 'sppark'],
-    image: '/images/compiler/why-icicle.webp',
+    image: whyIcicle,
   },
   {
     title: "Won't AI just optimize it?",
     body: 'AI is good at local, profiling-guided tuning. But lazy reduction and fusion are global decisions across the whole computation graph, which it does not see. A compiler optimizes the graph, not the snippet.',
     tags: ['claude', 'codex'],
-    image: '/images/compiler/why-ai.webp',
+    image: whyAi,
   },
 ];
 
