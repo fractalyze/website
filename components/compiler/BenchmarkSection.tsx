@@ -3,22 +3,25 @@ import {Reveal} from '@/components/Reveal';
 
 const axis = axisOf(benchmarks);
 
-// One bar per (workload, baseline) pair. Flattening here rather than nesting
-// keeps every row the same height, which is what lets the parity line read as
-// one continuous rule down the card instead of a stack of segments.
-const rows = benchmarks.flatMap((benchmark) =>
-  benchmark.baselines.map((baseline, index) => {
-    const ratio = speedup(benchmark, baseline);
-    return {
-      benchmark,
-      baseline,
-      ...readout(ratio),
-      length: axis.lengthPercent(magnitude(ratio)),
-      // Only the first bar of a workload repeats its name.
-      lead: index === 0,
-    };
-  })
-);
+// One bar per (workload, baseline) pair, ordered by how far ahead we are, so
+// the chart reads as a single ranking from our best result down to our worst.
+// That ordering is why each row repeats its own workload: a workload measured
+// against two baselines lands in two places, and neither can rely on the other
+// sitting above it.
+const rows = benchmarks
+  .flatMap((benchmark) =>
+    benchmark.baselines.map((baseline) => {
+      const ratio = speedup(benchmark, baseline);
+      return {
+        benchmark,
+        baseline,
+        ratio,
+        ...readout(ratio),
+        length: axis.lengthPercent(magnitude(ratio)),
+      };
+    })
+  )
+  .sort((a, b) => b.ratio - a.ratio);
 
 const GRID = 'grid grid-cols-[15rem_1fr_7rem] items-center gap-4';
 
@@ -41,9 +44,9 @@ export function BenchmarkSection() {
             The Verifiable Difference a Compiler Makes
           </h2>
           <p className="text-body-lg text-paper">
-            Every figure is a measured time against a named baseline on the same problem.
+            Explore real-time benchmark data on compilation throughput, compute cost reduction,
             <br />
-            Bars run right where the compiler wins and left where the baseline still does.
+            and verification latency compared with manual optimization.
           </p>
         </div>
 
@@ -62,23 +65,21 @@ export function BenchmarkSection() {
           </div>
 
           <ul>
-            {rows.map(({benchmark, baseline, times, faster, length, lead}) => (
+            {rows.map(({benchmark, baseline, times, faster, length}) => (
               <li
                 key={`${benchmark.workload}/${baseline.name}`}
-                className={`${GRID} h-[3.125rem] ${lead ? 'border-t border-line' : ''}`}
+                className={`${GRID} h-[3.125rem] border-t border-line`}
               >
                 {/* Cells truncate rather than wrap, so the name and the baseline
                     each carry their own text, and the row carries how it was
                     measured. */}
                 <div className="min-w-0" title={provenance(benchmark)}>
-                  {lead && (
-                    <span
-                      title={benchmark.workload}
-                      className="block truncate text-body font-semibold leading-[1.1rem] text-ink"
-                    >
-                      {benchmark.workload}
-                    </span>
-                  )}
+                  <span
+                    title={benchmark.workload}
+                    className="block truncate text-body font-semibold leading-[1.1rem] text-ink"
+                  >
+                    {benchmark.workload}
+                  </span>
                   <span
                     title={`vs ${baseline.name}`}
                     className="block truncate text-body-sm text-muted"

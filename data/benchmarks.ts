@@ -30,10 +30,7 @@ export const benchmarks: Benchmark[] = [
     workload: 'msm(bn254 g1, 2^24)',
     instance: '2²⁴',
     ms: 248.12,
-    baselines: [
-      {name: 'ICICLE v4', ms: 50.34},
-      {name: 'icicle-gnark v3.2.2', ms: 53.49},
-    ],
+    baselines: [{name: 'icicle-gnark v3.2.2', ms: 53.49}],
     basis: 'kernel',
   },
   {
@@ -47,10 +44,7 @@ export const benchmarks: Benchmark[] = [
     workload: 'ntt(bn254, 2^24)',
     instance: '2²⁴',
     ms: 7.66,
-    baselines: [
-      {name: 'ICICLE v4', ms: 4.75},
-      {name: 'icicle-gnark v3.2.2', ms: 16.23},
-    ],
+    baselines: [{name: 'icicle-gnark v3.2.2', ms: 16.23}],
     basis: 'kernel',
   },
   {
