@@ -13,6 +13,17 @@ const nextConfig = {
     ],
   },
   turbopack: {},
+  // Posts that were published, indexed, and shared before being withdrawn. The
+  // listing is the nearest page that still stands; without these the links in
+  // search results and other people's posts end at a 404.
+  async redirects() {
+    return [
+      'fastest-groth16-cpu-prover',
+      'gpu-fusion-zk-optimization',
+      'leanvm-progress-1-poseidon2',
+      'leanvm-progress-2-packed-poseidon2',
+    ].map((slug) => ({source: `/blog/${slug}`, destination: '/blog', permanent: true}));
+  },
   async headers() {
     return [
       {
