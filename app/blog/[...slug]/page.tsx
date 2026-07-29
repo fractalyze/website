@@ -23,15 +23,31 @@ export async function generateMetadata({params}: { params: Promise<{ slug: strin
     return {};
   }
 
+  // A shared link with no picture is a link nobody clicks, so the post's own
+  // cover doubles as its card art. Twitter is spelled out rather than left to
+  // fall through to the root, which would caption every article with the site
+  // description.
+  const cover = post.image ?? '/images/blog/default-cover.webp';
+  const path = `/blog/${post.slug}`;
+
   return {
     title: post.title,
     description: post.summary,
+    alternates: {canonical: path},
     openGraph: {
       title: post.title,
       description: post.summary,
       type: 'article',
+      url: path,
+      images: [cover],
       publishedTime: post.date,
       ...(post.lastmod && {modifiedTime: post.lastmod}),
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: post.title,
+      description: post.summary,
+      images: [cover],
     },
   };
 }

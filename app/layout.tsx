@@ -13,12 +13,20 @@ const dmMono = DM_Mono({
   variable: '--font-mono',
 });
 
+// Card art for anywhere a page has none of its own.
+const SOCIAL_IMAGE = '/images/blog/default-cover.webp';
+
 export const metadata: Metadata = {
+  // Every relative URL below, and in each page's own metadata, is resolved
+  // against this — which is also what lets a page declare its canonical as a
+  // path rather than repeating the domain.
+  metadataBase: new URL(siteMetadata.siteUrl),
   title: {
     default: siteMetadata.title,
     template: `%s | ${siteMetadata.title}`,
   },
   description: siteMetadata.description,
+  alternates: {canonical: '/'},
   icons: {
     icon: '/favicon.ico',
     shortcut: '/favicon.ico',
@@ -27,15 +35,17 @@ export const metadata: Metadata = {
   openGraph: {
     title: siteMetadata.title,
     description: siteMetadata.description,
-    url: siteMetadata.siteUrl,
+    url: '/',
     siteName: siteMetadata.title,
     locale: siteMetadata.locale,
     type: 'website',
+    images: [SOCIAL_IMAGE],
   },
   twitter: {
     card: 'summary_large_image',
     title: siteMetadata.title,
     description: siteMetadata.description,
+    images: [SOCIAL_IMAGE],
   },
   robots: {
     index: true,
