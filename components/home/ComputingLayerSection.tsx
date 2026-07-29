@@ -202,8 +202,8 @@ export function ComputingLayerSection() {
                 </div>,
                 <BusConnector key="bus-3" from={1} to={4} />,
                 <PlatformRow key="platforms" />,
-              ].map((step) => (
-                <Reveal key={step.key} className="w-full">
+              ].map((step, index) => (
+                <Reveal key={step.key} className="w-full" delay={index * 90}>
                   {step}
                 </Reveal>
               ))}

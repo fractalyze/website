@@ -17,42 +17,6 @@ body {
   @apply bg-paper text-ink antialiased;
 }
 
-/*
- * Scroll reveals, driven by the scroll position itself rather than script.
- * Browsers without view() timelines simply render the content, so nothing can
- * be left hidden by a missed callback, and blocks already on screen at load
- * start past the range and need no special case.
- */
-@keyframes reveal-rise {
-  from {
-    opacity: 0;
-    transform: translateY(12px);
-  }
-}
-
-@keyframes reveal-grow {
-  from {
-    transform: scaleX(0);
-  }
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  @supports (animation-timeline: view()) {
-    [data-reveal] {
-      animation: reveal-rise 1s linear both;
-      animation-timeline: view();
-      animation-range: entry 0% entry 35%;
-    }
-
-    [data-grow] {
-      transform-origin: left center;
-      animation: reveal-grow 1s linear both;
-      animation-timeline: view();
-      animation-range: entry 0% entry 45%;
-    }
-  }
-}
-
 /* Article body. Sizes and vertical rhythm come from the typography plugin
    config; only what the plugin cannot express lives here. */
 .prose {
