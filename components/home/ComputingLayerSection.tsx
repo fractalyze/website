@@ -19,7 +19,7 @@ const todayHandwork = [
   ['Vendor-specific', 'Fixes'],
 ];
 
-const todayStacks = ['NVIDIA CUDA stack', 'AMD ROCm stack'];
+const todayHardwareWork = 'Hardware-Specific Implementations';
 
 const platforms = [
   {label: 'CPU', Icon: CpuIcon},
@@ -180,18 +180,11 @@ export function ComputingLayerSection() {
               <ProcessRow steps={todaySpecialistWork} tone="brand" />
               <BusConnector from={5} to={5} />
               <ProcessRow steps={todayHandwork} tone="blue" />
-              <BusConnector from={5} to={2} />
-              <div className="flex w-full items-stretch gap-2">
-                {todayStacks.map((stack) => (
-                  <div
-                    key={stack}
-                    className="flex flex-1 items-center justify-center rounded-lg bg-accent px-5 py-4 text-body-sm text-ink"
-                  >
-                    {stack}
-                  </div>
-                ))}
+              <BusConnector from={5} to={1} />
+              <div className="flex w-full items-center justify-center rounded-lg bg-accent px-5 py-4 text-body-sm text-ink">
+                {todayHardwareWork}
               </div>
-              <BusConnector from={2} to={4} />
+              <BusConnector from={1} to={4} />
               <PlatformRow />
             </div>
           </div>
