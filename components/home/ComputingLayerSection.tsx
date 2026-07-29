@@ -75,7 +75,7 @@ function BusConnector({from, to}: {from: number; to: number}) {
       {top.map((x) => (
         <line key={`t${x}`} x1={x} y1={0} x2={x} y2={20} {...dashed} />
       ))}
-      <line x1={Math.min(...span)} y1={20} x2={Math.max(...span)} y2={20} strokeWidth={1.5} />
+      <line x1={Math.min(...span)} y1={20} x2={Math.max(...span)} y2={20} {...dashed} />
       {bottom.map((x) => (
         <g key={`b${x}`}>
           <line x1={x} y1={20} x2={x} y2={42} {...dashed} />
@@ -105,12 +105,21 @@ function AppHeader() {
   );
 }
 
+function DownArrow() {
+  return (
+    <svg viewBox="0 0 12 40" className="h-10 w-3" fill="none" stroke="currentColor" aria-hidden>
+      <line x1={6} y1={0} x2={6} y2={32} {...dashed} />
+      <path d={head(6, 32)} fill="currentColor" stroke="none" />
+    </svg>
+  );
+}
+
 function PlatformRow({withArrows = false}: {withArrows?: boolean}) {
   return (
     <div className="flex w-full items-stretch gap-2">
       {platforms.map(({label, Icon}) => (
-        <div key={label} className="flex flex-1 flex-col items-center">
-          {withArrows && <ArrowRow count={1} height={40} />}
+        <div key={label} className="flex min-w-0 flex-1 flex-col items-center gap-2">
+          {withArrows && <DownArrow />}
           <div className="flex w-full items-center justify-center gap-1 rounded-lg border border-line bg-surface px-5 py-4">
             <Icon />
             <span className="text-body-sm text-ink">{label}</span>
@@ -127,11 +136,11 @@ function ProcessRow({steps, tone}: {steps: string[][]; tone: 'brand' | 'blue'}) 
       {steps.map((lines) => (
         <div
           key={lines.join(' ')}
-          className={`flex flex-1 items-center justify-center rounded-lg px-5 py-4 text-center text-micro leading-[1.1] text-ink ${
+          className={`flex min-w-0 flex-1 items-center justify-center rounded-lg px-1 py-4 text-center text-micro leading-[1.1] text-ink ${
             tone === 'brand' ? 'bg-accent' : 'bg-accent-blue'
           }`}
         >
-          <span>
+          <span className="whitespace-nowrap">
             {lines[0]}
             <br />
             {lines[1]}
@@ -208,13 +217,16 @@ export function ComputingLayerSection() {
             <div className="flex flex-col items-center gap-2 rounded-xl border border-line bg-paper p-5 text-ink">
               <AppHeader />
               <ExchangeArrows />
-              <div className="flex w-full flex-col gap-2 rounded-2xl border border-accent bg-accent/40 p-5">
-                <div className="flex items-center justify-center rounded-lg bg-accent px-5 py-10 text-body-sm text-ink">
-                  Orchestration Layer
-                </div>
-                <div className="flex items-center justify-center rounded-lg bg-accent px-5 py-10 text-body-sm text-ink">
-                  Compiler Layer
-                </div>
+              {/* Fixed so this card matches the height of the "Today" one beside it. */}
+              <div className="flex h-[18.8125rem] w-full flex-col gap-2 rounded-2xl border border-accent bg-accent/40 p-5">
+                {['Orchestration Layer', 'Compiler Layer'].map((layer) => (
+                  <div
+                    key={layer}
+                    className="flex min-h-0 flex-1 items-center justify-center rounded-lg bg-accent px-5 text-body-sm text-ink"
+                  >
+                    {layer}
+                  </div>
+                ))}
               </div>
               <PlatformRow withArrows />
             </div>
