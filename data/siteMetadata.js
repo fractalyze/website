@@ -14,7 +14,7 @@ const siteMetadata = {
   zorchUrl: 'https://awesome-zorch.fractalyze.io',
   // Only entries with a URL are rendered in the footer.
   social: {
-    linkedin: '',
+    linkedin: 'https://www.linkedin.com/company/fractalyze',
     x: 'https://x.com/fractal_intern',
     github: 'https://github.com/fractalyze',
   },
