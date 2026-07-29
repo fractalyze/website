@@ -4,7 +4,7 @@ import {CheckMark, CrossMark, PartialMark} from '@/components/icons/CompilerIcon
 const cards = [
   {
     title: "General-purpose compilers can't see the math",
-    body: 'To GCC, a * b % p is three integer instructions. C and Rust give you no way to say that p is a prime modulus — and no analysis recovers what the language couldn’t express.',
+    body: 'To GCC, a * b % p is three integer instructions. C and Rust give you no way to say that p is a prime modulus, and no analysis recovers what the language could not express.',
     tags: ['gcc', 'rustc', 'clang'],
     image: '/images/compiler/why-gcc.webp',
   },
@@ -15,14 +15,14 @@ const cards = [
     image: '/images/compiler/why-xla.webp',
   },
   {
-    title: 'Hand-written kernels know our math  one kernel at a time',
-    body: 'A hand-tuned kernel couples one operation — MSM, NTT, hash — to one GPU. Research moves fast and hardware faster, so that code rarely lives long enough to reuse.',
+    title: 'Hand-written kernels know our math, one kernel at a time',
+    body: 'A hand-tuned kernel couples one operation, whether MSM, NTT, or a hash, to one GPU. Research moves fast and hardware faster, so that code rarely lives long enough to reuse.',
     tags: ['icicle', 'sppark'],
     image: '/images/compiler/why-icicle.webp',
   },
   {
     title: "Won't AI just optimize it?",
-    body: 'AI is good at local, profiling-guided tuning. But lazy reduction and fusion are global decisions across the whole computation graph — which it doesn’t see. A compiler optimizes the graph, not the snippet.',
+    body: 'AI is good at local, profiling-guided tuning. But lazy reduction and fusion are global decisions across the whole computation graph, which it does not see. A compiler optimizes the graph, not the snippet.',
     tags: ['claude', 'codex'],
     image: '/images/compiler/why-ai.webp',
   },

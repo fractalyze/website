@@ -10,22 +10,22 @@ const layers = [
   {
     Icon: StackedTrianglesIcon,
     title: 'Frontend framework',
-    body: 'Build a SNARK in Python: define your IOP rounds and compose them. You write the protocol, never the kernels.',
+    body: 'Build a SNARK in Python: define your IOP rounds and compose them. You write the protocol, and never touch the kernels.',
   },
   {
     Icon: OrbitIcon,
     title: 'FRX',
-    body: 'A JAX-based runtime that traces your Python into a computation graph and lowers it to StableHLO, carrying field types — not floats — the whole way down.',
+    body: 'A JAX-based runtime that traces your Python into a graph and lowers it to StableHLO, carrying field types, not floats.',
   },
   {
     Icon: NestedSquaresIcon,
     title: 'XLA',
-    body: 'Runs its full optimization pipeline over the whole graph — fusion, layout, scheduling, lazy reduction, and more — optimizing the computation as one program.',
+    body: 'Runs a full optimization pipeline over the whole graph, from fusion and layout to lazy reduction, treating it as one program.',
   },
   {
     Icon: NestedSquaresIcon,
     title: 'PrimeIR',
-    body: 'An MLIR layer that lowers the optimized graph into kernels and tunes the generated code for each CPU / GPU target.',
+    body: 'An MLIR layer that lowers the optimized graph into kernels and tunes the generated code for each CPU and GPU target.',
   },
 ];
 
@@ -34,9 +34,9 @@ export function PipelineSection() {
     <section className="bg-surface px-section py-section">
       <div className="mx-auto flex max-w-content flex-col items-center gap-10">
         <div className="flex max-w-measure flex-col items-center gap-5 text-center">
-          <h2 className="font-display text-display-4 text-ink">From Python to the Metal</h2>
+          <h2 className="font-display text-display-4 text-ink">From Python to the Hardware</h2>
           <p className="text-body-lg text-ink">
-            One pipeline a Python framework for SNARKs, lowered through StableHLO and
+            One pipeline: a Python framework for SNARKs, lowered through StableHLO and
             <br />
             optimized all the way down to CPU and GPU kernels.
           </p>
