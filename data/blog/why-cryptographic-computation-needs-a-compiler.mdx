@@ -25,17 +25,17 @@ Follow the last few years of ZK research and it reads as one course correction a
 
 This speed is not a feeling — it's a number. Papers matching "zero-knowledge" on ePrint grew from 66 in 2015 to 250 in 2025, roughly 3.8x in a decade. ZK's share of all cryptography papers doubled over the same period, from 5.3% to 10.7%, and 2026 has already logged 173 papers through July — a pace of 300+ per year. On arXiv, the count grew 35x over the same period, from 5 to 177 — a signal that ZK is spilling beyond ePrint into the systems and ML communities.
 
-![ePrint papers matching "zero-knowledge" per year, 2015 to 2026](/blog/why-cryptography-needs-a-compiler/eprint-zk-papers.png)
+![ePrint papers matching "zero-knowledge" per year, 2015 to 2026](/blog/why-cryptographic-computation-needs-a-compiler/eprint-zk-papers.png)
 
-![Zero-knowledge papers as a share of all ePrint cryptography papers](/blog/why-cryptography-needs-a-compiler/eprint-zk-share.png)
+![Zero-knowledge papers as a share of all ePrint cryptography papers](/blog/why-cryptographic-computation-needs-a-compiler/eprint-zk-share.png)
 
-![arXiv papers matching "zero-knowledge" per year](/blog/why-cryptography-needs-a-compiler/arxiv-zk-papers.png)
+![arXiv papers matching "zero-knowledge" per year](/blog/why-cryptographic-computation-needs-a-compiler/arxiv-zk-papers.png)
 
 Hardware moves at the same speed. NVIDIA overhauled its architecture roughly every two years from Kepler (2012) to Blackwell (2024), and at Computex 2024 it made a **one-year rhythm** official — Blackwell Ultra (2025), Rubin (2026), Rubin Ultra (2027), and Feynman (2028) are already on the roadmap. Same story for CUDA. Through CUDA 11, a major version arrived every 2–3 years; 13.x has shipped four minor versions in about eleven months. And this change lands directly on ZK. CUDA 13.3 exposed the carry-less multiply-accumulate instruction `clmad` in PTX — polynomial multiplication over GF(2), the heart of binary-field arithmetic. NVIDIA's [announcement blog](https://developer.nvidia.com/blog/building-faster-cryptography-with-carryless-multiplication-in-nvidia-cuda-13-3) names ZK proving as a use case directly, reporting that GF(2^128) sumcheck runs 3–4x faster on an RTX 5090 and 4–13x faster on a B200 versus the bitsliced implementations that came before. An operation that was emulated in software yesterday becomes a hardware instruction today. Before software catches up with the hardware, the hardware moves again.
 
-![NVIDIA architecture releases from Kepler to Feynman](/blog/why-cryptography-needs-a-compiler/nvidia-cadence.png)
+![NVIDIA architecture releases from Kepler to Feynman](/blog/why-cryptographic-computation-needs-a-compiler/nvidia-cadence.png)
 
-![CUDA release cadence by major version](/blog/why-cryptography-needs-a-compiler/cuda-releases.png)
+![CUDA release cadence by major version](/blog/why-cryptographic-computation-needs-a-compiler/cuda-releases.png)
 
 At the same time, I would diagnose clear unexplored territory in today's stack. Fiat-Shamir-based NIZKs force sequential computation — and the problem is worse in the sumcheck family, which needs a challenge every round. Tensor core utilization is low — ZK's field arithmetic rides the 32-bit integer pipeline, and there are measurements showing that while recent generations poured their silicon growth into tensor cores, integer-pipeline performance has stayed flat for several generations ([ZKProphet](https://arxiv.org/abs/2509.22684), IISWC 2025). GPUs get faster every generation, but ZK can't use the part that's getting faster. Nor is there any scheme that seriously exploits multi-GPU via NCCL and the like.
 
@@ -51,7 +51,7 @@ The reality is not import but **fork and copy.** Look at Poseidon2 alone. arkwor
 
 It happens even within a single team. One risc0 repo contains **four copies** of the same BabyBear Poseidon2 — [Rust (host)](https://github.com/risc0/risc0/blob/3bbcd44d6459b9ef6ac0df3846dc9215514934e8/risc0/zkp/src/core/hash/poseidon2/mod.rs), [CUDA](https://github.com/risc0/risc0/blob/3bbcd44d6459b9ef6ac0df3846dc9215514934e8/risc0/sys/kernels/zkp/cuda/supra/poseidon2.cu), [Metal](https://github.com/risc0/risc0/blob/3bbcd44d6459b9ef6ac0df3846dc9215514934e8/risc0/sys/kernels/zkp/metal/poseidon2.metal), and [C++ (witness generation)](https://github.com/risc0/risc0/blob/3bbcd44d6459b9ef6ac0df3846dc9215514934e8/risc0/circuit/rv32im-sys/cxx/zkp/poseidon2.cpp). It shares zero lines of code with Plonky3's implementation over the same field. SP1 is even more dramatic. Its CPU prover's primitives are re-exports of Plonky3 (the description of [`slop/crates/poseidon2`](https://github.com/succinctlabs/sp1/blob/a630089d9ff484ec6f2feade8d0afbb1447eed11/slop/crates/poseidon2/Cargo.toml) reads "Re-exports p3_poseidon2 from Plonky3"), while its GPU prover [re-implements the same pipeline from scratch in CUDA C++](https://github.com/succinctlabs/sp1/tree/a630089d9ff484ec6f2feade8d0afbb1447eed11/sp1-gpu/crates/sys). The two directory trees — basefold, challenger, merkle_tree, logup_gkr — mirror each other almost directory for directory, and the Fiat-Shamir challenger exists on both sides as a class with **the same name** ([`DuplexChallenger`](https://github.com/succinctlabs/sp1/blob/a630089d9ff484ec6f2feade8d0afbb1447eed11/sp1-gpu/crates/sys/include/challenger/challenger.cuh)), once in Rust and once in CUDA. The same logic is not reused; it is **repeated.**
 
-![SP1's Rust and CUDA directory trees mirroring each other](/blog/why-cryptography-needs-a-compiler/sp1-mirror-tree.png)
+![SP1's Rust and CUDA directory trees mirroring each other](/blog/why-cryptographic-computation-needs-a-compiler/sp1-mirror-tree.png)
 
 Does AI fix this? It accelerates it. Hand the work to an AI agent and it reaches down into arkworks and plonky3 to modify them whenever needed, and the fork **drifts** further and further from its upstream. No human can review all of those edits, so past some point the code can neither pull in upstream's improvements nor give its own improvements back.
 
