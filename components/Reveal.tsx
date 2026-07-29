@@ -29,11 +29,13 @@ export function Reveal({children, className, delay = 0}: Props) {
     if (el.getBoundingClientRect().top < window.innerHeight) return;
 
     // Bars inside the block grow from their own start rather than sliding in.
+    // `data-grow="left"` anchors that start on the right instead, so a bar
+    // reaching leftwards from a baseline still grows out of the line it hangs off.
     const bars = Array.from(el.querySelectorAll<HTMLElement>('[data-grow]'));
 
     el.style.opacity = '0';
     bars.forEach((bar) => {
-      bar.style.transformOrigin = 'left center';
+      bar.style.transformOrigin = bar.dataset.grow === 'left' ? 'right center' : 'left center';
       bar.style.transform = 'scaleX(0)';
     });
 
