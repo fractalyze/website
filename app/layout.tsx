@@ -51,6 +51,16 @@ export default function RootLayout({
   return (
     <html lang={siteMetadata.language}>
       <head>
+        {/* Only the Latin subset is on every page. Fetching it alongside the
+            stylesheet rather than after it parses is what stops the reflow when
+            the webfont replaces the fallback. */}
+        <link
+          rel="preload"
+          as="font"
+          type="font/woff2"
+          href="/fonts/pretendard/PretendardVariable.subset.91.woff2"
+          crossOrigin="anonymous"
+        />
         <link rel="stylesheet" href="/fonts/pretendard/pretendard.css" />
       </head>
       <body className={`${dmMono.variable} font-sans`}>
