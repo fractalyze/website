@@ -10,11 +10,19 @@ type Props = {
 
 export function Reveal({children, className, delay = 0}: Props) {
   const ref = useRef<HTMLDivElement>(null);
+  // Server output carries neither attribute, so the content is visible to
+  // readers without scripting and there is nothing for React to mismatch on.
+  const [armed, setArmed] = useState(false);
   const [shown, setShown] = useState(false);
 
   useEffect(() => {
     const el = ref.current;
-    if (!el) return;
+    if (!el || typeof IntersectionObserver === 'undefined') {
+      setShown(true);
+      return;
+    }
+
+    setArmed(true);
 
     const observer = new IntersectionObserver(
       ([entry]) => {
@@ -23,9 +31,8 @@ export function Reveal({children, className, delay = 0}: Props) {
           observer.disconnect();
         }
       },
-      // Fires as soon as the top edge clears the lower 12% of the viewport. A
-      // fractional threshold would hold a section blank while half of it is on
-      // screen, since a tall section takes a long scroll to expose 15% of itself.
+      // Fires as the top edge clears the lower 12% of the viewport. A fractional
+      // threshold would hold a tall section blank while half of it is on screen.
       {threshold: 0, rootMargin: '0px 0px -12% 0px'}
     );
 
@@ -36,7 +43,7 @@ export function Reveal({children, className, delay = 0}: Props) {
   return (
     <div
       ref={ref}
-      data-reveal
+      data-reveal={armed || undefined}
       data-shown={shown || undefined}
       style={delay ? ({'--reveal-delay': `${delay}ms`} as React.CSSProperties) : undefined}
       className={className}

@@ -52,11 +52,6 @@ export default function RootLayout({
     <html lang={siteMetadata.language}>
       <head>
         <link rel="stylesheet" href="/fonts/pretendard/pretendard.css" />
-        {/* Marks the document before first paint so reveal styles never hide
-            content from readers without scripting. */}
-        <script
-          dangerouslySetInnerHTML={{__html: "document.documentElement.classList.add('js')"}}
-        />
       </head>
       <body className={`${dmMono.variable} font-sans`}>
         <div className="flex min-h-screen flex-col">
