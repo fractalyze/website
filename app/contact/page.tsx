@@ -5,6 +5,12 @@ export const metadata = {
   description: 'Talk to the Fractalyze team about building, optimizing, or operating production cryptography.',
 };
 
+// Tally's share link renders its own page chrome; /embed strips it down to the form.
+function toEmbedUrl(shareUrl: string) {
+  const embed = shareUrl.replace('tally.so/r/', 'tally.so/embed/');
+  return `${embed}?alignLeft=1&hideTitle=1&transparentBackground=1`;
+}
+
 export default function ContactPage() {
   const formUrl = siteMetadata.contactFormUrl;
 
@@ -20,7 +26,7 @@ export default function ContactPage() {
       <div className="mx-auto mt-10 w-full max-w-[50rem]">
         {formUrl ? (
           <iframe
-            src={formUrl}
+            src={toEmbedUrl(formUrl)}
             title="Contact Fractalyze"
             loading="lazy"
             className="h-[45rem] w-full rounded-2xl border border-line"

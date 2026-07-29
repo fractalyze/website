@@ -9,7 +9,7 @@ const siteMetadata = {
   github: 'https://github.com/fractalyze',
   locale: 'en-US',
   // Hosted Tally form behind the Contact Us call to action; falls back to email when empty.
-  contactFormUrl: '',
+  contactFormUrl: 'https://tally.so/r/obY0eN',
   // Destination of the compiler page's "Awesome Zorch" call to action.
   zorchUrl: 'https://awesome-zorch.fractalyze.io',
   // Only entries with a URL are rendered in the footer.
