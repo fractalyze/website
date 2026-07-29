@@ -4,6 +4,7 @@ import whyXla from '@/assets/images/compiler/why-xla.webp';
 import whyIcicle from '@/assets/images/compiler/why-icicle.webp';
 import whyAi from '@/assets/images/compiler/why-ai.webp';
 import {CheckMark, CrossMark, PartialMark} from '@/components/icons/CompilerIcons';
+import {Reveal} from '@/components/Reveal';
 
 const cards = [
   {
@@ -70,7 +71,7 @@ const markLabels = {yes: 'supported', no: 'not supported', partial: 'partial'};
 export function WhyCompilerSection() {
   return (
     <section className="bg-surface px-section py-section">
-      <div className="mx-auto flex max-w-content flex-col items-center gap-10">
+      <Reveal className="mx-auto flex max-w-content flex-col items-center gap-10">
         <div className="flex max-w-[57.25rem] flex-col items-center gap-5 text-center">
           <h2 className="font-display text-display-4 text-ink">
             Why Cryptography Needs a Domain-Specific Compiler
@@ -147,7 +148,7 @@ export function WhyCompilerSection() {
             ))}
           </tbody>
         </table>
-      </div>
+      </Reveal>
     </section>
   );
 }

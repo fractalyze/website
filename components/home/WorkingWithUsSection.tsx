@@ -2,6 +2,7 @@ import Image from 'next/image';
 import buildImage from '@/assets/images/home/working-build.webp';
 import optimizeImage from '@/assets/images/home/working-optimize.webp';
 import operateImage from '@/assets/images/home/working-operate.webp';
+import {Reveal} from '@/components/Reveal';
 
 const engagements = [
   {
@@ -27,7 +28,7 @@ const engagements = [
 export function WorkingWithUsSection() {
   return (
     <section className="bg-surface px-section py-section">
-      <div className="mx-auto flex max-w-content flex-col items-center gap-10">
+      <Reveal className="mx-auto flex max-w-content flex-col items-center gap-10">
         <div className="flex max-w-measure flex-col items-center gap-5 text-center">
           <h2 className="font-display text-display-4 text-ink">Working With Us</h2>
           <p className="text-body-lg text-ink">
@@ -59,7 +60,7 @@ export function WorkingWithUsSection() {
             </article>
           ))}
         </div>
-      </div>
+      </Reveal>
     </section>
   );
 }

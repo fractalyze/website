@@ -1,3 +1,5 @@
+import {Reveal} from '@/components/Reveal';
+
 const pillars = [
   {
     title: 'FRX Compiler',
@@ -50,7 +52,7 @@ const pillars = [
 export function CompilerOrchestrationSection() {
   return (
     <section className="bg-ink px-section py-section">
-      <div className="mx-auto flex max-w-content flex-col items-center gap-10">
+      <Reveal className="mx-auto flex max-w-content flex-col items-center gap-10">
         <div className="flex max-w-measure flex-col items-center gap-5 text-center">
           <h2 className="font-display text-display-4 text-paper">Compiler &amp; Orchestration</h2>
           <p className="text-body-lg text-paper">
@@ -93,7 +95,7 @@ export function CompilerOrchestrationSection() {
             </div>
           ))}
         </div>
-      </div>
+      </Reveal>
     </section>
   );
 }

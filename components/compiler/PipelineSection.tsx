@@ -3,6 +3,7 @@ import {
   OrbitIcon,
   StackedTrianglesIcon,
 } from '@/components/icons/CompilerIcons';
+import {Reveal} from '@/components/Reveal';
 
 const stages = ['Zorch', 'FRX', 'StableHLO', 'XLA', 'PrimeIR', 'CPU · GPU'];
 
@@ -32,7 +33,7 @@ const layers = [
 export function PipelineSection() {
   return (
     <section className="bg-surface px-section py-section">
-      <div className="mx-auto flex max-w-content flex-col items-center gap-10">
+      <Reveal className="mx-auto flex max-w-content flex-col items-center gap-10">
         <div className="flex max-w-measure flex-col items-center gap-5 text-center">
           <h2 className="font-display text-display-4 text-ink">From Python to the Hardware</h2>
           <p className="text-body-lg text-ink">
@@ -67,7 +68,7 @@ export function PipelineSection() {
             </article>
           ))}
         </div>
-      </div>
+      </Reveal>
     </section>
   );
 }

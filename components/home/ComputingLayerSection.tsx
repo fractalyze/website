@@ -1,3 +1,4 @@
+import {Reveal} from '@/components/Reveal';
 import {CpuIcon, FpgaIcon, GpuIcon, TpuIcon} from '@/components/icons/PlatformIcons';
 
 const DIAGRAM_WIDTH = 552;
@@ -183,18 +184,29 @@ export function ComputingLayerSection() {
               </ul>
             </div>
 
+            {/* Revealed step by step: the length of the descent is the point
+                this column is making. */}
             <div className="flex flex-col items-center gap-2 rounded-xl border border-line bg-paper p-5 text-ink">
-              <AppHeader />
-              <ArrowRow count={5} />
-              <ProcessRow steps={todaySpecialistWork} tone="brand" />
-              <BusConnector from={5} to={5} />
-              <ProcessRow steps={todayHandwork} tone="blue" />
-              <BusConnector from={5} to={1} />
-              <div className="flex w-full items-center justify-center rounded-lg bg-accent px-5 py-4 text-body-sm text-ink">
-                {todayHardwareWork}
-              </div>
-              <BusConnector from={1} to={4} />
-              <PlatformRow />
+              {[
+                <AppHeader key="app" />,
+                <ArrowRow key="fan" count={5} />,
+                <ProcessRow key="specialists" steps={todaySpecialistWork} tone="brand" />,
+                <BusConnector key="bus-1" from={5} to={5} />,
+                <ProcessRow key="handwork" steps={todayHandwork} tone="blue" />,
+                <BusConnector key="bus-2" from={5} to={1} />,
+                <div
+                  key="hardware"
+                  className="flex w-full items-center justify-center rounded-lg bg-accent px-5 py-4 text-body-sm text-ink"
+                >
+                  {todayHardwareWork}
+                </div>,
+                <BusConnector key="bus-3" from={1} to={4} />,
+                <PlatformRow key="platforms" />,
+              ].map((step, index) => (
+                <Reveal key={step.key} className="w-full" delay={index * 90}>
+                  {step}
+                </Reveal>
+              ))}
             </div>
           </div>
 
@@ -214,7 +226,8 @@ export function ComputingLayerSection() {
               </ul>
             </div>
 
-            <div className="flex flex-col items-center gap-2 rounded-xl border border-line bg-paper p-5 text-ink">
+            {/* Arrives as one piece, against the other column's nine steps. */}
+            <Reveal className="flex flex-col items-center gap-2 rounded-xl border border-line bg-paper p-5 text-ink">
               <AppHeader />
               <ExchangeArrows />
               {/* Fixed so this card matches the height of the "Today" one beside it. */}
@@ -229,7 +242,7 @@ export function ComputingLayerSection() {
                 ))}
               </div>
               <PlatformRow withArrows />
-            </div>
+            </Reveal>
           </div>
         </div>
       </div>

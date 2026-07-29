@@ -1,7 +1,9 @@
+import {Reveal} from '@/components/Reveal';
+
 export function ProductionGapSection() {
   return (
     <section className="bg-ink px-section py-section">
-      <div className="mx-auto flex max-w-[75rem] flex-col items-center gap-5 text-center">
+      <Reveal className="mx-auto flex max-w-[75rem] flex-col items-center gap-5 text-center">
         <h2 className="font-display text-display-4 text-paper">The Production Gap</h2>
         <p className="text-body-lg text-paper">
           Advanced cryptography is moving from research into production, powering privacy,
@@ -11,7 +13,7 @@ export function ProductionGapSection() {
           heavy, the systems are hand built by a small pool of specialists, and the road from
           prototype to production takes years.
         </p>
-      </div>
+      </Reveal>
     </section>
   );
 }

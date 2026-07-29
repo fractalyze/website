@@ -3,6 +3,7 @@ import confidentialFinance from '@/assets/images/home/domain-confidential-financ
 import aiInfrastructure from '@/assets/images/home/domain-ai-infrastructure.webp';
 import digitalIdentity from '@/assets/images/home/domain-digital-identity.webp';
 import secureCollaboration from '@/assets/images/home/domain-secure-collaboration.webp';
+import {Reveal} from '@/components/Reveal';
 
 const domains = [
   {
@@ -46,7 +47,7 @@ const domains = [
 export function PoweringSection() {
   return (
     <section className="bg-paper px-section py-section">
-      <div className="mx-auto flex max-w-content flex-col items-center gap-10">
+      <Reveal className="mx-auto flex max-w-content flex-col items-center gap-10">
         <div className="flex max-w-measure flex-col items-center gap-5 text-center">
           <h2 className="font-display text-display-4 text-ink">
             Powering the Next Generation of Cryptography
@@ -82,7 +83,7 @@ export function PoweringSection() {
             </div>
           ))}
         </div>
-      </div>
+      </Reveal>
     </section>
   );
 }

@@ -2,6 +2,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import {allBlogs} from '.contentlayer/generated';
 import {compareDesc, format} from 'date-fns';
+import {Reveal} from '@/components/Reveal';
 
 export function ResearchBlogSection() {
   const posts = allBlogs
@@ -15,7 +16,7 @@ export function ResearchBlogSection() {
 
   return (
     <section className="bg-paper px-section py-section">
-      <div className="mx-auto flex max-w-content flex-col items-center gap-10">
+      <Reveal className="mx-auto flex max-w-content flex-col items-center gap-10">
         <div className="flex max-w-measure flex-col items-center gap-5 text-center">
           <h2 className="font-display text-display-4 text-ink">Research &amp; Blog</h2>
           <p className="text-body-lg text-ink">
@@ -59,7 +60,7 @@ export function ResearchBlogSection() {
             </article>
           ))}
         </div>
-      </div>
+      </Reveal>
     </section>
   );
 }
