@@ -57,10 +57,10 @@ export function Reveal({children, className, delay = 0}: Props) {
         clear();
         el.animate(
           [
-            {opacity: 0, transform: 'translateY(12px)'},
+            {opacity: 0, transform: 'translateY(24px)'},
             {opacity: 1, transform: 'none'},
           ],
-          {duration: 800, delay, easing: 'cubic-bezier(0.2, 0.6, 0.2, 1)', fill: 'backwards'}
+          {duration: 1100, delay, easing: 'cubic-bezier(0.4, 0, 0.2, 1)', fill: 'backwards'}
         );
         bars.forEach((bar, index) => {
           bar.animate([{transform: 'scaleX(0)'}, {transform: 'none'}], {
