@@ -27,7 +27,7 @@ export type Benchmark = {
 
 export const benchmarks: Benchmark[] = [
   {
-    workload: 'msm bn254 G1',
+    workload: 'msm(bn254 g1, 2^24)',
     instance: '2²⁴',
     ms: 248.12,
     baselines: [
@@ -37,14 +37,14 @@ export const benchmarks: Benchmark[] = [
     basis: 'kernel',
   },
   {
-    workload: 'msm bn254 G2',
+    workload: 'msm(bn254 g2, 2^24)',
     instance: '2²⁴',
     ms: 960.7,
     baselines: [{name: 'ICICLE v4', ms: 156.46}],
     basis: 'wall-clock',
   },
   {
-    workload: 'ntt bn254',
+    workload: 'ntt(bn254, 2^24)',
     instance: '2²⁴',
     ms: 7.66,
     baselines: [
@@ -54,21 +54,21 @@ export const benchmarks: Benchmark[] = [
     basis: 'kernel',
   },
   {
-    workload: 'ntt koalabear',
+    workload: 'ntt(koalabear, 2^24)',
     instance: '2²⁴',
     ms: 0.6607,
     baselines: [{name: 'SP1 sppark', ms: 0.24}],
     basis: 'kernel',
   },
   {
-    workload: 'ntt GF(2³²)',
+    workload: 'ntt(gf(2^32), 2^23)',
     instance: '2²³',
     ms: 4.568,
     baselines: [{name: 'binius-gpu', ms: 8.402}],
     basis: 'kernel',
   },
   {
-    workload: 'groth16 prove',
+    workload: 'groth16_prove',
     instance: 'SP1 verifier circuit, 2²⁴ domain',
     ms: 1573,
     baselines: [{name: 'gnark ICICLE', ms: 2355}],
@@ -76,7 +76,7 @@ export const benchmarks: Benchmark[] = [
     note: '15,965,950 constraints',
   },
   {
-    workload: 'execute / checkpoint_gen',
+    workload: 'sp1_checkpoint_gen',
     instance: 'block 21740136',
     ms: 1200,
     baselines: [{name: 'SP1', ms: 2230}],
@@ -84,7 +84,7 @@ export const benchmarks: Benchmark[] = [
     note: 'both CPU',
   },
   {
-    workload: 'trace_gen',
+    workload: 'sp1_trace_gen',
     instance: 'block 21740136',
     ms: 518.67,
     baselines: [{name: 'SP1', ms: 1140}],
@@ -92,7 +92,7 @@ export const benchmarks: Benchmark[] = [
     note: 'our GPU vs SP1 CPU',
   },
   {
-    workload: 'trace_commit',
+    workload: 'sp1_trace_commit',
     instance: 'block 21740136, shard 17',
     ms: 17.6,
     baselines: [{name: 'SP1', ms: 16.6}],
@@ -100,7 +100,7 @@ export const benchmarks: Benchmark[] = [
     note: 'both GPU',
   },
   {
-    workload: 'logup_gkr',
+    workload: 'sp1_logup_gkr',
     instance: 'block 21740136, shard 17',
     ms: 20.4,
     baselines: [{name: 'SP1', ms: 19.9}],
@@ -108,7 +108,7 @@ export const benchmarks: Benchmark[] = [
     note: 'both GPU',
   },
   {
-    workload: 'zerocheck',
+    workload: 'sp1_zerocheck',
     instance: 'block 21740136, shard 17',
     ms: 50.8,
     baselines: [{name: 'SP1', ms: 156.9}],
@@ -116,7 +116,7 @@ export const benchmarks: Benchmark[] = [
     note: 'both GPU',
   },
   {
-    workload: 'jagged_evals',
+    workload: 'sp1_jagged_evals',
     instance: 'block 21740136, shard 17',
     ms: 37.8,
     baselines: [{name: 'SP1', ms: 41.1}],

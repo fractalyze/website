@@ -20,10 +20,17 @@ const rows = benchmarks.flatMap((benchmark) =>
   })
 );
 
-const GRID = 'grid grid-cols-[15rem_1fr_9rem] items-center gap-4';
+const GRID = 'grid grid-cols-[15rem_1fr_7rem] items-center gap-4';
 
-/** What the clock covered, plus anything qualifying the run. */
-const meta = ({basis, note}: Benchmark) => (note ? `${basis} · ${note}` : basis);
+/**
+ * How the run was set up, for the hover title.
+ *
+ * The instance, the clock, and any hardware caveat are all provenance a reader
+ * needs only when they question a number, and putting three lines of it under
+ * every workload buried the chart. They stay one hover away instead.
+ */
+const provenance = ({instance, basis, note}: Benchmark) =>
+  [instance, basis, note].filter(Boolean).join(' · ');
 
 export function BenchmarkSection() {
   return (
@@ -58,34 +65,26 @@ export function BenchmarkSection() {
             {rows.map(({benchmark, baseline, times, faster, length, lead}) => (
               <li
                 key={`${benchmark.workload}/${baseline.name}`}
-                className={`${GRID} h-[3.75rem] ${lead ? 'border-t border-line' : ''}`}
+                className={`${GRID} h-[3.125rem] ${lead ? 'border-t border-line' : ''}`}
               >
-                {/* Cells truncate rather than wrap, so each carries its own full
-                    text: a longer instance or note stays readable on hover instead
-                    of forcing every row taller to fit the worst case. */}
-                <div className="min-w-0">
+                {/* Cells truncate rather than wrap, so the name and the baseline
+                    each carry their own text, and the row carries how it was
+                    measured. */}
+                <div className="min-w-0" title={provenance(benchmark)}>
                   {lead && (
-                    <>
-                      <span
-                        title={benchmark.workload}
-                        className="block truncate text-body font-semibold leading-[1.1rem] text-ink"
-                      >
-                        {benchmark.workload}
-                      </span>
-                      <span
-                        title={benchmark.instance}
-                        className="block truncate text-body-sm text-muted"
-                      >
-                        {benchmark.instance}
-                      </span>
-                      <span
-                        title={meta(benchmark)}
-                        className="block truncate text-micro text-muted"
-                      >
-                        {meta(benchmark)}
-                      </span>
-                    </>
+                    <span
+                      title={benchmark.workload}
+                      className="block truncate text-body font-semibold leading-[1.1rem] text-ink"
+                    >
+                      {benchmark.workload}
+                    </span>
                   )}
+                  <span
+                    title={`vs ${baseline.name}`}
+                    className="block truncate text-body-sm text-muted"
+                  >
+                    vs {baseline.name}
+                  </span>
                 </div>
 
                 <div className="relative h-full">
@@ -108,19 +107,11 @@ export function BenchmarkSection() {
                   />
                 </div>
 
-                <div className="text-right">
-                  <span
-                    className={`block text-body font-semibold leading-[1.1rem] ${faster ? 'text-ink' : 'text-muted'}`}
-                  >
-                    {times.toFixed(2)}× {faster ? 'faster' : 'slower'}
-                  </span>
-                  <span
-                    title={`vs ${baseline.name}`}
-                    className="block truncate text-body-sm text-muted"
-                  >
-                    vs {baseline.name}
-                  </span>
-                </div>
+                <span
+                  className={`text-right text-body font-semibold leading-[1.1rem] ${faster ? 'text-ink' : 'text-muted'}`}
+                >
+                  {times.toFixed(2)}× {faster ? 'faster' : 'slower'}
+                </span>
               </li>
             ))}
           </ul>
