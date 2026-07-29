@@ -32,7 +32,7 @@ export function Footer() {
                 <li key={link.title}>
                   <Link
                     href={link.href}
-                    className="text-body font-semibold text-ink/80 transition-opacity hover:opacity-70"
+                    className="flex min-h-6 items-center text-body font-semibold text-ink/80 transition-opacity hover:opacity-70"
                   >
                     {link.title}
                   </Link>

@@ -45,6 +45,7 @@
     "eslint": "^9.39.1",
     "eslint-config-google": "^0.14.0",
     "eslint-config-next": "^16.0.4",
+    "lighthouse": "^12.8.2",
     "postcss": "^8.5.6",
     "tailwindcss": "^3.4.18"
   }

@@ -20,7 +20,7 @@ export function Header() {
                 <li key={link.title}>
                   <Link
                     href={link.href}
-                    className="block px-4 py-2 text-body font-medium text-ink transition-opacity hover:opacity-70"
+                    className="flex min-h-6 items-center px-4 py-2 text-body font-medium text-ink transition-opacity hover:opacity-70"
                   >
                     {link.title}
                   </Link>
