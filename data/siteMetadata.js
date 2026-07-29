@@ -4,7 +4,7 @@ const siteMetadata = {
   headerTitle: 'Fractalyze',
   description: 'Building Zorch - The Pytorch for Zero-Knowledge. Accelerating the Verifiable Internet.',
   language: 'en-us',
-  siteUrl: 'https://fractalyze.io',
+  siteUrl: 'https://www.fractalyze.io',
   email: 'contact@fractalyze.io',
   github: 'https://github.com/fractalyze',
   locale: 'en-US',
