@@ -3,7 +3,12 @@
 @tailwind utilities;
 
 html {
-  scroll-behavior: smooth;
+  /*
+   * No scroll-behavior: smooth here. Nothing on the site links to an anchor
+   * within a page, so the only scroll it ever animated was the router's jump
+   * back to the top — which played after the new page had already rendered,
+   * showing a fresh page scrolling up from wherever the last one was left.
+   */
   /*
    * The design is drawn on a 1920px canvas and every size in the theme is in rem,
    * so scaling the root size scales the whole layout proportionally: 16px at 1920
