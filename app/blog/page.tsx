@@ -8,7 +8,7 @@ export const metadata = {
   description: 'Research and technical articles from the Fractalyze team',
 };
 
-const categories = ['Research', 'Progress', 'Company'] as const;
+const categories = ['Tech', 'Business', 'Product'] as const;
 
 export default async function BlogPage({
   searchParams,
