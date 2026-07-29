@@ -1,99 +1,143 @@
-// The stack diagrams below are transcribed verbatim from the 260728 design, which
-// still carries ML-inference placeholder labels (vLLM / PyTorch / Triton, MAX,
-// CUDA / ROCm). They describe the wrong domain for this site and must be replaced
-// with cryptography equivalents before launch.
-type Box = {label: string; sublabel?: string; tone: 'neutral' | 'accent'; tall?: boolean};
+import {CpuIcon, FpgaIcon, GpuIcon, TpuIcon} from '@/components/icons/PlatformIcons';
 
-const todayStack: Box[] = [
-  {label: 'Your application', tone: 'neutral'},
-  {label: 'Custom or open-source model', tone: 'neutral'},
-  {label: 'vLLM / PyTorch / Triton', tone: 'accent'},
+const DIAGRAM_WIDTH = 552;
+const COLUMN_GAP = 8;
+
+const todaySpecialistWork = [
+  ['Compiler', 'Optimization'],
+  ['Runtime &', 'Memory Tuning'],
+  ['GPU Kernel', 'Engineering'],
+  ['Benchmarking &', 'Profiling'],
+  ['Infra /', 'Deployment'],
 ];
 
-const todayTargets: {head?: Box; device: Box}[] = [
-  {head: {label: 'NVIDIA CUDA stack', tone: 'accent'}, device: {label: 'NVIDIA', sublabel: 'B200', tone: 'neutral'}},
-  {head: {label: 'AMD ROCm stack', tone: 'accent'}, device: {label: 'AMD', sublabel: 'MI355X', tone: 'neutral'}},
+const todayHandwork = [
+  ['Manual', 'Tuning'],
+  ['Debugging &', 'Logging'],
+  ['Integration &', 'Handoffs'],
+  ['QA &', 'Validation'],
+  ['Vendor-specific', 'Fixes'],
 ];
 
-const fractalyzeStack: Box[] = [
-  {label: 'Your application', tone: 'neutral'},
-  {label: 'Custom or open-source model', tone: 'neutral'},
-  {label: 'MAX', tone: 'accent', tall: true},
+const todayStacks = ['NVIDIA CUDA stack', 'AMD ROCm stack'];
+
+const platforms = [
+  {label: 'CPU', Icon: CpuIcon},
+  {label: 'GPU', Icon: GpuIcon},
+  {label: 'TPU', Icon: TpuIcon},
+  {label: 'FPGA', Icon: FpgaIcon},
 ];
 
-const fractalyzeTargets: {head?: Box; device: Box}[] = [
-  {device: {label: 'NVIDIA', sublabel: 'B200', tone: 'neutral'}},
-  {device: {label: 'AMD', sublabel: 'MI355X', tone: 'neutral'}},
-];
-
-const toneClass = {
-  neutral: 'bg-surface border border-line',
-  accent: 'bg-accent',
-};
-
-function StackBox({box}: {box: Box}) {
-  return (
-    <div
-      className={`flex w-full flex-col items-center justify-center rounded-lg px-5 py-4 ${toneClass[box.tone]} ${
-        box.tall ? 'h-[7.125rem]' : ''
-      }`}
-    >
-      <span
-        className={
-          box.tall ? 'text-body-lg font-semibold text-ink' : 'text-body-sm text-ink'
-        }
-      >
-        {box.label}
-      </span>
-      {box.sublabel && <span className="text-[0.6875rem] leading-[0.75rem] text-muted">{box.sublabel}</span>}
-    </div>
-  );
+// Horizontal centre of each column, so connectors line up with the boxes they join.
+function columnCentres(count: number) {
+  const item = (DIAGRAM_WIDTH - COLUMN_GAP * (count - 1)) / count;
+  return Array.from({length: count}, (_, i) => i * (item + COLUMN_GAP) + item / 2);
 }
 
-// Dashed 1.5px rules with a triangular arrow head, as drawn in the design.
-function Connector({lines = 1}: {lines?: 1 | 2}) {
-  const xs = lines === 2 ? [8.5, 28.5] : [18.5];
+const dashed = {strokeWidth: 1.5, strokeDasharray: '3 3'} as const;
+
+function head(x: number, y: number) {
+  return `M${x - 4} ${y} L${x + 4} ${y} L${x} ${y + 8} Z`;
+}
+
+function ArrowRow({count, height = 30}: {count: number; height?: number}) {
   return (
     <svg
-      viewBox="0 0 37 40"
-      className="h-10 w-[2.3125rem] shrink-0"
+      viewBox={`0 0 ${DIAGRAM_WIDTH} ${height}`}
+      className="h-auto w-full"
       fill="none"
       stroke="currentColor"
       aria-hidden
     >
-      {xs.map((x) => (
+      {columnCentres(count).map((x) => (
         <g key={x}>
-          <line x1={x} y1="0" x2={x} y2="33" strokeWidth="1.5" strokeDasharray="3 3" />
-          <path d={`M${x - 3.5} 32 L${x + 3.5} 32 L${x} 40 Z`} fill="currentColor" stroke="none" />
+          <line x1={x} y1={0} x2={x} y2={height - 8} {...dashed} />
+          <path d={head(x, height - 8)} fill="currentColor" stroke="none" />
         </g>
       ))}
     </svg>
   );
 }
 
-function Diagram({
-  stack,
-  targets,
-}: {
-  stack: Box[];
-  targets: {head?: Box; device: Box}[];
-}) {
+// A run of stubs into a shared horizontal rule, then arrows down to the next row.
+function BusConnector({from, to}: {from: number; to: number}) {
+  const top = columnCentres(from);
+  const bottom = columnCentres(to);
+  const span = [...top, ...bottom];
   return (
-    <div className="flex w-full flex-col items-center gap-2 rounded-xl border border-line bg-paper p-5 text-ink">
-      <StackBox box={stack[0]} />
-      <Connector lines={2} />
-      {stack.slice(1).map((box) => (
-        <StackBox key={box.label} box={box} />
+    <svg
+      viewBox={`0 0 ${DIAGRAM_WIDTH} 50`}
+      className="h-auto w-full"
+      fill="none"
+      stroke="currentColor"
+      aria-hidden
+    >
+      {top.map((x) => (
+        <line key={`t${x}`} x1={x} y1={0} x2={x} y2={20} {...dashed} />
       ))}
-      <div className="flex w-full items-stretch gap-2">
-        {targets.map(({head, device}) => (
-          <div key={device.sublabel ?? device.label} className="flex flex-1 flex-col items-center gap-2">
-            {head && <StackBox box={head} />}
-            <Connector />
-            <StackBox box={device} />
+      <line x1={Math.min(...span)} y1={20} x2={Math.max(...span)} y2={20} strokeWidth={1.5} />
+      {bottom.map((x) => (
+        <g key={`b${x}`}>
+          <line x1={x} y1={20} x2={x} y2={42} {...dashed} />
+          <path d={head(x, 42)} fill="currentColor" stroke="none" />
+        </g>
+      ))}
+    </svg>
+  );
+}
+
+function ExchangeArrows() {
+  return (
+    <svg viewBox="0 0 37 40" className="h-10 w-[2.3125rem]" fill="none" stroke="currentColor" aria-hidden>
+      <line x1={8.5} y1={0} x2={8.5} y2={32} {...dashed} />
+      <path d={head(8.5, 32)} fill="currentColor" stroke="none" />
+      <line x1={28.5} y1={8} x2={28.5} y2={40} {...dashed} />
+      <path d="M24.5 8 L32.5 8 L28.5 0 Z" fill="currentColor" stroke="none" />
+    </svg>
+  );
+}
+
+function AppHeader() {
+  return (
+    <div className="flex w-full items-center justify-center rounded-lg border border-line bg-surface px-5 py-4 text-body-sm text-ink">
+      Your application
+    </div>
+  );
+}
+
+function PlatformRow({withArrows = false}: {withArrows?: boolean}) {
+  return (
+    <div className="flex w-full items-stretch gap-2">
+      {platforms.map(({label, Icon}) => (
+        <div key={label} className="flex flex-1 flex-col items-center">
+          {withArrows && <ArrowRow count={1} height={40} />}
+          <div className="flex w-full items-center justify-center gap-1 rounded-lg border border-line bg-surface px-5 py-4">
+            <Icon />
+            <span className="text-body-sm text-ink">{label}</span>
           </div>
-        ))}
-      </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function ProcessRow({steps, tone}: {steps: string[][]; tone: 'brand' | 'blue'}) {
+  return (
+    <div className="flex w-full items-stretch gap-2">
+      {steps.map((lines) => (
+        <div
+          key={lines.join(' ')}
+          className={`flex flex-1 items-center justify-center rounded-lg px-5 py-4 text-center text-micro leading-[1.1] text-ink ${
+            tone === 'brand' ? 'bg-accent' : 'bg-accent-blue'
+          }`}
+        >
+          <span>
+            {lines[0]}
+            <br />
+            {lines[1]}
+          </span>
+        </div>
+      ))}
     </div>
   );
 }
@@ -113,8 +157,8 @@ export function ComputingLayerSection() {
           </p>
         </div>
 
-        <div className="flex w-[81.25rem] max-w-full items-stretch gap-8">
-          <div className="flex flex-1 flex-col gap-5 rounded-2xl border border-line bg-surface p-8">
+        <div className="grid w-[81.25rem] max-w-full grid-cols-2 gap-5">
+          <div className="flex flex-col gap-5 rounded-2xl border border-line bg-surface p-6">
             <span className="w-fit rounded-full border border-line bg-paper px-4 py-1.5 text-caption text-muted">
               Today
             </span>
@@ -123,14 +167,36 @@ export function ComputingLayerSection() {
               <p className="text-body-lg font-medium text-ink">
                 Many specialists. Months of engineering.
               </p>
-              <p className="whitespace-pre-line text-body text-ink">
-                {'Protocol, compiler, GPU, and runtime engineers working in separate silos\nMonths of manual integration, tuning, and performance iteration\nEvery new scheme or hardware target starts from scratch'}
-              </p>
+              <ul className="list-disc pl-5 text-body text-ink">
+                <li>Protocol, compiler, GPU, and runtime engineers working in separate silos</li>
+                <li>Months of manual integration, tuning, and performance iteration</li>
+                <li>Every new scheme or hardware target starts from scratch</li>
+              </ul>
             </div>
-            <Diagram stack={todayStack} targets={todayTargets} />
+
+            <div className="flex flex-col items-center gap-2 rounded-xl border border-line bg-paper p-5 text-ink">
+              <AppHeader />
+              <ArrowRow count={5} />
+              <ProcessRow steps={todaySpecialistWork} tone="brand" />
+              <BusConnector from={5} to={5} />
+              <ProcessRow steps={todayHandwork} tone="blue" />
+              <BusConnector from={5} to={2} />
+              <div className="flex w-full items-stretch gap-2">
+                {todayStacks.map((stack) => (
+                  <div
+                    key={stack}
+                    className="flex flex-1 items-center justify-center rounded-lg bg-accent px-5 py-4 text-body-sm text-ink"
+                  >
+                    {stack}
+                  </div>
+                ))}
+              </div>
+              <BusConnector from={2} to={4} />
+              <PlatformRow />
+            </div>
           </div>
 
-          <div className="flex flex-1 flex-col gap-5 rounded-2xl bg-ink p-8">
+          <div className="flex flex-col gap-5 rounded-2xl bg-ink p-6">
             <span className="w-fit rounded-full border border-line bg-paper px-4 py-1.5 text-caption text-muted">
               With Fractalyze
             </span>
@@ -139,11 +205,26 @@ export function ComputingLayerSection() {
               <p className="text-body-lg font-medium text-paper">
                 Focus on your application, we handle the rest.
               </p>
-              <p className="whitespace-pre-line text-body text-paper">
-                {'One compiler automatically optimizes and generates execution code\nA runtime handles high-performance execution and memory management\nOrchestration scales the same workload across CPU, GPU, TPU, and FPGA'}
-              </p>
+              <ul className="list-disc pl-5 text-body text-paper">
+                <li>One compiler automatically optimizes and generates execution code</li>
+                <li>A runtime handles high-performance execution and memory management</li>
+                <li>Orchestration scales the same workload across CPU, GPU, TPU, and FPGA</li>
+              </ul>
             </div>
-            <Diagram stack={fractalyzeStack} targets={fractalyzeTargets} />
+
+            <div className="flex flex-col items-center gap-2 rounded-xl border border-line bg-paper p-5 text-ink">
+              <AppHeader />
+              <ExchangeArrows />
+              <div className="flex w-full flex-col gap-2 rounded-2xl border border-accent bg-accent/40 p-5">
+                <div className="flex items-center justify-center rounded-lg bg-accent px-5 py-10 text-body-sm text-ink">
+                  Orchestration Layer
+                </div>
+                <div className="flex items-center justify-center rounded-lg bg-accent px-5 py-10 text-body-sm text-ink">
+                  Compiler Layer
+                </div>
+              </div>
+              <PlatformRow withArrows />
+            </div>
           </div>
         </div>
       </div>

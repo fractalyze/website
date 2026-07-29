@@ -41,7 +41,10 @@ const config: Config = {
         },
         muted: '#666666',
         subtle: '#999999',
-        accent: '#D0CEEC',
+        accent: {
+          DEFAULT: '#D0CEEC',
+          blue: '#A7C4F6',
+        },
         line: {
           DEFAULT: '#E0E0E0',
           strong: '#BBBBBB',
