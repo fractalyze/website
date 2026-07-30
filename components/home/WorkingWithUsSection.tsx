@@ -27,35 +27,42 @@ const engagements = [
 
 export function WorkingWithUsSection() {
   return (
-    <section className="bg-surface px-section py-section">
-      <Reveal className="mx-auto flex max-w-content flex-col items-center gap-10">
-        <div className="flex max-w-measure flex-col items-center gap-5 text-center">
-          <h2 className="font-display text-display-4 text-ink">Working With Us</h2>
-          <p className="text-body-lg text-ink">
-            Building production cryptography takes more than software.
-            <br />
+    <section className="bg-surface px-6 py-16 md:px-10 md:py-20 xl:px-section xl:py-section">
+      <Reveal className="mx-auto flex max-w-content flex-col items-center gap-8 md:gap-10">
+        <div className="flex max-w-measure flex-col items-center gap-4 text-center md:gap-5">
+          <h2 className="font-display text-title-2 text-ink md:text-title-1 xl:text-display-4">
+            Working With Us
+          </h2>
+          <p className="text-body-sm text-ink md:text-body-lg">
+            Building production cryptography takes more than software.{' '}
+            <br className="hidden xl:inline" />
             Our engineers work as part of your team, from first design to live operations
           </p>
         </div>
 
-        <div className="grid w-full grid-cols-3 gap-5">
+        <div className="grid w-full grid-cols-1 gap-5 md:grid-cols-3">
           {engagements.map((engagement) => (
             <article
               key={engagement.title}
               className="overflow-hidden rounded-2xl border border-line bg-paper"
             >
-              <div className="relative h-[15rem] w-full">
+              {/* A ratio rather than a height until the card is the known 453px
+                  wide the desktop grid gives it: one fixed height crops a
+                  different part of the art at every width in between. */}
+              <div className="relative aspect-[15/8] w-full xl:aspect-auto xl:h-[15rem]">
                 <Image
                   src={engagement.image}
                   alt=""
                   fill
-                  sizes="453px"
+                  sizes="(min-width: 1280px) 453px, (min-width: 768px) 33vw, 100vw"
                   className="object-cover"
-            placeholder="blur"
+                  placeholder="blur"
                 />
               </div>
-              <div className="flex flex-col gap-4 p-8">
-                <h3 className="text-title-3 font-medium text-ink">{engagement.title}</h3>
+              <div className="flex flex-col gap-4 p-6 xl:p-8">
+                <h3 className="text-title-4 font-medium text-ink md:text-title-3">
+                  {engagement.title}
+                </h3>
                 <p className="text-body-sm text-ink">{engagement.description}</p>
               </div>
             </article>

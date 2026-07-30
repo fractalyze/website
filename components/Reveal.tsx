@@ -10,6 +10,12 @@ type Props = {
 
 const FAILSAFE_MS = 1000;
 
+// How far above the viewport the recovery root below reaches. It has to cover
+// the distance from the top of the viewport back to the top of the document for
+// a block left anywhere above the fold to count as passed; a page taller than
+// this would leave a block above the mark dimmed.
+const PASSED_REACH_PX = 100000;
+
 /**
  * Fades a block up as it scrolls into view.
  *
@@ -46,8 +52,19 @@ export function Reveal({children, className, delay = 0}: Props) {
       });
     };
 
-    // Cleared by the observer's first callback; only fires if none arrives.
-    const failsafe = window.setTimeout(clear, FAILSAFE_MS);
+    // Cleared by the observer's first callback; only fires if none arrives —
+    // which is also the case where nothing else will ever disconnect them, so it
+    // has to tear both observers down rather than only undim the block.
+    const failsafe = window.setTimeout(() => {
+      stop();
+      clear();
+    }, FAILSAFE_MS);
+
+    const stop = () => {
+      window.clearTimeout(failsafe);
+      observer.disconnect();
+      passed.disconnect();
+    };
 
     const observer = new IntersectionObserver(
       ([entry]) => {
@@ -55,7 +72,7 @@ export function Reveal({children, className, delay = 0}: Props) {
         // block is in view, so it doubles as proof the observer is alive.
         window.clearTimeout(failsafe);
         if (!entry.isIntersecting) return;
-        observer.disconnect();
+        stop();
         clear();
         el.animate(
           [
@@ -76,11 +93,27 @@ export function Reveal({children, className, delay = 0}: Props) {
       {threshold: 0, rootMargin: '0px 0px -10% 0px'}
     );
 
+    // A jump — a restored scroll position, a #hash link, find-in-page — can
+    // carry a dimmed block from below the fold to above the viewport in one
+    // step. Both ends of that jump have a zero intersection ratio, so the
+    // observer above is never called again and the block would stay dimmed for
+    // good. This root covers everything above the viewport instead, which makes
+    // being scrolled past an event of its own: the animation is missed, but the
+    // content the reader is scrolling back to is there.
+    const passed = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting) return;
+        stop();
+        clear();
+      },
+      {threshold: 0, rootMargin: `${PASSED_REACH_PX}px 0px -100% 0px`}
+    );
+
     observer.observe(el);
+    passed.observe(el);
 
     return () => {
-      window.clearTimeout(failsafe);
-      observer.disconnect();
+      stop();
       clear();
     };
   }, [delay]);

@@ -154,30 +154,35 @@ function ProcessRow({steps, tone}: {steps: string[][]; tone: 'brand' | 'blue'}) 
 
 export function ComputingLayerSection() {
   return (
-    <section className="bg-paper px-section py-section">
-      <div className="mx-auto flex max-w-content flex-col items-center gap-10">
-        <div className="flex max-w-measure flex-col items-center gap-5 text-center">
-          <h2 className="font-display text-display-4 text-ink">
+    <section className="bg-paper px-6 py-16 md:px-10 md:py-20 xl:px-section xl:py-section">
+      <div className="mx-auto flex max-w-content flex-col items-center gap-8 md:gap-10">
+        <div className="flex max-w-measure flex-col items-center gap-4 text-center md:gap-5">
+          <h2 className="font-display text-title-2 text-ink md:text-title-1 xl:text-display-4">
             The Computing Layer for Cryptography
           </h2>
-          <p className="text-body-lg text-ink">
-            A unified platform that automatically transforms high-level cryptographic applications
-            <br />
+          <p className="text-body-sm text-ink md:text-body-lg">
+            A unified platform that automatically transforms high-level cryptographic applications{' '}
+            <br className="hidden xl:inline" />
             into optimized execution for any target hardware.
           </p>
         </div>
 
-        <div className="grid w-[81.25rem] max-w-full grid-cols-2 gap-5">
-          <div className="flex flex-col gap-5 rounded-2xl border border-line bg-surface p-6">
+        {/* Side by side only at desktop. Each panel carries a diagram drawn to a
+            552px grid, and halving the width of a screen that is already narrower
+            than that leaves nothing to draw it in. */}
+        <div className="grid w-full grid-cols-1 gap-5 xl:w-[81.25rem] xl:max-w-full xl:grid-cols-2">
+          <div className="flex flex-col gap-5 rounded-2xl border border-line bg-surface p-4 md:p-6">
             <span className="w-fit rounded-full border border-line bg-paper px-4 py-1.5 text-caption text-muted">
               Today
             </span>
             <div className="flex flex-col gap-4">
-              <h3 className="text-title-2 font-medium text-ink">Expensive &amp; Complex</h3>
-              <p className="text-body-lg font-medium text-ink">
+              <h3 className="text-title-3 font-medium text-ink md:text-title-2">
+                Expensive &amp; Complex
+              </h3>
+              <p className="text-body-sm font-medium text-ink md:text-body-lg">
                 Many specialists. Months of engineering.
               </p>
-              <ul className="list-disc pl-5 text-body text-ink">
+              <ul className="list-disc pl-5 text-body-sm text-ink md:text-body">
                 <li>Protocol, compiler, GPU, and runtime engineers working in separate silos</li>
                 <li>Months of manual integration, tuning, and performance iteration</li>
                 <li>Every new scheme or hardware target starts from scratch</li>
@@ -186,40 +191,44 @@ export function ComputingLayerSection() {
 
             {/* Revealed step by step: the length of the descent is the point
                 this column is making. */}
-            <div className="flex flex-col items-center gap-2 rounded-xl border border-line bg-paper p-5 text-ink">
-              {[
-                <AppHeader key="app" />,
-                <ArrowRow key="fan" count={5} />,
-                <ProcessRow key="specialists" steps={todaySpecialistWork} tone="brand" />,
-                <BusConnector key="bus-1" from={5} to={5} />,
-                <ProcessRow key="handwork" steps={todayHandwork} tone="blue" />,
-                <BusConnector key="bus-2" from={5} to={1} />,
-                <div
-                  key="hardware"
-                  className="flex w-full items-center justify-center rounded-lg bg-accent px-5 py-4 text-body-sm text-ink"
-                >
-                  {todayHardwareWork}
-                </div>,
-                <BusConnector key="bus-3" from={1} to={4} />,
-                <PlatformRow key="platforms" />,
-              ].map((step, index) => (
-                <Reveal key={step.key} className="w-full" delay={index * 150}>
-                  {step}
-                </Reveal>
-              ))}
+            <div className="w-full overflow-x-auto md:overflow-visible">
+              <div className="flex min-w-[calc(34.5rem+2.625rem)] flex-col items-center gap-2 rounded-xl border border-line bg-paper p-5 text-ink md:min-w-0">
+                {[
+                  <AppHeader key="app" />,
+                  <ArrowRow key="fan" count={5} />,
+                  <ProcessRow key="specialists" steps={todaySpecialistWork} tone="brand" />,
+                  <BusConnector key="bus-1" from={5} to={5} />,
+                  <ProcessRow key="handwork" steps={todayHandwork} tone="blue" />,
+                  <BusConnector key="bus-2" from={5} to={1} />,
+                  <div
+                    key="hardware"
+                    className="flex w-full items-center justify-center rounded-lg bg-accent px-5 py-4 text-body-sm text-ink"
+                  >
+                    {todayHardwareWork}
+                  </div>,
+                  <BusConnector key="bus-3" from={1} to={4} />,
+                  <PlatformRow key="platforms" />,
+                ].map((step, index) => (
+                  <Reveal key={step.key} className="w-full" delay={index * 150}>
+                    {step}
+                  </Reveal>
+                ))}
+              </div>
             </div>
           </div>
 
-          <div className="flex flex-col gap-5 rounded-2xl bg-ink p-6">
+          <div className="flex flex-col gap-5 rounded-2xl bg-ink p-4 md:p-6">
             <span className="w-fit rounded-full border border-line bg-paper px-4 py-1.5 text-caption text-muted">
               With Fractalyze
             </span>
             <div className="flex flex-col gap-4">
-              <h3 className="text-title-2 font-medium text-paper">Automated &amp; Simple</h3>
-              <p className="text-body-lg font-medium text-paper">
+              <h3 className="text-title-3 font-medium text-paper md:text-title-2">
+                Automated &amp; Simple
+              </h3>
+              <p className="text-body-sm font-medium text-paper md:text-body-lg">
                 Focus on your application, we handle the rest.
               </p>
-              <ul className="list-disc pl-5 text-body text-paper">
+              <ul className="list-disc pl-5 text-body-sm text-paper md:text-body">
                 <li>One compiler automatically optimizes and generates execution code</li>
                 <li>A runtime handles high-performance execution and memory management</li>
                 <li>Orchestration scales the same workload across CPU, GPU, TPU, and FPGA</li>
@@ -227,22 +236,28 @@ export function ComputingLayerSection() {
             </div>
 
             {/* Arrives as one piece, against the other column's nine steps. */}
-            <Reveal className="flex flex-col items-center gap-2 rounded-xl border border-line bg-paper p-5 text-ink">
-              <AppHeader />
-              <ExchangeArrows />
-              {/* Fixed so this card matches the height of the "Today" one beside it. */}
-              <div className="flex h-[18.8125rem] w-full flex-col gap-2 rounded-2xl border border-accent bg-accent/40 p-5">
-                {['Orchestration Layer', 'Compiler Layer'].map((layer) => (
-                  <div
-                    key={layer}
-                    className="flex min-h-0 flex-1 items-center justify-center rounded-lg bg-accent px-5 text-body-sm text-ink"
-                  >
-                    {layer}
-                  </div>
-                ))}
-              </div>
-              <PlatformRow withArrows />
-            </Reveal>
+            <div className="w-full overflow-x-auto md:overflow-visible">
+              <Reveal className="flex min-w-[calc(34.5rem+2.625rem)] flex-col items-center gap-2 rounded-xl border border-line bg-paper p-5 text-ink md:min-w-0">
+                <AppHeader />
+                <ExchangeArrows />
+                {/* Empty, so it has no height of its own to take. It stands in
+                    for the hardware column opposite it, and the figures are what
+                    that column comes to once its rows are stacked: 12rem on a
+                    phone, 16rem at tablet, and the drawn 18.8125rem beside the
+                    "Today" card. */}
+                <div className="flex h-[12rem] w-full flex-col gap-2 rounded-2xl border border-accent bg-accent/40 p-5 md:h-[16rem] xl:h-[18.8125rem]">
+                  {['Orchestration Layer', 'Compiler Layer'].map((layer) => (
+                    <div
+                      key={layer}
+                      className="flex min-h-0 flex-1 items-center justify-center rounded-lg bg-accent px-5 text-body-sm text-ink"
+                    >
+                      {layer}
+                    </div>
+                  ))}
+                </div>
+                <PlatformRow withArrows />
+              </Reveal>
+            </div>
           </div>
         </div>
       </div>

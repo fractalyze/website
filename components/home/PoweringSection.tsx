@@ -46,39 +46,46 @@ const domains = [
 
 export function PoweringSection() {
   return (
-    <section className="bg-paper px-section py-section">
-      <Reveal className="mx-auto flex max-w-content flex-col items-center gap-10">
-        <div className="flex max-w-measure flex-col items-center gap-5 text-center">
-          <h2 className="font-display text-display-4 text-ink">
+    <section className="bg-paper px-6 py-16 md:px-10 md:py-20 xl:px-section xl:py-section">
+      <Reveal className="mx-auto flex max-w-content flex-col items-center gap-8 md:gap-10">
+        <div className="flex max-w-measure flex-col items-center gap-4 text-center md:gap-5">
+          <h2 className="font-display text-title-2 text-ink md:text-title-1 xl:text-display-4">
             Powering the Next Generation of Cryptography
           </h2>
-          <p className="text-body-lg text-ink">
+          <p className="text-body-sm text-ink md:text-body-lg">
             The next generation of applications will be built on cryptographic computation.
           </p>
         </div>
 
-        <div className="flex w-[62.5rem] max-w-full flex-col gap-20">
+        <div className="flex w-full flex-col gap-12 md:gap-16 xl:w-[62.5rem] xl:max-w-full xl:gap-20">
           {domains.map((domain, index) => (
-            <div key={domain.title} className="flex items-center gap-20">
+            <div
+              key={domain.title}
+              className="flex flex-col gap-5 md:flex-row md:items-center md:gap-10 xl:gap-20"
+            >
+              {/* The alternation is a two-column effect, so it only starts where
+                  there are two columns. Stacked, every pair reads text then image. */}
               <div
-                className={`flex w-[28.75rem] flex-col gap-3 ${index % 2 === 1 ? 'order-2' : ''}`}
+                className={`flex w-full flex-col gap-3 md:flex-1 xl:w-[28.75rem] xl:flex-none ${
+                  index % 2 === 1 ? 'md:order-2' : ''
+                }`}
               >
-                <h3 className="text-title-2 font-medium text-ink">{domain.title}</h3>
-                <p className="text-body-lg text-ink">{domain.description}</p>
-                <ul className="list-disc pl-5 text-body text-ink">
+                <h3 className="text-title-3 font-medium text-ink md:text-title-2">{domain.title}</h3>
+                <p className="text-body-sm text-ink md:text-body-lg">{domain.description}</p>
+                <ul className="list-disc pl-5 text-body-sm text-ink md:text-body">
                   {domain.items.map((item) => (
                     <li key={item}>{item}</li>
                   ))}
                 </ul>
               </div>
-              <div className="relative h-[15rem] w-[28.75rem] overflow-hidden rounded-2xl border border-line">
+              <div className="relative aspect-[460/240] w-full overflow-hidden rounded-2xl border border-line md:flex-1 xl:aspect-auto xl:h-[15rem] xl:w-[28.75rem] xl:flex-none">
                 <Image
                   src={domain.image}
                   alt=""
                   fill
-                  sizes="460px"
+                  sizes="(min-width: 1280px) 460px, (min-width: 768px) 50vw, 100vw"
                   className="object-cover"
-            placeholder="blur"
+                  placeholder="blur"
                 />
               </div>
             </div>

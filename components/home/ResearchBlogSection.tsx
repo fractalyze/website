@@ -15,11 +15,13 @@ export function ResearchBlogSection() {
   }
 
   return (
-    <section className="bg-paper px-section py-section">
-      <Reveal className="mx-auto flex max-w-content flex-col items-center gap-10">
-        <div className="flex max-w-measure flex-col items-center gap-5 text-center">
-          <h2 className="font-display text-display-4 text-ink">Research &amp; Blog</h2>
-          <p className="text-body-lg text-ink">
+    <section className="bg-paper px-6 py-16 md:px-10 md:py-20 xl:px-section xl:py-section">
+      <Reveal className="mx-auto flex max-w-content flex-col items-center gap-8 md:gap-10">
+        <div className="flex max-w-measure flex-col items-center gap-4 text-center md:gap-5">
+          <h2 className="font-display text-title-2 text-ink md:text-title-1 xl:text-display-4">
+            Research &amp; Blog
+          </h2>
+          <p className="text-body-sm text-ink md:text-body-lg">
             Technical articles, research findings, and insights from our team.
           </p>
         </div>
@@ -31,12 +33,14 @@ export function ResearchBlogSection() {
           View blog details
         </Link>
 
-        {/* A lone post would otherwise sit in the first of three columns with
-            two empty ones beside it; putting it in the middle one centres it
-            without changing the width it shares with a full row. */}
+        {/* Three across from tablet up, where the listing at /blog runs two:
+            the frames draw them that way, and the listing's own comment gives
+            the reason it differs. A lone post moves to the middle column so it
+            does not sit against the left edge under a centred heading — which
+            needs three columns to have a middle. */}
         <div
-          className={`grid w-full grid-cols-3 gap-5 ${
-            posts.length === 1 ? '[&>*]:col-start-2' : ''
+          className={`grid w-full grid-cols-1 gap-5 md:grid-cols-3 ${
+            posts.length === 1 ? 'md:[&>*]:col-start-2' : ''
           }`}
         >
           {posts.map((post) => (
@@ -45,23 +49,31 @@ export function ResearchBlogSection() {
               className="overflow-hidden rounded-2xl border border-line bg-surface"
             >
               <Link href={`/blog/${post.slug}`} className="block">
-                <div className="relative h-[12.5rem] w-full">
+                {/* The card treatment is components/BlogPostCard's, kept in
+                    step by hand because this section's card is an h3 under the
+                    section h2 and pads wider. The column count is not shared —
+                    see above. */}
+                <div className="relative aspect-[906/400] w-full xl:aspect-auto xl:h-[12.5rem]">
                   <Image
                     src={post.image}
                     alt=""
                     fill
-                    sizes="453px"
+                    sizes="(min-width: 1280px) 453px, (min-width: 768px) 33vw, 100vw"
                     className="object-cover"
                   />
                 </div>
-                <div className="flex flex-col gap-4 p-8">
-                  <h3 className="line-clamp-2 text-title-3 font-medium text-ink">{post.title}</h3>
+                <div className="flex flex-col gap-4 p-6 xl:p-8">
+                  <h3 className="line-clamp-2 text-title-4 font-medium text-ink md:text-title-3">
+                    {post.title}
+                  </h3>
                   <div className="flex items-center gap-2 text-body-sm text-ink">
                     <time dateTime={post.date}>{format(new Date(post.date), 'MMMM d, yyyy')}</time>
                     <span className="h-3 w-px bg-line-strong" />
                     <span>{Math.ceil(post.readingTime.minutes)} min read</span>
                   </div>
-                  <p className="line-clamp-3 text-body text-ink">{post.summary}</p>
+                  {post.summary && (
+                    <p className="line-clamp-3 text-body-sm text-ink md:text-body">{post.summary}</p>
+                  )}
                 </div>
               </Link>
             </article>
