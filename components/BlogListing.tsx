@@ -28,7 +28,8 @@ export type ListedPost = {
  * The filter still lives in the URL, so a filtered view is still a link.
  */
 export function BlogListing({posts}: {posts: ListedPost[]}) {
-  const selected = categories.find((entry) => entry === useSearchParams().get('category'));
+  const active = useSearchParams().get('category');
+  const selected = categories.find((entry) => entry === active);
   const shown = posts.filter((post) => !selected || post.category === selected);
 
   return (
