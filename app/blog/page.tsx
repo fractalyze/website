@@ -34,11 +34,16 @@ export default function BlogPage() {
     }));
 
   return (
-    <section className="bg-paper px-section py-20">
-      <div className="mx-auto flex max-w-content flex-col gap-10">
-        <div className="flex flex-col gap-5">
-          <h1 className="font-display text-display-3 text-ink">Research &amp; Blog</h1>
-          <p className="text-body-lg text-ink">
+    <section className="bg-paper px-6 py-12 md:px-10 md:py-16 xl:px-section xl:py-20">
+      <div className="mx-auto flex max-w-content flex-col gap-8 md:gap-10">
+        <div className="flex flex-col gap-4 md:gap-5">
+          {/* The title steps rather than scales: below 1280 the root is pinned at
+              16px, so the desktop size would render *larger* on a tablet than on
+              a 1280 desktop, where the root is 12px. */}
+          <h1 className="font-display text-title-1 text-ink md:text-display-4 xl:text-display-3">
+            Research &amp; Blog
+          </h1>
+          <p className="text-body-sm text-ink md:text-body-lg">
             Technical articles, research findings, and insights from our team.
           </p>
         </div>

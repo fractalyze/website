@@ -56,7 +56,11 @@ export function BlogListing({posts}: {posts: ListedPost[]}) {
       </ul>
 
       {shown.length > 0 ? (
-        <div className="grid grid-cols-3 gap-x-5 gap-y-10">
+        /*
+          A tablet pair lands at about the 453px the card is drawn at; three
+          columns on a 1024 frame would give it 301px.
+        */
+        <div className="grid grid-cols-1 gap-x-5 gap-y-8 md:grid-cols-2 md:gap-y-10 xl:grid-cols-3">
           {shown.map((post) => (
             <BlogPostCard
               key={post.slug}
@@ -70,7 +74,7 @@ export function BlogListing({posts}: {posts: ListedPost[]}) {
           ))}
         </div>
       ) : (
-        <p className="text-body text-muted">No posts in this category yet.</p>
+        <p className="text-body-sm text-muted md:text-body-lg">No posts in this category yet.</p>
       )}
     </>
   );

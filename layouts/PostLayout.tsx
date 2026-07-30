@@ -42,7 +42,7 @@ function ArrowIcon({direction}: {direction: 'left' | 'right'}) {
 
 const PostLayout = ({content, title, date, readingTime, previous, next}: PostLayoutProps) => {
   return (
-    <article className="bg-paper px-section py-20">
+    <article className="bg-paper px-6 py-12 md:px-10 md:py-16 xl:px-section xl:py-20">
       {/*
         Alone on the site, an article is sized in pixels rather than rem.
         Everything else scales with the viewport so the design keeps its
@@ -51,10 +51,19 @@ const PostLayout = ({content, title, date, readingTime, previous, next}: PostLay
         shortening the line, since the measure scales with it. A reading column
         wants a fixed measure and a size that stays legible, so this one holds
         at roughly ninety characters however wide the window gets.
+
+        Under 730px of room the max-w-full is what gives, and only it: the column
+        becomes the screen minus its gutters while the type stays the size it was.
+        A phone gets a shorter line of the same prose, which is the whole point —
+        so the gutters shrink with the screen rather than staying at the 100px a
+        side the desktop scale leaves, which on a 360 screen is 200px of the 360
+        and would have left the article 160px to work with.
       */}
-      <div className="mx-auto flex w-[730px] max-w-full flex-col gap-10">
+      <div className="mx-auto flex w-[730px] max-w-full flex-col gap-8 md:gap-10">
         <header className="flex flex-col gap-4">
-          <h1 className="text-[32px] font-semibold leading-[1.1] text-ink">{title}</h1>
+          <h1 className="text-[28px] font-semibold leading-[1.1] text-ink md:text-[32px]">
+            {title}
+          </h1>
           <hr className="border-t-2 border-ink" />
           <div className="flex items-center gap-4 text-[14px] text-ink">
             <time dateTime={date}>{format(new Date(date), 'MMMM d, yyyy')}</time>
@@ -65,7 +74,9 @@ const PostLayout = ({content, title, date, readingTime, previous, next}: PostLay
 
         <div className="prose">{content}</div>
 
-        <nav className="flex items-center justify-between border-t border-line pt-6 text-[14px] text-ink">
+        {/* The three links total about 350px of label and icon, so on a phone
+            they come apart into two rows rather than compressing into one. */}
+        <nav className="flex flex-col items-start gap-5 border-t border-line pt-6 text-[14px] text-ink md:flex-row md:items-center md:justify-between">
           <Link href="/blog" className="flex items-center gap-1 transition-opacity hover:opacity-70">
             <MenuIcon />
             View List
