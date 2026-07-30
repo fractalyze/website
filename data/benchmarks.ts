@@ -9,10 +9,9 @@ export type Baseline = {
   /**
    * Implementation, printed beside the bar it produced.
    *
-   * `ICICLE` and `ICICLE Gnark` are two names because they are two things: the
-   * CUDA library, and the gnark binding over it. The msm rows were timed
-   * against the first and the bn254 ntt against the second, so collapsing them
-   * would claim a comparison that was not run.
+   * One name covers a library and its bindings — every icicle comparison reads
+   * `ICICLE` whether it ran against the CUDA library or the gnark integration
+   * over it. Which of the two a row actually used is on the row.
    */
   name: string;
   ms: number;
@@ -59,8 +58,9 @@ export const benchmarks: Benchmark[] = [
     workload: 'ntt_bn254',
     size: '2^24',
     ms: 7.66,
-    baselines: [{name: 'ICICLE Gnark', ms: 16.23}],
+    baselines: [{name: 'ICICLE', ms: 16.23}],
     basis: 'kernel',
+    note: 'gnark binding',
   },
   {
     workload: 'ntt_koalabear',
@@ -82,9 +82,9 @@ export const benchmarks: Benchmark[] = [
     size: '2^24',
     instance: 'SP1 verifier circuit',
     ms: 1573,
-    baselines: [{name: 'ICICLE Gnark', ms: 2355}],
+    baselines: [{name: 'ICICLE', ms: 2355}],
     basis: 'wall-clock',
-    note: '15,965,950 constraints',
+    note: 'gnark binding, 15,965,950 constraints',
   },
   {
     workload: 'sp1_checkpoint_gen',
