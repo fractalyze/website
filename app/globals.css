@@ -39,11 +39,12 @@ body {
   @apply bg-paper text-ink antialiased;
 }
 
-/* The header is sticky and 5rem tall, so a heading reached through its anchor
-   would come to rest underneath it. Only the element the fragment names needs
-   the clearance. */
+/* The header is sticky and 80px tall at every width, so a heading reached
+   through its anchor would come to rest underneath it. In pixels for the same
+   reason the header is: 6rem would be 72px once the root drops to 12px, which
+   is less clearance than the header needs. */
 :target {
-  scroll-margin-top: 6rem;
+  scroll-margin-top: 96px;
 }
 
 /* Article body. Sizes and vertical rhythm come from the typography plugin

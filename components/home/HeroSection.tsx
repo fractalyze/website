@@ -28,7 +28,7 @@ export function HeroSection() {
               compiler and orchestration stack.
             </p>
             <div>
-              <ContactButton variant="solid" className="w-[8.25rem] justify-center" />
+              <ContactButton variant="solid" className="w-[132px] justify-center" />
             </div>
           </div>
         </div>

@@ -57,16 +57,22 @@ export function Header() {
         scrolled ? 'border-line' : 'border-transparent'
       }`}
     >
-      <div className="mx-auto flex h-20 max-w-content items-center justify-between">
+      {/*
+        The bar and the mark are in pixels while the gutters around them are not.
+        Every frame draws this header at one size — the mark measures 156x26 of
+        ink on the 1024 tablet and 155x26 on the 1920 desktop — but a rem is 16px
+        below the breakpoint and 12px above it, so h-20 drew an 80px bar on a
+        phone against a 60px one at 1440: the small screen got the bigger header.
+        The gutters keep scaling because they set the header against the sections
+        under it, which do the same.
+      */}
+      <div className="mx-auto flex h-[80px] max-w-content items-center justify-between">
         <div className="flex items-center gap-20">
           <Link href="/" aria-label="Fractalyze">
-            {/* Height, because the mark scales by it. 26px puts the mark near
-                the 108px width the mobile frame draws against its 360 canvas;
-                from tablet up it is at its full size. */}
             <img
               src="/logo/fractalyze-logo-black.svg"
               alt="Fractalyze"
-              className="h-[1.625rem] w-auto md:h-[2.625rem]"
+              className="h-[42px] w-auto"
             />
           </Link>
           <nav className="hidden xl:block">
