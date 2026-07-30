@@ -8,11 +8,28 @@ const frame = {
 
 const size = 'h-[5.25rem] w-[5.25rem]';
 
-export function StackedTrianglesIcon({className}: {className?: string}) {
+export function AsteriskIcon({className}: {className?: string}) {
+  // Eight rays of one length, so the diagonals reach 38.5/√2 along each axis
+  // and stop short of the box the upright pair spans.
+  const diagonal = 38.5 / Math.SQRT2;
+  const near = (42 - diagonal).toFixed(2);
+  const far = (42 + diagonal).toFixed(2);
+
   return (
     <svg {...frame} className={className ?? size} aria-hidden>
-      {[3.5, 24.5, 45.5].map((top) => (
-        <path key={top} d={`M42 ${top} L80.5 ${top + 38.5} L3.5 ${top + 38.5} Z`} />
+      <path d="M42 3.5 L42 80.5" />
+      <path d="M3.5 42 L80.5 42" />
+      <path d={`M${near} ${near} L${far} ${far}`} />
+      <path d={`M${near} ${far} L${far} ${near}`} />
+    </svg>
+  );
+}
+
+export function StackedPlanesIcon({className}: {className?: string}) {
+  return (
+    <svg {...frame} className={className ?? size} aria-hidden>
+      {[20, 42, 64].map((cy) => (
+        <path key={cy} d={`M42 ${cy - 16.5} L80.5 ${cy} L42 ${cy + 16.5} L3.5 ${cy} Z`} />
       ))}
     </svg>
   );

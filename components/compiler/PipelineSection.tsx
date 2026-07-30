@@ -1,7 +1,8 @@
 import {
+  AsteriskIcon,
   NestedSquaresIcon,
   OrbitIcon,
-  StackedTrianglesIcon,
+  StackedPlanesIcon,
 } from '@/components/icons/CompilerIcons';
 import {Reveal} from '@/components/Reveal';
 
@@ -9,7 +10,7 @@ const stages = ['Zorch', 'FRX', 'StableHLO', 'XLA', 'PrimeIR', 'CPU · GPU'];
 
 const layers = [
   {
-    Icon: StackedTrianglesIcon,
+    Icon: AsteriskIcon,
     title: 'Frontend framework',
     body: 'Build a SNARK in Python: define your IOP rounds and compose them. You write the protocol, and never touch the kernels.',
   },
@@ -24,7 +25,7 @@ const layers = [
     body: 'Runs a full optimization pipeline over the whole graph, from fusion and layout to lazy reduction, treating it as one program.',
   },
   {
-    Icon: NestedSquaresIcon,
+    Icon: StackedPlanesIcon,
     title: 'PrimeIR',
     body: 'An MLIR layer that lowers the optimized graph into kernels and tunes the generated code for each CPU and GPU target.',
   },
