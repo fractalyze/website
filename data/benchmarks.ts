@@ -6,7 +6,14 @@
 // (240 µs is 0.24) so that a single unit divides cleanly.
 
 export type Baseline = {
-  /** Implementation and version, printed beside the bar it produced. */
+  /**
+   * Implementation, printed beside the bar it produced.
+   *
+   * `ICICLE` and `ICICLE Gnark` are two names because they are two things: the
+   * CUDA library, and the gnark binding over it. The msm rows were timed
+   * against the first and the bn254 ntt against the second, so collapsing them
+   * would claim a comparison that was not run.
+   */
   name: string;
   ms: number;
 };
@@ -37,17 +44,16 @@ export const benchmarks: Benchmark[] = [
   {
     workload: 'msm_bn254_g1',
     size: '2^24',
-    ms: 248.12,
-    baselines: [{name: 'ICICLE Gnark', ms: 53.49}],
+    ms: 59.13,
+    baselines: [{name: 'ICICLE', ms: 64.49}],
     basis: 'kernel',
   },
   {
     workload: 'msm_bn254_g2',
     size: '2^24',
-    ms: 960.7,
-    baselines: [{name: 'ICICLE Gnark', ms: 156.46}],
+    ms: 154.45,
+    baselines: [{name: 'ICICLE', ms: 163.42}],
     basis: 'wall-clock',
-    note: 'timed against ICICLE v4',
   },
   {
     workload: 'ntt_bn254',
@@ -66,9 +72,9 @@ export const benchmarks: Benchmark[] = [
   },
   {
     workload: 'ntt_gf2_32',
-    size: '2^23',
-    ms: 4.568,
-    baselines: [{name: 'Binius GPU', ms: 8.402}],
+    size: '2^24',
+    ms: 12.894,
+    baselines: [{name: 'Binius GPU', ms: 16.797}],
     basis: 'kernel',
   },
   {
@@ -158,9 +164,9 @@ const HEADROOM = 1.12;
  * Where parity sits, and how long a bar of a given magnitude is — both as a
  * percentage of the track.
  *
- * Derived from the data rather than fixed, so the line settles wherever the
- * two sides balance: today the worst loss (6.14×) is larger than the best win
- * (3.09×), which puts parity right of centre.
+ * Derived from the data rather than fixed, so the line settles wherever the two
+ * sides balance — right of centre while the worst loss exceeds the best win,
+ * left of it once the wins are larger. Pinning it would misreport both.
  */
 export function axisOf(rows: Benchmark[]) {
   const lengths = rows.flatMap((row) => row.baselines.map((b) => magnitude(speedup(row, b))));
