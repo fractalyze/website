@@ -29,6 +29,26 @@ const GRID = 'grid grid-cols-[15rem_1fr_7rem] items-center gap-4';
 const label = ({workload, size}: Benchmark) => (size ? `${workload}(${size})` : workload);
 
 /**
+ * The same label with the exponent raised.
+ *
+ * Sizes are written 2^24 in the data, where they stay greppable and easy to
+ * edit. Real digits in a sup tag rather than the unicode superscripts: those
+ * are absent from the Pretendard subsets the site ships, so they would come
+ * from whatever fallback the browser reaches for.
+ */
+function Label({benchmark}: {benchmark: Benchmark}) {
+  const [base, exponent] = (benchmark.size ?? '').split('^');
+  if (!exponent) return <>{benchmark.workload}</>;
+
+  return (
+    <>
+      {benchmark.workload}({base}
+      <sup className="text-[0.7em] leading-none">{exponent}</sup>)
+    </>
+  );
+}
+
+/**
  * How the run was set up, for the hover title.
  *
  * What was run, what the clock covered, and any hardware caveat are all
@@ -81,7 +101,7 @@ export function BenchmarkSection() {
                     title={label(benchmark)}
                     className="block truncate text-body font-semibold leading-[1.1rem] text-ink"
                   >
-                    {label(benchmark)}
+                    <Label benchmark={benchmark} />
                   </span>
                   <span
                     title={`vs ${baseline.name}`}
