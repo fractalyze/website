@@ -125,8 +125,13 @@ function PlatformRow({withArrows = false}: {withArrows?: boolean}) {
       {platforms.map(({label, Icon}) => (
         <div key={label} className="flex min-w-0 flex-1 flex-col items-center gap-2">
           {withArrows && <DownArrow />}
+          {/* The icon is a fixed 24px and absent below the tablet rather than a
+              rem that shrinks with the page. It was drawing 15px at 1024 beside
+              a label pinned at 14, and on a phone the chip is 53px wide, which
+              flex resolved by squeezing the icon to nothing — present in the
+              box, taking a column, drawing zero pixels. */}
           <div className="flex w-full items-center justify-center gap-1 rounded-lg border border-line bg-surface px-5 py-4">
-            <Icon />
+            <Icon className="hidden h-[24px] w-[24px] shrink-0 md:block" />
             <span className="text-body-sm text-ink">{label}</span>
           </div>
         </div>
@@ -207,7 +212,10 @@ export function ComputingLayerSection() {
                   <BusConnector key="bus-2" from={5} to={1} />,
                   <div
                     key="hardware"
-                    className="flex w-full items-center justify-center rounded-lg bg-accent px-5 py-4 text-body-sm text-ink"
+                    // text-center as well as justify-center: the flex property
+                    // centres the block, and on a phone the label wraps, leaving
+                    // the second line ranged left inside a centred block.
+                    className="flex w-full items-center justify-center rounded-lg bg-accent px-5 py-4 text-center text-body-sm text-ink"
                   >
                     {todayHardwareWork}
                   </div>,
