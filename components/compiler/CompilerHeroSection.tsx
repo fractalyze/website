@@ -11,10 +11,14 @@ export function CompilerHeroSection() {
       <div className="mx-auto flex max-w-content flex-col items-start gap-8 md:flex-row md:items-center md:justify-between md:gap-10 xl:gap-40">
         <div className="flex flex-col gap-5 md:gap-6">
           {/* Stepped, not inherited: display-2 is 4.5rem against a root pinned at
-              16px below 1280, so the desktop size would draw 72px on a phone
+              16px below 1024, so the desktop size would draw 72px on a phone
               against 54px on a desktop. The forced break goes with it — below
-              1280 the title wraps to the column it is given. */}
-          <h1 className="font-display text-[2.25rem] uppercase leading-[1.1] text-ink md:text-[2.75rem] xl:text-display-2 xl:leading-[4.95rem]">
+              1024 the title wraps to the column it is given.
+              The tablet ceiling is the frame's own size: it draws 48px, which
+              in capitals puts "FOR CRYPTOGRAPHY" at 489px inside the 507px the
+              row leaves at 1023. The floor is the 768 end, where "CRYPTOGRAPHY"
+              cannot break and 42px is the most that clears the gutter. */}
+          <h1 className="font-display text-[2.25rem] uppercase leading-[1.1] text-ink md:text-[clamp(2.625rem,5vw,3rem)] xl:text-display-2 xl:leading-[4.95rem]">
             A Compiler Built{' '}
             <br className="hidden xl:inline" />
             for Cryptography
@@ -33,13 +37,18 @@ export function CompilerHeroSection() {
             <ArrowTailIcon />
           </a>
         </div>
-        <div className="relative h-[12rem] w-full overflow-hidden rounded-[1.25rem] md:h-[16rem] md:w-[45%] md:shrink-0 xl:h-[25rem] xl:w-[31.625rem]">
+        {/* Sized off the frames rather than guessed. The tablet frame draws the
+            image 412x400 in a 980px content width, so it holds that ratio at
+            42% of the row instead of a fixed height, which at 768 would leave a
+            portrait crop of a landscape photograph. The phone frame draws it
+            320x242 on a 360 canvas, which is the 15rem. */}
+        <div className="relative h-[15rem] w-full overflow-hidden rounded-[1.25rem] md:h-auto md:w-[42%] md:shrink-0 md:aspect-[412/400] xl:aspect-auto xl:h-[25rem] xl:w-[31.625rem]">
           <Image
             src={compilerHero}
             alt=""
             fill
             priority
-            sizes="(min-width: 1280px) 506px, (min-width: 768px) 45vw, 100vw"
+            sizes="(min-width: 1024px) 506px, (min-width: 768px) 42vw, 100vw"
             className="object-cover"
             placeholder="blur"
           />
