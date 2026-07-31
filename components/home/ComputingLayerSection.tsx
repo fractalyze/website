@@ -3,8 +3,10 @@ import {CpuIcon, FpgaIcon, GpuIcon, TpuIcon} from '@/components/icons/PlatformIc
 
 // Every line is kept under 56px at 12px, which is what a chip has to spend once
 // the panel is one of two columns at 1024 — the narrowest the diagram is ever
-// drawn. The labels are 12px at every width now, so a chip that fits at 1920 no
-// longer fits everywhere: "Benchmarking &" ran 33px past its chip at 1024.
+// drawn. The labels are a flat 12px from the tablet up rather than a rem, so a
+// chip that fits at 1920 no longer fits everywhere: "Benchmarking &" ran 33px
+// past its chip at 1024. Below the tablet they are 11px against a 47px chip,
+// which is the other end these strings have to survive.
 const todaySpecialistWork = [
   ['Compiler', 'Optimize'],
   ['Runtime', 'Tuning'],
@@ -34,17 +36,6 @@ const dashed = {strokeWidth: 1.5, strokeDasharray: '3 3'} as const;
 
 function head(x: number, y: number) {
   return `M${x - 4} ${y} L${x + 4} ${y} L${x} ${y + 8} Z`;
-}
-
-function ExchangeArrows() {
-  return (
-    <svg viewBox="0 0 37 40" className="h-10 w-[2.3125rem]" fill="none" stroke="currentColor" aria-hidden>
-      <line x1={8.5} y1={0} x2={8.5} y2={32} {...dashed} />
-      <path d={head(8.5, 32)} fill="currentColor" stroke="none" />
-      <line x1={28.5} y1={8} x2={28.5} y2={40} {...dashed} />
-      <path d="M24.5 8 L32.5 8 L28.5 0 Z" fill="currentColor" stroke="none" />
-    </svg>
-  );
 }
 
 function AppHeader() {
@@ -91,13 +82,14 @@ function ProcessRow({steps, tone}: {steps: string[][]; tone: 'brand' | 'blue'}) 
       {steps.map((lines) => (
         <div
           key={lines.join(' ')}
-          // No horizontal padding below the tablet. Five chips share a phone's
-          // 219px and the longest label, "Integrate/Handoff", draws 40.4px of
-          // ink at 10px — 2px wider than the chip's own padding box left it,
-          // which is why it had been overrunning its chip since the labels were
-          // first cut to fit. The text is centred, so what padding buys here is
-          // ink the chip does not have to give.
-          className={`flex min-w-0 flex-1 items-center justify-center rounded-lg px-0 py-4 text-center text-[10px] leading-[1.1] text-ink md:px-1 md:text-micro ${
+          // 11px below the tablet, and no horizontal padding to hold it. Five
+          // chips share a phone's 243px, and the longest label — "Integrate/
+          // Handoff" — draws 4.04px of ink per pixel of font, so 11px is 44.4px
+          // against the 47.0px a chip has. 12px would need 48.5 and is only
+          // reachable by taking the padding off the frames entirely; 10px was
+          // what the boxes cost before they were tightened. The text is
+          // centred, so what padding buys here is ink the chip cannot give.
+          className={`flex min-w-0 flex-1 items-center justify-center rounded-lg px-0 py-4 text-center text-[11px] leading-[1.1] text-ink md:px-1 md:text-micro ${
             tone === 'brand' ? 'bg-accent' : 'bg-accent-blue'
           }`}
         >
@@ -137,7 +129,7 @@ export function ComputingLayerSection() {
             block 17px taller on one side pushed that side's diagram down and
             shortened it by the same amount. */}
         <div className="grid w-full grid-cols-1 gap-5 xl:w-[81.25rem] xl:max-w-full xl:grid-cols-2 xl:grid-rows-[auto_auto_1fr]">
-          <div className="flex flex-col gap-5 rounded-2xl border border-line bg-surface p-4 md:p-6 xl:grid xl:row-span-3 xl:grid-rows-subgrid">
+          <div className="flex flex-col gap-5 rounded-2xl border border-line bg-surface p-3 md:p-6 xl:grid xl:row-span-3 xl:grid-rows-subgrid">
             <span className="w-fit rounded-full border border-line bg-paper px-4 py-1.5 text-caption text-muted">
               Today
             </span>
@@ -168,7 +160,7 @@ export function ComputingLayerSection() {
                 piece: the staging is now the only thing carrying "many hands,
                 months of it". */}
             <div className="w-full">
-              <div className="flex h-full flex-col items-center gap-2 rounded-xl border border-line bg-paper p-2 text-ink md:p-5">
+              <div className="flex h-full flex-col items-center gap-2 rounded-xl border border-line bg-paper p-1.5 text-ink md:p-5">
                 {[
                   <AppHeader key="app" />,
                   <DownArrow key="into" />,
@@ -178,13 +170,13 @@ export function ComputingLayerSection() {
                     // are already accent and accent-blue, and one undifferentiated
                     // grey holding all of them is this side's whole claim.
                     //
-                    // p-2 below the tablet, matched by the frame outside it: the
-                    // five-chip row is what sets the 360 floor and has nothing to
-                    // give, so a box nested inside the frame is only affordable
-                    // if the frame gives up the padding to pay for it. The two
-                    // 8px rings and this border come to 17px a side against the
-                    // frame's old 20, which is where the chips get their room.
-                    className="flex w-full flex-col gap-2 rounded-2xl border border-line bg-surface p-2 md:p-5"
+                    // p-1.5 below the tablet, matched by the frame outside it and
+                    // by the panel outside that. The five-chip row is what sets
+                    // the 360 floor, so every pixel the labels are read at is a
+                    // pixel these three rings gave up: 12/6/6 against the 16/20/-
+                    // they started at, which is 24px of row and the difference
+                    // between a 10px label and an 11px one.
+                    className="flex w-full flex-col gap-2 rounded-2xl border border-line bg-surface p-1.5 md:p-5"
                   >
                     <ProcessRow steps={todaySpecialistWork} tone="brand" />
                     <ProcessRow steps={todayHandwork} tone="blue" />
@@ -210,7 +202,7 @@ export function ComputingLayerSection() {
 
           {/* The border is transparent rather than absent: the panel opposite
               has one, and without it this box measures 2px wider inside. */}
-          <div className="flex flex-col gap-5 rounded-2xl border border-transparent bg-ink p-4 md:p-6 xl:grid xl:row-span-3 xl:grid-rows-subgrid">
+          <div className="flex flex-col gap-5 rounded-2xl border border-transparent bg-ink p-3 md:p-6 xl:grid xl:row-span-3 xl:grid-rows-subgrid">
             <span className="w-fit rounded-full border border-line bg-paper px-4 py-1.5 text-caption text-muted">
               With Fractalyze
             </span>
@@ -230,11 +222,11 @@ export function ComputingLayerSection() {
 
             {/* Arrives as one piece, against the other column's four. */}
             <div className="w-full">
-              {/* p-2 below the tablet to match the frame opposite, which had to
-                  give up that padding to afford the box nested inside it. */}
-              <Reveal className="flex h-full flex-col items-center gap-2 rounded-xl border border-line bg-paper p-2 text-ink md:p-5">
+              {/* p-1.5 below the tablet to match the frame opposite, which gave
+                  up that padding to buy its chips a readable label. */}
+              <Reveal className="flex h-full flex-col items-center gap-2 rounded-xl border border-line bg-paper p-1.5 text-ink md:p-5">
                 <AppHeader />
-                <ExchangeArrows />
+                <DownArrow />
                 {/* Stacked, this column is shorter than the one opposite it —
                     still, now that both are three things: the container here
                     holds two rows against that one's three plus a bar. On a
