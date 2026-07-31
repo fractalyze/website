@@ -190,17 +190,14 @@ export function ComputingLayerSection() {
             </div>
 
             {/* Revealed step by step: the length of the descent is the point
-                this column is making. */}
-            {/* Focusable, or the only way to reach what is off the right edge
-                is a pointer. A scroll container that no key can move is a
-                keyboard dead end. */}
-            <div
-              className="w-full overflow-x-auto md:overflow-visible"
-              tabIndex={0}
-              role="group"
-              aria-label="Today, in detail"
-            >
-              <div className="flex min-w-[calc(34.5rem+2.625rem)] flex-col items-center gap-2 rounded-xl border border-line bg-paper p-5 text-ink md:min-w-0">
+                this column is making.
+                Dropped below the tablet rather than scrolled. The diagram is
+                drawn against a hard 552px column grid with its connector
+                coordinates computed from it, so it cannot reflow; it needs a
+                674px viewport and a phone does not have one. The bullets above
+                carry the same argument in prose. */}
+            <div className="hidden w-full md:block">
+              <div className="flex flex-col items-center gap-2 rounded-xl border border-line bg-paper p-5 text-ink">
                 {[
                   <AppHeader key="app" />,
                   <ArrowRow key="fan" count={5} />,
@@ -243,14 +240,11 @@ export function ComputingLayerSection() {
               </ul>
             </div>
 
-            {/* Arrives as one piece, against the other column's nine steps. */}
-            <div
-              className="w-full overflow-x-auto md:overflow-visible"
-              tabIndex={0}
-              role="group"
-              aria-label="With Fractalyze, in detail"
-            >
-              <Reveal className="flex min-w-[calc(34.5rem+2.625rem)] flex-col items-center gap-2 rounded-xl border border-line bg-paper p-5 text-ink md:min-w-0">
+            {/* Arrives as one piece, against the other column's nine steps.
+                Hidden below the tablet with its opposite number, so the
+                comparison is never half a comparison. */}
+            <div className="hidden w-full md:block">
+              <Reveal className="flex flex-col items-center gap-2 rounded-xl border border-line bg-paper p-5 text-ink">
                 <AppHeader />
                 <ExchangeArrows />
                 {/* Empty, so it has no height of its own to take. It stands in

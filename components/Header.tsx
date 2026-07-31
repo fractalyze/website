@@ -81,7 +81,11 @@ export function Header() {
                 <li key={link.title}>
                   <Link
                     href={link.href}
-                    className="flex min-h-6 items-center px-4 py-2 text-label font-medium text-ink transition-opacity hover:opacity-70"
+                    // 16px, not the 14px the buttons carry. The two are drawn at
+                    // different sizes: the frame's Contact Us button is 132x40
+                    // with a 13.75px label, and the desktop nav sits a size above
+                    // it.
+                    className="flex min-h-6 items-center px-4 py-2 text-body font-medium text-ink transition-opacity hover:opacity-70"
                   >
                     {link.title}
                   </Link>
