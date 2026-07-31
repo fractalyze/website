@@ -57,18 +57,18 @@ export const benchmarks: Benchmark[] = [
   {
     workload: 'ntt_bn254',
     size: '2^24',
-    ms: 7.66,
-    baselines: [{name: 'ICICLE', ms: 16.23}],
+    ms: 5.21,
+    baselines: [{name: 'ICICLE', ms: 4.51}],
     basis: 'kernel',
-    note: 'gnark binding',
+    note: 'ICICLE v4, Montgomery form',
   },
   {
     workload: 'ntt_koalabear',
     size: '2^24',
-    ms: 0.6607,
+    ms: 0.3385,
     baselines: [{name: 'SP1', ms: 0.24}],
     basis: 'kernel',
-    note: 'sppark',
+    note: 'sppark, Montgomery form',
   },
   {
     workload: 'ntt_gf2_32',
