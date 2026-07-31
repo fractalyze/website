@@ -1,4 +1,4 @@
-import {axisOf, benchmarks, magnitude, readout, speedup, type Benchmark} from '@/data/benchmarks';
+import {axisOf, benchmarks, magnitude, speedup, type Benchmark} from '@/data/benchmarks';
 import {Reveal} from '@/components/Reveal';
 
 const axis = axisOf(benchmarks);
@@ -16,7 +16,7 @@ const rows = benchmarks
         benchmark,
         baseline,
         ratio,
-        ...readout(ratio),
+        faster: ratio >= 1,
         length: axis.lengthPercent(magnitude(ratio)),
       };
     })
@@ -89,7 +89,7 @@ export function BenchmarkSection() {
 
         <div className="w-full rounded-2xl border border-line bg-surface p-5 md:p-8 xl:w-[75rem] xl:max-w-full xl:p-10">
           <ul>
-            {rows.map(({benchmark, baseline, times, faster, length}) => (
+            {rows.map(({benchmark, baseline, ratio, faster, length}) => (
               <li
                 key={`${benchmark.workload}/${baseline.name}`}
                 className={`${GRID} py-3 md:h-[50px] md:py-0`}
@@ -142,18 +142,21 @@ export function BenchmarkSection() {
                     }
                   />
                   {/* Against the end of the bar, which for a losing result is the
-                      baseline itself. The multiple alone: the direction and the
-                      colour say which side of parity it fell, and the sentence a
-                      reader would need to be told that is on the title. */}
+                      baseline itself. The ratio is printed as it falls, so a row
+                      we lose reads 0.94× rather than 1.06× the other way about:
+                      parity is 1, and which side of it a row landed is then in
+                      the figure itself rather than only in the bar's direction
+                      and colour. */}
                   <span
-                    title={`${times.toFixed(2)}× ${faster ? 'faster' : 'slower'} than ${baseline.name}`}
+                    title={`${ratio.toFixed(2)}× the speed of ${baseline.name}`}
                     className={`absolute top-1/2 ml-2 -translate-y-1/2 whitespace-nowrap text-body-sm font-semibold leading-[17.6px] ${faster ? 'text-ink' : 'text-muted'}`}
                     style={{left: `${faster ? axis.parityPercent + length : axis.parityPercent}%`}}
                   >
-                    {times.toFixed(2)}×
-                    {/* The direction is a bar pointing one way in one of two
-                        colours, which is nothing to a screen reader. */}
-                    <span className="sr-only"> {faster ? 'faster' : 'slower'}</span>
+                    {ratio.toFixed(2)}×
+                    {/* A bare multiple is only unambiguous next to the line it is
+                        measured against, and the line is a border a screen reader
+                        never sees. This says what the 1 would have been. */}
+                    <span className="sr-only"> the speed of {baseline.name}</span>
                   </span>
                 </div>
               </li>

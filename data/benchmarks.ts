@@ -128,7 +128,14 @@ export const benchmarks: Benchmark[] = [
   },
 ];
 
-/** How many times faster we are. Below 1 means the baseline is ahead. */
+/**
+ * How many times faster we are — our speed as a multiple of the baseline's.
+ *
+ * This is the figure the chart prints, unmodified, on both sides of parity: 1.59
+ * where we are ahead and 0.94 where we are not. One scale hung off 1 rather than
+ * two counted away from it, so a reader compares rows by reading them rather
+ * than by first checking which direction each one is counting in.
+ */
 export function speedup(benchmark: Benchmark, baseline: Baseline): number {
   return baseline.ms / benchmark.ms;
 }
@@ -142,11 +149,6 @@ export function speedup(benchmark: Benchmark, baseline: Baseline): number {
  */
 export function magnitude(ratio: number): number {
   return ratio >= 1 ? ratio - 1 : -(1 / ratio - 1);
-}
-
-/** The multiple a reader sees: always at or above 1, with the side named. */
-export function readout(ratio: number): {times: number; faster: boolean} {
-  return ratio >= 1 ? {times: ratio, faster: true} : {times: 1 / ratio, faster: false};
 }
 
 // Room past the longest bar on each side, so nothing runs into the card edge.
