@@ -33,7 +33,17 @@ const cards = [
   },
 ];
 
-const columns = ['gcc · rustc · clang', 'xla · tvm · triton', 'icicle · sppark', 'AI coding agents', 'zorch'];
+// Each heading names the tools its column stands for. They run on one line from
+// the tablet up and stack on a phone, where the five columns have 41px each and
+// the longest name in them is 38: written out, "gcc · rustc · clang" alone wants
+// 112px. Stacking keeps every name rather than dropping two of the three.
+const columns = [
+  {full: 'gcc · rustc · clang', parts: ['gcc', 'rustc', 'clang']},
+  {full: 'xla · tvm · triton', parts: ['xla', 'tvm', 'triton']},
+  {full: 'icicle · sppark', parts: ['icicle', 'sppark']},
+  {full: 'AI coding agents', parts: ['AI coding', 'agents']},
+  {full: 'zorch', parts: ['zorch']},
+];
 
 type Mark = 'yes' | 'no' | 'partial';
 
@@ -108,34 +118,37 @@ export function WhyCompilerSection() {
         </div>
 
         {/* Six columns of marks only mean something read across, so the table
-            keeps its shape at every width and scrolls sideways on a phone rather
-            than being transposed into five stacked lists. The floor is what the
-            narrowest legible columns come to; from 767 up the gutters already
-            leave more than that, so the scrollbar only ever appears on a phone.
+            keeps its shape at every width rather than being transposed into five
+            stacked lists. It fits a 360px phone without scrolling: the headings
+            stack, and the type steps down from the sizes the frame draws — 14px
+            headings, an 18px capability, a 14px note — to 12 and 13, which is
+            what the 107px the label column has left will hold.
             The mobile frame drops this table altogether, which would drop the
             comparison the section is built around. */}
-        <div
-          className="w-full overflow-x-auto"
-          tabIndex={0}
-          role="group"
-          aria-label="Compiler capability comparison"
-        >
-          <table className="mx-auto w-full min-w-[41rem] max-w-full table-fixed border-collapse text-ink xl:w-[81.25rem] xl:min-w-0">
+        <div className="w-full">
+          <table className="mx-auto w-full max-w-full table-fixed border-collapse text-ink xl:w-[81.25rem]">
             <thead>
               <tr className="border border-line-strong bg-surface-sunken">
                 {/* The corner cell labels nothing, so it is not a header. */}
-                <td className="w-[10.5rem] p-0 md:w-[13rem] xl:w-[18.75rem]" />
+                <td className="w-[107px] p-0 md:w-[13rem] xl:w-[18.75rem]" />
                 {columns.map((column, index) => (
                   <th
-                    key={column}
+                    key={column.full}
                     // Every font-size step repeats the leading: a `text-*` utility
                     // carries a line-height of its own, and its responsive variant
                     // is emitted after the unprefixed `leading-*`, so it would win.
-                    className={`h-[3.75rem] text-center text-body-sm font-semibold leading-[19.8px] md:text-body md:leading-[19.8px] xl:text-body-lg xl:leading-[19.8px] ${
+                    className={`h-[3.75rem] text-center text-[12px] font-semibold leading-[15px] md:text-body-sm md:leading-[19.8px] ${
                       index === columns.length - 1 ? 'bg-accent/60' : ''
                     }`}
                   >
-                    {column}
+                    <span className="md:hidden">
+                      {column.parts.map((part) => (
+                        <span key={part} className="block">
+                          {part}
+                        </span>
+                      ))}
+                    </span>
+                    <span className="hidden md:inline">{column.full}</span>
                   </th>
                 ))}
               </tr>
@@ -143,17 +156,19 @@ export function WhyCompilerSection() {
             <tbody>
               {rows.map((row) => (
                 <tr key={row.capability} className="h-20 border border-line">
-                  <th scope="row" className="pl-4 text-left align-middle md:pl-5">
-                    <span className="block text-body font-semibold leading-[19.8px] xl:text-body-lg xl:leading-[19.8px]">
+                  <th scope="row" className="pl-2 text-left align-middle md:pl-5">
+                    <span className="block text-[13px] font-semibold leading-[16px] md:text-body-lg md:leading-[19.8px]">
                       {row.capability}
                     </span>
-                    <span className="block text-body-sm font-normal text-muted">{row.detail}</span>
+                    <span className="block text-[12px] font-normal leading-[15px] text-muted md:text-body-sm md:leading-[19.8px]">
+                      {row.detail}
+                    </span>
                   </th>
                   {row.marks.map((mark, index) => {
                     const Mark = marks[mark];
                     return (
                       <td
-                        key={columns[index]}
+                        key={columns[index].full}
                         className={`align-middle ${index === row.marks.length - 1 ? 'bg-accent/60' : ''}`}
                       >
                         <span className="flex justify-center" title={markLabels[mark]}>
