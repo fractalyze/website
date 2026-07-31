@@ -50,7 +50,7 @@ type Mark = 'yes' | 'no' | 'partial';
 const rows: {capability: string; detail: string; marks: Mark[]}[] = [
   {
     capability: 'Field-aware semantics',
-    detail: 'sees a·b mod p as one op in F_p',
+    detail: 'finite fields, not integers',
     marks: ['no', 'no', 'yes', 'partial', 'yes'],
   },
   {
@@ -130,14 +130,14 @@ export function WhyCompilerSection() {
             <thead>
               <tr className="border border-line-strong bg-surface-sunken">
                 {/* The corner cell labels nothing, so it is not a header. */}
-                <td className="w-[107px] p-0 md:w-[13rem] xl:w-[18.75rem]" />
+                <td className="w-[118px] p-0 md:w-[13rem] xl:w-[18.75rem]" />
                 {columns.map((column, index) => (
                   <th
                     key={column.full}
                     // Every font-size step repeats the leading: a `text-*` utility
                     // carries a line-height of its own, and its responsive variant
                     // is emitted after the unprefixed `leading-*`, so it would win.
-                    className={`h-[3.75rem] text-center text-[12px] font-semibold leading-[15px] md:text-body-sm md:leading-[19.8px] ${
+                    className={`h-[3.75rem] text-center text-[11px] font-semibold leading-[14px] md:text-body-sm md:leading-[19.8px] ${
                       index === columns.length - 1 ? 'bg-accent/60' : ''
                     }`}
                   >

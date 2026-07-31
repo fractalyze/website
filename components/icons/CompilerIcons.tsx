@@ -65,7 +65,8 @@ export function ArrowTailIcon({className}: {className?: string}) {
     <svg
       viewBox="0 0 16 16"
       fill="currentColor"
-      className={className ?? 'h-4 w-4'}
+      // Pinned with the button it sits in, which is 40px with a 14px label.
+      className={className ?? 'h-[16px] w-[16px]'}
       aria-hidden
     >
       <path d="M8.286 3.703a.75.75 0 0 1 1.061 0l3.75 3.75a.75.75 0 0 1 0 1.061l-3.75 3.75a.75.75 0 1 1-1.06-1.06l2.469-2.47H3.25a.75.75 0 0 1 0-1.5h7.505L8.286 4.764a.75.75 0 0 1 0-1.061Z" />
@@ -82,7 +83,10 @@ export function CheckMark({className}: {className?: string}) {
       strokeWidth={1.5}
       strokeLinecap="round"
       strokeLinejoin="round"
-      className={className ?? 'h-6 w-6'}
+      // Pixels, not a rem: these sit in a table whose type is pixels too, and as
+      // a rem the mark drew 15px at 1024 against 24px on the phone beside it.
+      // 24px is what the frame draws — its cross inks 15px in a 24px box.
+      className={className ?? 'h-[24px] w-[24px]'}
       aria-hidden
     >
       <path d="M20 7 L10 17 L4.5 11.5" />
@@ -98,7 +102,10 @@ export function CrossMark({className}: {className?: string}) {
       stroke="currentColor"
       strokeWidth={1.5}
       strokeLinecap="round"
-      className={className ?? 'h-6 w-6'}
+      // Pixels, not a rem: these sit in a table whose type is pixels too, and as
+      // a rem the mark drew 15px at 1024 against 24px on the phone beside it.
+      // 24px is what the frame draws — its cross inks 15px in a 24px box.
+      className={className ?? 'h-[24px] w-[24px]'}
       aria-hidden
     >
       <path d="M19 5 L5 19 M5 5 L19 19" />
@@ -114,7 +121,10 @@ export function PartialMark({className}: {className?: string}) {
       stroke="currentColor"
       strokeWidth={1.5}
       strokeLinejoin="round"
-      className={className ?? 'h-6 w-6'}
+      // Pixels, not a rem: these sit in a table whose type is pixels too, and as
+      // a rem the mark drew 15px at 1024 against 24px on the phone beside it.
+      // 24px is what the frame draws — its cross inks 15px in a 24px box.
+      className={className ?? 'h-[24px] w-[24px]'}
       aria-hidden
     >
       <path d="M12.09 3.25 L21.84 19.75 L2.34 19.75 Z" />
