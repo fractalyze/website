@@ -1,0 +1,68 @@
+---
+title: 'Compilers Will Give Cryptography Its GPT Moment'
+date: '2026-07-31'
+tags: ['compiler', 'mlir', 'xla', 'zkp', 'fhe', 'fractalyze']
+draft: false
+category: 'Business'
+summary: 'A friend running an AI team could take a model from paper to production in a few hours. Ours spent years trying to ship zero-knowledge proofs. The question that led us from that gap to MLIR, an Ethereum grant, and a domain-specific compiler for cryptography.'
+authors: ['Ryan Kim']
+image: '/blog/covers/atrium-stairs.webp'
+---
+
+## Why AI Takes Hours and Cryptography Takes Years
+
+Suppose we are building an AI service. First we need a model specialized for it. We install PyTorch and write the code in Python. Once training begins, that Python code runs on any cloud or data center and, optimized for whatever hardware it lands on, carries out an enormous amount of computation.
+
+Or, rather than build a model yourself, you can deploy or reuse an existing one. A model from a paper at a major AI conference sits publicly on Hugging Face. You download it, install it, and enter the details of your GPUs and cluster. The model deploys to your cluster automatically, optimizes for your hardware, and runs inference on parallelized code. A user can experience a new model in a few hours.
+
+This is a compressed account, but it is roughly what a friend running an AI team told me back in 2024.
+
+Meanwhile our team, which had long argued that trust in the digital world is a problem worth solving, was struggling to apply zero-knowledge proofs in the blockchain industry. We read new papers and searched for code we could reuse in production. Cryptography demands a tremendous amount of computation, so hardware optimization matters enormously. And because it relies on parallelization, as AI does (RiscZero's Continuation, for example), clustering matters too. But most of the code was hard to follow: dense with hardware-specific optimizations, it either called low-level APIs tied to one hardware architecture or was hard-wired to it.
+
+For anyone running a team, staffing up to add ZK features to a service was close to a disaster. Engineers who could research and develop mathematical optimizations were vanishingly scarce, and engineers experienced in system-level optimization across CPU, GPU, and ASIC and in running GPU clusters were extremely expensive, because that skill set overlapped precisely with AI, where salaries were already staggering. A capable team cost at least \$1M more per year.
+
+The bigger problem was the update cycle. ZK and FHE advance by orders of magnitude, and every six months a new breakthrough slashes the computation required. Production code has to keep pace, so a team needed not just developers but a standing research capability. Even frontier teams like RiscZero, Succinct, and Jolt spend months, often a year to a year and a half, on a single production codebase. Adding applied-cryptography features to a service demanded that much time. After several conversations with our strategy and finance team, we concluded that the product's market value could never outweigh the cost.
+
+In December 2024 a question began to nag at us. AI and cryptography both handle enormous computation, so both depend on hardware optimization; both run highly complex systems built on parallelization. Why, then, does research reach production in a few hours in AI and in years in cryptography?
+
+Then we found XLA, the domain-specific compiler that carries AI's Python code all the way into production.
+
+## Ideation, PoC, and Google zkSummit
+
+XLA compiles Python code and, by harnessing hardware and clusters, makes enormous computation possible. It is what lets Python, normally too slow to bother with, serve even resource-intensive domains like AI. "Domain-specific" means that, unlike a general-purpose compiler, it optimizes on an MLIR foundation for the specifics of each case: the AI model, the mathematical optimizations, the hardware in use, the network, and so on.
+
+XLA, which emerged around 2015–2016 alongside PyTorch and TensorFlow, grew into mature open source run by a consortium of big-tech companies. By advancing complex optimization and parallelization, it collapsed research-to-product iteration time, and it laid the technical groundwork for the GPT moment.
+
+We concluded that this technology was essential to commercializing cryptography, where building a product costs too much, takes too long, and is simply too hard.
+
+In January 2025 we began expressing cryptography's mathematical operations on an MLIR foundation. It was still low-level, but we captured MSM and NTT operations and, eventually, all of Groth16 in MLIR. Low-level though it was, this code ran on any hardware (x86, AMD, ARM), unlike everything we had seen before. We also worked out how to embed cluster information into it, a technique close to model parallelism, so the computation could run across multiple GPUs.
+
+Three months later we presented to Jeremy Bruestle, then CEO of RiscZero. It was a short meeting, but Jeremy already knew AI, parallelism, and MLIR deeply, and he told us: "Surprisingly, these are stacks I've worked in myself, so I think the direction is right and necessary, but it will take too long."
+
+Only later did I see how right he was. It took far longer than we expected. And, honestly, it would have been impossible had AI not changed the speed of software development. Braver for not knowing better, we kept building. In August 2025, at Google zkSummit in San Francisco, we presented the CPU results for our MLIR version of Groth16. The Python code ran on every CPU architecture and beat RapidSnark and Gnark by roughly 2x. It drew little attention. It was far from the frontier: Groth16 was nearly ten years old and too simple. Much remained to do.
+
+Even so, the Ethereum Foundation saw the value. After we explained to Justin Drake and Alexander Hicks why this research is essential to cryptography, we received an Ethereum grant.
+
+## Moving at the Speed of Agents
+
+A year and a half passed. Once AI could truly code as well as a person, the pace accelerated. The past few months have been study and development at tremendous speed, because the more we learned about compilers and cryptography, the more we saw how much was left to do.
+
+We tuned AI-oriented compiler technology to fit cryptography, teaching the compiler about complex schemes and fields. We extended it from proof generation to witness generation. We added support for zkVMs and for FHE. Around the core, for generality, we built a framework that makes cryptography code as easy to write as PyTorch, and a solution that scales out complex orchestration systems using AI's parallelization techniques.
+
+The results astonished us. When AI writes cryptography code in Python to the framework, the compiler does all the optimization. The result is tuned to your hardware and runs at least as fast as the state of the art, sometimes tens of times faster. Naturally: not every proving scheme in the world has been optimized by top-tier experts.
+
+A single piece of Python code now delivers hardware-agnostic acceleration. With the compiler, and without any knowledge of mathematical optimization or hardware, you can match the performance an optimization engineer would spend years to reach. You inherit AI's parallelization techniques as well, so the computation available to you scales to data-center size.
+
+Research moves faster, and work once out of reach for its sheer computational weight, such as ZK-FHE, becomes possible. And a product can now be prototyped and developed to a commercially viable level by AI agents alone.
+
+The value of privacy becomes easier to convey. We have moved closer to solving the problem of digital trust.
+
+## Fractalyze, What We See Next
+
+Fractalyze is an R&D team of experts in blockchain, mathematics, cryptography, and compilers. In more than ten years of R&D we learned that technological progress is irreversible and never linear; it advances in steps, through paradigm shifts, tracing an S-curve, as we saw in AI, blockchain, and robotics. We believe a domain-specific compiler will drive that kind of paradigm shift in cryptography, carrying it into the steep middle of an S-curve where the research-and-development cycle accelerates, value becomes easier to deliver, and new ideas come pouring out.
+
+We replace the digital world's precarious trust with cryptography. Against the endlessly multiplying bots, AI slop, and scams, and against the surveillance and censorship that grow under the pretext of containing them, we are preparing a future in which cryptography is a real alternative. As we have learned firsthand, today's cryptography remains too expensive and too slow to commercialize. The current approach cannot catch up to the speed of AI. That is why cryptography needs a new paradigm built on a domain-specific compiler.
+
+If your product needs applied cryptography but you cannot afford a team that costs billions, talk to us. If you are doing new cryptographic research and want to distribute heavy computation efficiently, talk to us. We will help.
+
+Cryptography replaces trust. Compiler will give GPT-moments to cryptography.
