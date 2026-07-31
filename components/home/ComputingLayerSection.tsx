@@ -18,9 +18,9 @@ const todaySpecialistWork = [
 
 const todayHandwork = [
   ['Manual', 'Tuning'],
-  ['Debug &', 'Logging'],
-  ['Integrate', 'Handoffs'],
-  ['QA &', 'Validation'],
+  ['Debug', 'Logging'],
+  ['Integrate', 'Handoff'],
+  ['QA &', 'Testing'],
   ['Vendor', 'Fixes'],
 ];
 
@@ -137,11 +137,11 @@ function PlatformRow({withArrows = false}: {withArrows?: boolean}) {
 
 function ProcessRow({steps, tone}: {steps: string[][]; tone: 'brand' | 'blue'}) {
   return (
-    <div className="flex w-full items-stretch gap-2">
+    <div className="flex w-full items-stretch gap-0.5 md:gap-2">
       {steps.map((lines) => (
         <div
           key={lines.join(' ')}
-          className={`flex min-w-0 flex-1 items-center justify-center rounded-lg px-1 py-4 text-center text-micro leading-[1.1] text-ink ${
+          className={`flex min-w-0 flex-1 items-center justify-center rounded-lg px-0.5 py-4 text-center text-[10px] leading-[1.1] text-ink md:px-1 md:text-micro ${
             tone === 'brand' ? 'bg-accent' : 'bg-accent-blue'
           }`}
         >
@@ -195,9 +195,8 @@ export function ComputingLayerSection() {
 
             {/* Revealed step by step: the length of the descent is the point
                 this column is making.
-                Hidden below the tablet. Even with the labels cut, five chips to
-                a row need 430px of viewport, and the common phone is 390. */}
-            <div className="hidden w-full md:block">
+                */}
+            <div className="w-full">
               <div className="flex flex-col items-center gap-2 rounded-xl border border-line bg-paper p-5 text-ink">
                 {[
                   <AppHeader key="app" />,
