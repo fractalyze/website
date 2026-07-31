@@ -1,9 +1,6 @@
 import {Reveal} from '@/components/Reveal';
 import {CpuIcon, FpgaIcon, GpuIcon, TpuIcon} from '@/components/icons/PlatformIcons';
 
-const DIAGRAM_WIDTH = 552;
-const COLUMN_GAP = 8;
-
 // Every line is kept under 56px at 12px, which is what a chip has to spend once
 // the panel is one of two columns at 1024 — the narrowest the diagram is ever
 // drawn. The labels are 12px at every width now, so a chip that fits at 1920 no
@@ -33,62 +30,10 @@ const platforms = [
   {label: 'FPGA', Icon: FpgaIcon},
 ];
 
-// Horizontal centre of each column, so connectors line up with the boxes they join.
-function columnCentres(count: number) {
-  const item = (DIAGRAM_WIDTH - COLUMN_GAP * (count - 1)) / count;
-  return Array.from({length: count}, (_, i) => i * (item + COLUMN_GAP) + item / 2);
-}
-
 const dashed = {strokeWidth: 1.5, strokeDasharray: '3 3'} as const;
 
 function head(x: number, y: number) {
   return `M${x - 4} ${y} L${x + 4} ${y} L${x} ${y + 8} Z`;
-}
-
-function ArrowRow({count, height = 30}: {count: number; height?: number}) {
-  return (
-    <svg
-      viewBox={`0 0 ${DIAGRAM_WIDTH} ${height}`}
-      className="h-auto w-full"
-      fill="none"
-      stroke="currentColor"
-      aria-hidden
-    >
-      {columnCentres(count).map((x) => (
-        <g key={x}>
-          <line x1={x} y1={0} x2={x} y2={height - 8} {...dashed} />
-          <path d={head(x, height - 8)} fill="currentColor" stroke="none" />
-        </g>
-      ))}
-    </svg>
-  );
-}
-
-// A run of stubs into a shared horizontal rule, then arrows down to the next row.
-function BusConnector({from, to}: {from: number; to: number}) {
-  const top = columnCentres(from);
-  const bottom = columnCentres(to);
-  const span = [...top, ...bottom];
-  return (
-    <svg
-      viewBox={`0 0 ${DIAGRAM_WIDTH} 50`}
-      className="h-auto w-full"
-      fill="none"
-      stroke="currentColor"
-      aria-hidden
-    >
-      {top.map((x) => (
-        <line key={`t${x}`} x1={x} y1={0} x2={x} y2={20} {...dashed} />
-      ))}
-      <line x1={Math.min(...span)} y1={20} x2={Math.max(...span)} y2={20} {...dashed} />
-      {bottom.map((x) => (
-        <g key={`b${x}`}>
-          <line x1={x} y1={20} x2={x} y2={42} {...dashed} />
-          <path d={head(x, 42)} fill="currentColor" stroke="none" />
-        </g>
-      ))}
-    </svg>
-  );
 }
 
 function ExchangeArrows() {
@@ -146,7 +91,13 @@ function ProcessRow({steps, tone}: {steps: string[][]; tone: 'brand' | 'blue'}) 
       {steps.map((lines) => (
         <div
           key={lines.join(' ')}
-          className={`flex min-w-0 flex-1 items-center justify-center rounded-lg px-0.5 py-4 text-center text-[10px] leading-[1.1] text-ink md:px-1 md:text-micro ${
+          // No horizontal padding below the tablet. Five chips share a phone's
+          // 219px and the longest label, "Integrate/Handoff", draws 40.4px of
+          // ink at 10px — 2px wider than the chip's own padding box left it,
+          // which is why it had been overrunning its chip since the labels were
+          // first cut to fit. The text is centred, so what padding buys here is
+          // ink the chip does not have to give.
+          className={`flex min-w-0 flex-1 items-center justify-center rounded-lg px-0 py-4 text-center text-[10px] leading-[1.1] text-ink md:px-1 md:text-micro ${
             tone === 'brand' ? 'bg-accent' : 'bg-accent-blue'
           }`}
         >
@@ -176,9 +127,9 @@ export function ComputingLayerSection() {
           </p>
         </div>
 
-        {/* Side by side only at desktop. Each panel carries a diagram drawn to a
-            552px grid, and halving the width of a screen that is already narrower
-            than that leaves nothing to draw it in. */}
+        {/* Side by side only at desktop. Each panel carries a diagram whose
+            narrowest row is five chips, and halving a screen that is already
+            narrower than the widest of those rows leaves nothing to draw it in. */}
         {/* Subgrid at the desktop step, where the two panels stand side by
             side: badge, prose and diagram then share three rows across both, so
             the drawings start on the same line and end on the same one. Left to
@@ -204,31 +155,52 @@ export function ComputingLayerSection() {
               </ul>
             </div>
 
-            {/* Revealed step by step: the length of the descent is the point
-                this column is making.
-                */}
+            {/* The same three things stacked as the panel opposite —
+                application, one container, hardware — so the two diagrams are
+                read as one pair and the difference between them is what is
+                inside the container, not how it is drawn. The dashed connectors
+                that used to run between the inner rows are gone with the 552px
+                grid that positioned them; the arrows into and out of the
+                container are all that is left, and they are the same two the
+                other side has.
+
+                Revealed a piece at a time, against the other column's single
+                piece: the staging is now the only thing carrying "many hands,
+                months of it". */}
             <div className="w-full">
-              <div className="flex h-full flex-col items-center gap-2 rounded-xl border border-line bg-paper p-5 text-ink">
+              <div className="flex h-full flex-col items-center gap-2 rounded-xl border border-line bg-paper p-2 text-ink md:p-5">
                 {[
                   <AppHeader key="app" />,
-                  <ArrowRow key="fan" count={5} />,
-                  <ProcessRow key="specialists" steps={todaySpecialistWork} tone="brand" />,
-                  <BusConnector key="bus-1" from={5} to={5} />,
-                  <ProcessRow key="handwork" steps={todayHandwork} tone="blue" />,
-                  <BusConnector key="bus-2" from={5} to={1} />,
+                  <DownArrow key="into" />,
                   <div
-                    key="hardware"
-                    // text-center as well as justify-center: the flex property
-                    // centres the block, and on a phone the label wraps, leaving
-                    // the second line ranged left inside a centred block.
-                    className="flex w-full items-center justify-center rounded-lg bg-accent px-5 py-4 text-center text-body-sm text-ink"
+                    key="work"
+                    // Neutral where the box opposite is accent: the rows inside
+                    // are already accent and accent-blue, and one undifferentiated
+                    // grey holding all of them is this side's whole claim.
+                    //
+                    // p-2 below the tablet, matched by the frame outside it: the
+                    // five-chip row is what sets the 360 floor and has nothing to
+                    // give, so a box nested inside the frame is only affordable
+                    // if the frame gives up the padding to pay for it. The two
+                    // 8px rings and this border come to 17px a side against the
+                    // frame's old 20, which is where the chips get their room.
+                    className="flex w-full flex-col gap-2 rounded-2xl border border-line bg-surface p-2 md:p-5"
                   >
-                    {todayHardwareWork}
+                    <ProcessRow steps={todaySpecialistWork} tone="brand" />
+                    <ProcessRow steps={todayHandwork} tone="blue" />
+                    {/* text-center as well as justify-center: the flex property
+                        centres the block, and on a phone the label wraps, leaving
+                        the second line ranged left inside a centred block. */}
+                    <div className="flex w-full items-center justify-center rounded-lg bg-accent px-5 py-4 text-center text-body-sm text-ink">
+                      {todayHardwareWork}
+                    </div>
                   </div>,
-                  <BusConnector key="bus-3" from={1} to={4} />,
-                  <PlatformRow key="platforms" />,
+                  <PlatformRow key="platforms" withArrows />,
                 ].map((step, index) => (
-                  <Reveal key={step.key} className="w-full" delay={index * 150}>
+                  // justify-center rather than a bare block: the arrow is the one
+                  // child narrower than the column, and its wrapper is what has to
+                  // centre it now that it sits in one.
+                  <Reveal key={step.key} className="flex w-full justify-center" delay={index * 150}>
                     {step}
                   </Reveal>
                 ))}
@@ -256,13 +228,17 @@ export function ComputingLayerSection() {
               </ul>
             </div>
 
-            {/* Arrives as one piece, against the other column's nine steps. */}
+            {/* Arrives as one piece, against the other column's four. */}
             <div className="w-full">
-              <Reveal className="flex h-full flex-col items-center gap-2 rounded-xl border border-line bg-paper p-5 text-ink">
+              {/* p-2 below the tablet to match the frame opposite, which had to
+                  give up that padding to afford the box nested inside it. */}
+              <Reveal className="flex h-full flex-col items-center gap-2 rounded-xl border border-line bg-paper p-2 text-ink md:p-5">
                 <AppHeader />
                 <ExchangeArrows />
-                {/* Stacked, this column is shorter than the nine steps opposite
-                    it. On a phone and a tablet it takes the drawn height; at the
+                {/* Stacked, this column is shorter than the one opposite it —
+                    still, now that both are three things: the container here
+                    holds two rows against that one's three plus a bar. On a
+                    phone and a tablet it takes the drawn height; at the
                     desktop step, where the two diagrams share a row, it absorbs
                     whatever that row leaves rather than carrying a number tuned
                     to one width — 18.8125rem matched at 1920 and was 27px short
