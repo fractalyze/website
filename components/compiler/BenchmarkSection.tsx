@@ -24,30 +24,20 @@ const rows = benchmarks
   .sort((a, b) => b.ratio - a.ratio);
 
 /**
- * Three columns — workload, track, readout — down to the tablet, and three
- * lines on a phone.
+ * Two columns — workload and track — and two lines on a phone.
  *
- * A 360px screen cannot hold a bar worth reading next to two columns of text,
- * so below the tablet the row folds: the workload and its readout share the
- * first line, the baseline sits under the workload, and the track spans the
- * width beneath both. Placement is explicit rather than left to auto-flow,
- * because the readout is the last cell in the source and has to come back up to
- * the first line. The mobile design frame drops this chart, but the section's
- * own subtitle promises benchmark data, so it stays.
+ * The design frame draws a label block, a bar from a common origin, and the
+ * figure sitting against the end of that bar. Carrying the figure on the bar
+ * rather than in a column of its own is what makes it a two-column row here and
+ * a two-line one on a phone. The frame has no losing result to draw and so no
+ * origin to speak of; ours keeps one, and with the present data it lands 7% from
+ * the left, which is close enough to the frame that the two read alike.
+ *
+ * The label column is in pixels because its contents are: body copy stopped
+ * scaling with the root, and a column that still did would squeeze it.
  */
-// The two text columns are in pixels at the desktop step, and the row height
-// with them: their contents are body copy, which no longer scales with the root,
-// so a column that did would squeeze "3.09x faster" onto two lines at 1440 and
-// push the label pair out of a 37.5px row. The figures are what the rem values
-// come to at 1920, so the chart is unchanged at the width it is drawn for.
 const GRID =
-  'grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-4 gap-y-1 md:grid-cols-[10rem_1fr_6rem] md:gap-y-4 xl:grid-cols-[240px_1fr_112px]';
-
-/** The track: the full width under both cells on a phone, the middle column above. */
-const TRACK = 'col-start-1 col-end-3 row-start-2 md:col-end-2 md:col-start-2 md:row-start-1';
-
-/** The readout: top-right of the folded row, its own column once there is one. */
-const READOUT = 'col-start-2 row-start-1 md:col-start-3';
+  'grid grid-cols-1 items-center gap-y-2 md:grid-cols-[10rem_1fr] md:gap-x-4 md:gap-y-0 xl:grid-cols-[200px_1fr]';
 
 /** The operation and, where one applies, the size it was run at. */
 const label = ({workload, size}: Benchmark) => (size ? `${workload}(${size})` : workload);
@@ -98,19 +88,6 @@ export function BenchmarkSection() {
         </div>
 
         <div className="w-full rounded-2xl border border-line bg-surface p-5 md:p-8 xl:w-[75rem] xl:max-w-full xl:p-10">
-          <div className={`${GRID} pb-3`}>
-            <span className="hidden md:block" />
-            <span className="relative col-start-1 col-end-3 block text-micro uppercase tracking-wide text-muted md:col-start-2 md:col-end-3">
-              <span
-                className="absolute -translate-x-1/2 whitespace-nowrap"
-                style={{left: `${axis.parityPercent}%`}}
-              >
-                baseline
-              </span>
-            </span>
-            <span className="hidden md:block" />
-          </div>
-
           <ul>
             {rows.map(({benchmark, baseline, times, faster, length}) => (
               <li
@@ -135,10 +112,21 @@ export function BenchmarkSection() {
                   </span>
                 </div>
 
-                <div className={`relative h-6 ${TRACK} md:h-full`}>
+                {/* Stretched to the full row height from the tablet up, so the
+                    per-row baselines butt against each other and read as one
+                    line down the chart rather than a tick beside each bar.
+                    The right margin is the figure's own width, held out of the
+                    track so the longest bar has somewhere to put it. In pixels,
+                    like the figure: reserving a rem would leave 30px at 1024 for
+                    a 40px number. */}
+                <div className="relative mr-[48px] h-6 md:h-auto md:self-stretch">
+                  {/* Absent on a phone. The rows there carry a label above each
+                      track, so the segments cannot meet, and parity sits 3% from
+                      the left where a lone tick reads as a mark on the card
+                      edge. The bars still say which side of it they fell. */}
                   <span
                     aria-hidden
-                    className="absolute inset-y-0 w-px bg-line-strong"
+                    className="absolute inset-y-0 hidden w-0 border-l border-dashed border-line md:block"
                     style={{left: `${axis.parityPercent}%`}}
                   />
                   <span
@@ -146,20 +134,28 @@ export function BenchmarkSection() {
                     // A near-parity result rounds to a bar under a pixel wide, which
                     // reads as a missing bar rather than a close one; the floor keeps
                     // the mark on the page without inflating what it claims.
-                    className={`absolute inset-y-0 my-auto h-6 min-w-[3px] ${faster ? 'bg-accent-blue' : 'bg-line-strong'}`}
+                    className={`absolute inset-y-0 my-auto h-5 min-w-[3px] ${faster ? 'bg-accent' : 'bg-line-strong'}`}
                     style={
                       faster
                         ? {left: `${axis.parityPercent}%`, width: `${length}%`}
                         : {right: `${100 - axis.parityPercent}%`, width: `${length}%`}
                     }
                   />
+                  {/* Against the end of the bar, which for a losing result is the
+                      baseline itself. The multiple alone: the direction and the
+                      colour say which side of parity it fell, and the sentence a
+                      reader would need to be told that is on the title. */}
+                  <span
+                    title={`${times.toFixed(2)}× ${faster ? 'faster' : 'slower'} than ${baseline.name}`}
+                    className={`absolute top-1/2 ml-2 -translate-y-1/2 whitespace-nowrap text-body-sm font-semibold leading-[17.6px] ${faster ? 'text-ink' : 'text-muted'}`}
+                    style={{left: `${faster ? axis.parityPercent + length : axis.parityPercent}%`}}
+                  >
+                    {times.toFixed(2)}×
+                    {/* The direction is a bar pointing one way in one of two
+                        colours, which is nothing to a screen reader. */}
+                    <span className="sr-only"> {faster ? 'faster' : 'slower'}</span>
+                  </span>
                 </div>
-
-                <span
-                  className={`${READOUT} text-right text-body-sm font-semibold leading-[17.6px] xl:text-body xl:leading-[17.6px] ${faster ? 'text-ink' : 'text-muted'}`}
-                >
-                  {times.toFixed(2)}× {faster ? 'faster' : 'slower'}
-                </span>
               </li>
             ))}
           </ul>

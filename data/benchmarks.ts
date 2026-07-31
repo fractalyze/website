@@ -55,10 +55,10 @@ export const benchmarks: Benchmark[] = [
     basis: 'wall-clock',
   },
   {
-    workload: 'ntt_bn254',
+    workload: 'ntt_koalabear',
     size: '2^24',
-    ms: 5.21,
-    baselines: [{name: 'ICICLE', ms: 4.51}],
+    ms: 0.3385,
+    baselines: [{name: 'ICICLE', ms: 0.539}],
     basis: 'kernel',
     note: 'ICICLE v4, Montgomery form',
   },
@@ -66,7 +66,7 @@ export const benchmarks: Benchmark[] = [
     workload: 'ntt_gf2_32',
     size: '2^24',
     ms: 12.894,
-    baselines: [{name: 'Binius GPU', ms: 16.797}],
+    baselines: [{name: 'Binius', ms: 16.797}],
     basis: 'kernel',
   },
   {
