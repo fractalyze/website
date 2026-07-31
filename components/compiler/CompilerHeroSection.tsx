@@ -31,7 +31,7 @@ export function CompilerHeroSection() {
             href={siteMetadata.zorchUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex h-10 w-fit items-center gap-1 rounded-md bg-ink px-3 text-label font-medium text-paper transition-opacity hover:opacity-70"
+            className="inline-flex h-[40px] w-fit items-center gap-1 rounded-[6px] bg-ink px-[12px] text-label font-medium text-paper transition-opacity hover:opacity-70"
           >
             Awesome Zorch
             <ArrowTailIcon />

@@ -28,7 +28,7 @@ export function ResearchBlogSection() {
 
         <Link
           href="/blog"
-          className="inline-flex h-10 items-center rounded-md bg-ink px-3 text-label font-medium text-paper transition-opacity hover:opacity-70"
+          className="inline-flex h-[40px] items-center rounded-[6px] bg-ink px-[12px] text-label font-medium text-paper transition-opacity hover:opacity-70"
         >
           View blog details
         </Link>

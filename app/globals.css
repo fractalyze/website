@@ -44,15 +44,27 @@ html {
 }
 
 /*
- * calc(100vw / 120) is the line through (1920, 16) and (1440, 12), but it
- * minifies to .833333vw, which lands 5 millionths of a pixel under 12 at 1440.
- * The floor absorbed that while it was 12. Now that it is 10, this pins the
- * design's second reference width back to the exact size it is drawn at; above
- * 1440 the calc is the larger term and this changes nothing.
+ * calc(100vw / 120) is the line through (1920, 16) and (1440, 12) — the two
+ * widths the design is drawn against — but it minifies to .833333vw and lands
+ * a few millionths of a pixel under the mark at both of them. The 12px floor
+ * absorbed that at 1440 while it was the floor; nothing ever absorbed it at
+ * 1920, where the root has been 15.999984px rather than 16.
+ *
+ * That did not matter while every size in the theme was a rem and moved
+ * together. It matters now that body copy is in pixels, because the two
+ * notations only agree when the root is exactly 16. These two rules pin the
+ * reference widths to the sizes they are drawn at; between and above them the
+ * calc is the governing term and they change nothing.
  */
 @media (min-width: 1440px) {
   html {
     font-size: clamp(12px, calc(100vw / 120), 16px);
+  }
+}
+
+@media (min-width: 1920px) {
+  html {
+    font-size: 16px;
   }
 }
 

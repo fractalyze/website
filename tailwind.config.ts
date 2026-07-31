@@ -25,6 +25,19 @@ const config: Config = {
       },
       // Type scale transcribed from the 260728 design. Line heights are baked in
       // because the design pairs each size with a fixed leading.
+      //
+      // Headings are in rem and scale with the root, so the desktop layout stays
+      // proportional as it narrows. Everything a reader reads at length is in
+      // px and does not, because scaling it means a 1440 laptop — the commonest
+      // desktop width there is — rendering 16px body copy at 12px. The design
+      // draws body copy at one size on every canvas it was drawn on: 18px at
+      // 1920 and 18px at 1024, 14px at 360. Pixels are what say that.
+      //
+      // The two notations agree wherever the root is 16px, which is every width
+      // below the desktop breakpoint and 1920 above it, so this pins the middle
+      // of the desktop range and changes nothing at either end. Article bodies
+      // have opted out the same way since the blog landed; see the typography
+      // block below.
       fontSize: {
         'display-1': ['5rem', {lineHeight: '4.5rem'}],
         'display-2': ['4.5rem', {lineHeight: '4.95rem'}],
@@ -34,16 +47,13 @@ const config: Config = {
         'title-2': ['1.75rem', {lineHeight: '1.925rem'}],
         'title-3': ['1.5rem', {lineHeight: '1.65rem'}],
         'title-4': ['1.25rem', {lineHeight: '1.375rem'}],
-        'body-lg': ['1.125rem', {lineHeight: '1.6875rem'}],
-        body: ['1rem', {lineHeight: '1.5rem'}],
-        'body-sm': ['0.875rem', {lineHeight: '1.3125rem'}],
-        // Buttons and nav links. The design sets these at 14px, which is what
-        // 0.875rem comes to once the root reaches its ceiling; the floor holds
-        // that size on the narrower desktops where the root scales down, rather
-        // than letting a control shrink to 10.5px along with the page.
-        label: ['max(0.875rem,14px)', {lineHeight: '1.3125rem'}],
-        caption: ['0.8125rem', {lineHeight: '1.21875rem'}],
-        micro: ['0.75rem', {lineHeight: '0.825rem'}],
+        'body-lg': ['18px', {lineHeight: '27px'}],
+        body: ['16px', {lineHeight: '24px'}],
+        'body-sm': ['14px', {lineHeight: '21px'}],
+        // Buttons and nav links.
+        label: ['14px', {lineHeight: '21px'}],
+        caption: ['13px', {lineHeight: '19.5px'}],
+        micro: ['12px', {lineHeight: '13.2px'}],
       },
       colors: {
         ink: '#000000',

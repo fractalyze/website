@@ -131,7 +131,7 @@ export function WhyCompilerSection() {
                     // Every font-size step repeats the leading: a `text-*` utility
                     // carries a line-height of its own, and its responsive variant
                     // is emitted after the unprefixed `leading-*`, so it would win.
-                    className={`h-[3.75rem] text-center text-body-sm font-semibold leading-[1.2375rem] md:text-body md:leading-[1.2375rem] xl:text-body-lg xl:leading-[1.2375rem] ${
+                    className={`h-[3.75rem] text-center text-body-sm font-semibold leading-[19.8px] md:text-body md:leading-[19.8px] xl:text-body-lg xl:leading-[19.8px] ${
                       index === columns.length - 1 ? 'bg-accent/60' : ''
                     }`}
                   >
@@ -144,7 +144,7 @@ export function WhyCompilerSection() {
               {rows.map((row) => (
                 <tr key={row.capability} className="h-20 border border-line">
                   <th scope="row" className="pl-4 text-left align-middle md:pl-5">
-                    <span className="block text-body font-semibold leading-[1.2375rem] xl:text-body-lg xl:leading-[1.2375rem]">
+                    <span className="block text-body font-semibold leading-[19.8px] xl:text-body-lg xl:leading-[19.8px]">
                       {row.capability}
                     </span>
                     <span className="block text-body-sm font-normal text-muted">{row.detail}</span>

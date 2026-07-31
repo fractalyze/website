@@ -35,8 +35,13 @@ const rows = benchmarks
  * the first line. The mobile design frame drops this chart, but the section's
  * own subtitle promises benchmark data, so it stays.
  */
+// The two text columns are in pixels at the desktop step, and the row height
+// with them: their contents are body copy, which no longer scales with the root,
+// so a column that did would squeeze "3.09x faster" onto two lines at 1440 and
+// push the label pair out of a 37.5px row. The figures are what the rem values
+// come to at 1920, so the chart is unchanged at the width it is drawn for.
 const GRID =
-  'grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-4 gap-y-1 md:grid-cols-[10rem_1fr_6rem] md:gap-y-4 xl:grid-cols-[15rem_1fr_7rem]';
+  'grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-4 gap-y-1 md:grid-cols-[10rem_1fr_6rem] md:gap-y-4 xl:grid-cols-[240px_1fr_112px]';
 
 /** The track: the full width under both cells on a phone, the middle column above. */
 const TRACK = 'col-start-1 col-end-3 row-start-2 md:col-end-2 md:col-start-2 md:row-start-1';
@@ -110,7 +115,7 @@ export function BenchmarkSection() {
             {rows.map(({benchmark, baseline, times, faster, length}) => (
               <li
                 key={`${benchmark.workload}/${baseline.name}`}
-                className={`${GRID} py-3 md:h-[3.125rem] md:py-0`}
+                className={`${GRID} py-3 md:h-[50px] md:py-0`}
               >
                 {/* Cells truncate rather than wrap, so the name and the baseline
                     each carry their own text, and the row carries how it was
@@ -118,7 +123,7 @@ export function BenchmarkSection() {
                 <div className="min-w-0" title={provenance(benchmark)}>
                   <span
                     title={label(benchmark)}
-                    className="block truncate text-body font-semibold leading-[1.1rem] text-ink"
+                    className="block truncate text-body font-semibold leading-[17.6px] text-ink"
                   >
                     <Label benchmark={benchmark} />
                   </span>
@@ -151,7 +156,7 @@ export function BenchmarkSection() {
                 </div>
 
                 <span
-                  className={`${READOUT} text-right text-body-sm font-semibold leading-[1.1rem] xl:text-body xl:leading-[1.1rem] ${faster ? 'text-ink' : 'text-muted'}`}
+                  className={`${READOUT} text-right text-body-sm font-semibold leading-[17.6px] xl:text-body xl:leading-[17.6px] ${faster ? 'text-ink' : 'text-muted'}`}
                 >
                   {times.toFixed(2)}× {faster ? 'faster' : 'slower'}
                 </span>
