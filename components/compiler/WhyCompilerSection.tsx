@@ -70,28 +70,28 @@ const markLabels = {yes: 'supported', no: 'not supported', partial: 'partial'};
 
 export function WhyCompilerSection() {
   return (
-    <section className="bg-surface px-section py-section">
-      <Reveal className="mx-auto flex max-w-content flex-col items-center gap-10">
-        <div className="flex max-w-[57.25rem] flex-col items-center gap-5 text-center">
-          <h2 className="font-display text-display-4 text-ink">
+    <section className="bg-surface px-6 py-16 md:px-10 md:py-20 xl:px-section xl:py-section">
+      <Reveal className="mx-auto flex max-w-content flex-col items-center gap-8 md:gap-10">
+        <div className="flex max-w-[57.25rem] flex-col items-center gap-4 text-center md:gap-5">
+          <h2 className="font-display text-title-2 text-ink md:text-title-1 xl:text-display-4">
             Why Cryptography Needs a Domain-Specific Compiler
           </h2>
-          <p className="text-body-lg text-ink">
+          <p className="text-body-sm text-ink md:text-body-lg">
             General-purpose compiler optimizations weren&apos;t designed for finite fields,
             polynomial arithmetic, or proof systems.
           </p>
         </div>
 
-        <div className="grid w-[81.25rem] max-w-full grid-cols-2 gap-5">
+        <div className="grid w-full grid-cols-1 gap-5 md:grid-cols-2 xl:w-[81.25rem] xl:max-w-full">
           {cards.map((card) => (
             <article key={card.title} className="overflow-hidden rounded-2xl border border-line bg-paper">
-              <div className="relative h-[15rem] w-full">
-                <Image src={card.image} alt="" fill sizes="640px" className="object-cover"
-            placeholder="blur" />
+              <div className="relative h-[11rem] w-full md:h-[15rem]">
+                <Image src={card.image} alt="" fill sizes="(min-width: 768px) 640px, 100vw"
+                  className="object-cover" placeholder="blur" />
               </div>
               <div className="flex flex-col gap-4 p-5">
-                <h3 className="text-title-2 font-medium text-ink">{card.title}</h3>
-                <p className="text-body text-ink">{card.body}</p>
+                <h3 className="text-title-3 font-medium text-ink md:text-title-2">{card.title}</h3>
+                <p className="text-body-sm text-ink md:text-body">{card.body}</p>
                 <ul className="flex flex-wrap gap-2">
                   {card.tags.map((tag) => (
                     <li
@@ -107,48 +107,60 @@ export function WhyCompilerSection() {
           ))}
         </div>
 
-        <table className="w-[81.25rem] max-w-full table-fixed border-collapse text-ink">
-          <thead>
-            <tr className="border border-line-strong bg-surface-sunken">
-              <th className="w-[18.75rem] p-0" />
-              {columns.map((column, index) => (
-                <th
-                  key={column}
-                  className={`h-[3.75rem] text-center text-body-lg font-semibold leading-[1.2375rem] ${
-                    index === columns.length - 1 ? 'bg-accent/60' : ''
-                  }`}
-                >
-                  {column}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {rows.map((row) => (
-              <tr key={row.capability} className="h-20 border border-line">
-                <th scope="row" className="pl-5 text-left align-middle">
-                  <span className="block text-body-lg font-semibold leading-[1.2375rem]">
-                    {row.capability}
-                  </span>
-                  <span className="block text-body-sm font-normal text-muted">{row.detail}</span>
-                </th>
-                {row.marks.map((mark, index) => {
-                  const Mark = marks[mark];
-                  return (
-                    <td
-                      key={columns[index]}
-                      className={`align-middle ${index === row.marks.length - 1 ? 'bg-accent/60' : ''}`}
-                    >
-                      <span className="flex justify-center" title={markLabels[mark]}>
-                        <Mark />
-                      </span>
-                    </td>
-                  );
-                })}
+        {/* Six columns of marks only mean something read across, so the table
+            keeps its shape at every width and scrolls sideways on a phone rather
+            than being transposed into five stacked lists. The floor is what the
+            narrowest legible columns come to; from 767 up the gutters already
+            leave more than that, so the scrollbar only ever appears on a phone.
+            The mobile frame drops this table altogether, which would drop the
+            comparison the section is built around. */}
+        <div className="w-full overflow-x-auto">
+          <table className="mx-auto w-full min-w-[41rem] max-w-full table-fixed border-collapse text-ink xl:w-[81.25rem] xl:min-w-0">
+            <thead>
+              <tr className="border border-line-strong bg-surface-sunken">
+                <th className="w-[10.5rem] p-0 md:w-[13rem] xl:w-[18.75rem]" />
+                {columns.map((column, index) => (
+                  <th
+                    key={column}
+                    // Every font-size step repeats the leading: a `text-*` utility
+                    // carries a line-height of its own, and its responsive variant
+                    // is emitted after the unprefixed `leading-*`, so it would win.
+                    className={`h-[3.75rem] text-center text-body-sm font-semibold leading-[1.2375rem] md:text-body md:leading-[1.2375rem] xl:text-body-lg xl:leading-[1.2375rem] ${
+                      index === columns.length - 1 ? 'bg-accent/60' : ''
+                    }`}
+                  >
+                    {column}
+                  </th>
+                ))}
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {rows.map((row) => (
+                <tr key={row.capability} className="h-20 border border-line">
+                  <th scope="row" className="pl-4 text-left align-middle md:pl-5">
+                    <span className="block text-body font-semibold leading-[1.2375rem] xl:text-body-lg xl:leading-[1.2375rem]">
+                      {row.capability}
+                    </span>
+                    <span className="block text-body-sm font-normal text-muted">{row.detail}</span>
+                  </th>
+                  {row.marks.map((mark, index) => {
+                    const Mark = marks[mark];
+                    return (
+                      <td
+                        key={columns[index]}
+                        className={`align-middle ${index === row.marks.length - 1 ? 'bg-accent/60' : ''}`}
+                      >
+                        <span className="flex justify-center" title={markLabels[mark]}>
+                          <Mark />
+                        </span>
+                      </td>
+                    );
+                  })}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </Reveal>
     </section>
   );

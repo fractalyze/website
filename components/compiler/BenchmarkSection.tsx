@@ -23,7 +23,26 @@ const rows = benchmarks
   )
   .sort((a, b) => b.ratio - a.ratio);
 
-const GRID = 'grid grid-cols-[15rem_1fr_7rem] items-center gap-4';
+/**
+ * Three columns — workload, track, readout — down to the tablet, and three
+ * lines on a phone.
+ *
+ * A 360px screen cannot hold a bar worth reading next to two columns of text,
+ * so below the tablet the row folds: the workload and its readout share the
+ * first line, the baseline sits under the workload, and the track spans the
+ * width beneath both. Placement is explicit rather than left to auto-flow,
+ * because the readout is the last cell in the source and has to come back up to
+ * the first line. The mobile design frame drops this chart, but the section's
+ * own subtitle promises benchmark data, so it stays.
+ */
+const GRID =
+  'grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-4 gap-y-1 md:grid-cols-[10rem_1fr_6rem] md:gap-y-4 xl:grid-cols-[15rem_1fr_7rem]';
+
+/** The track: the full width under both cells on a phone, the middle column above. */
+const TRACK = 'col-start-1 col-end-3 row-start-2 md:col-end-2 md:col-start-2 md:row-start-1';
+
+/** The readout: top-right of the folded row, its own column once there is one. */
+const READOUT = 'col-start-2 row-start-1 md:col-start-3';
 
 /** The operation and, where one applies, the size it was run at. */
 const label = ({workload, size}: Benchmark) => (size ? `${workload}(${size})` : workload);
@@ -60,23 +79,23 @@ const provenance = ({instance, basis, note}: Benchmark) =>
 
 export function BenchmarkSection() {
   return (
-    <section className="bg-ink px-section py-section">
-      <Reveal className="mx-auto flex max-w-content flex-col items-center gap-10">
-        <div className="flex max-w-measure flex-col items-center gap-5 text-center">
-          <h2 className="font-display text-display-4 text-paper">
+    <section className="bg-ink px-6 py-16 md:px-10 md:py-20 xl:px-section xl:py-section">
+      <Reveal className="mx-auto flex max-w-content flex-col items-center gap-8 md:gap-10">
+        <div className="flex max-w-measure flex-col items-center gap-4 text-center md:gap-5">
+          <h2 className="font-display text-title-2 text-paper md:text-title-1 xl:text-display-4">
             The Verifiable Difference a Compiler Makes
           </h2>
-          <p className="text-body-lg text-paper">
-            Explore real-time benchmark data on compilation throughput, compute cost reduction,
-            <br />
+          <p className="text-body-sm text-paper md:text-body-lg">
+            Explore real-time benchmark data on compilation throughput, compute cost reduction,{' '}
+            <br className="hidden xl:inline" />
             and verification latency compared with manual optimization.
           </p>
         </div>
 
-        <div className="w-[75rem] max-w-full rounded-2xl border border-line bg-surface p-10">
+        <div className="w-full rounded-2xl border border-line bg-surface p-5 md:p-8 xl:w-[75rem] xl:max-w-full xl:p-10">
           <div className={`${GRID} pb-3`}>
-            <span />
-            <span className="relative block text-micro uppercase tracking-wide text-muted">
+            <span className="hidden md:block" />
+            <span className="relative col-start-1 col-end-3 block text-micro uppercase tracking-wide text-muted md:col-start-2 md:col-end-3">
               <span
                 className="absolute -translate-x-1/2 whitespace-nowrap"
                 style={{left: `${axis.parityPercent}%`}}
@@ -84,14 +103,14 @@ export function BenchmarkSection() {
                 baseline
               </span>
             </span>
-            <span />
+            <span className="hidden md:block" />
           </div>
 
           <ul>
             {rows.map(({benchmark, baseline, times, faster, length}) => (
               <li
                 key={`${benchmark.workload}/${baseline.name}`}
-                className={`${GRID} h-[3.125rem]`}
+                className={`${GRID} py-3 md:h-[3.125rem] md:py-0`}
               >
                 {/* Cells truncate rather than wrap, so the name and the baseline
                     each carry their own text, and the row carries how it was
@@ -111,7 +130,7 @@ export function BenchmarkSection() {
                   </span>
                 </div>
 
-                <div className="relative h-full">
+                <div className={`relative h-6 ${TRACK} md:h-full`}>
                   <span
                     aria-hidden
                     className="absolute inset-y-0 w-px bg-line-strong"
@@ -132,7 +151,7 @@ export function BenchmarkSection() {
                 </div>
 
                 <span
-                  className={`text-right text-body font-semibold leading-[1.1rem] ${faster ? 'text-ink' : 'text-muted'}`}
+                  className={`${READOUT} text-right text-body-sm font-semibold leading-[1.1rem] xl:text-body xl:leading-[1.1rem] ${faster ? 'text-ink' : 'text-muted'}`}
                 >
                   {times.toFixed(2)}× {faster ? 'faster' : 'slower'}
                 </span>
