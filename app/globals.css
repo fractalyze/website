@@ -3,67 +3,195 @@
 @tailwind utilities;
 
 html {
-  scroll-behavior: smooth;
+  /*
+   * No scroll-behavior: smooth here. Nothing on the site links to an anchor
+   * within a page, so the only scroll it ever animated was the router's jump
+   * back to the top — which played after the new page had already rendered,
+   * showing a fresh page scrolling up from wherever the last one was left.
+   */
+
+  /*
+   * The tablet and mobile designs are drawn at their own scale — 16px type on a
+   * 1024 and a 360 canvas — rather than being the desktop design shrunk, so
+   * below the desktop breakpoint the root stops tracking the viewport.
+   */
+  font-size: 16px;
 }
 
-body {
-  @apply bg-white text-gray-900 antialiased dark:bg-black dark:text-gray-100;
-}
-
-/* Prism code highlighting theme */
-@layer base {
-  :root {
-    --color-primary: rgb(52, 109, 219);
+@media (min-width: 1024px) {
+  html {
+    /*
+     * The desktop design is drawn on a 1920px canvas and every size in the theme
+     * is in rem, so scaling the root scales the whole layout proportionally:
+     * 16px at 1920 and down from there, which keeps the gutter-to-content ratio
+     * the design uses instead of letting a 1400px container run edge to edge on
+     * a narrower screen.
+     *
+     * The floor and this breakpoint have to agree, because the floor decides
+     * the narrowest viewport the layout fits. The layout is 100rem wide — a
+     * 87.5rem container inside 6.25rem gutters — and the widest thing in it is
+     * the container itself, so it fits a viewport V exactly while the root is
+     * at or under (V - 15)/100, the 15 being the scrollbar. At 1024 that is
+     * 10.09px, which is where the 10px floor comes from.
+     *
+     * Nothing here can be traded for a larger floor. Closing the gutters
+     * entirely would only buy 11.5px, and holding the root at 12 instead makes
+     * the home title 628px wide in the 507px its row leaves — the size it would
+     * have to drop to is below the size the tablet draws it at.
+     */
+    font-size: clamp(10px, calc(100vw / 120), 16px);
   }
 }
 
-/* Code blocks - Prism styling */
+/*
+ * calc(100vw / 120) is the line through (1920, 16) and (1440, 12) — the two
+ * widths the design is drawn against — but it minifies to .833333vw and lands
+ * a few millionths of a pixel under the mark at both of them. The 12px floor
+ * absorbed that at 1440 while it was the floor; nothing ever absorbed it at
+ * 1920, where the root has been 15.999984px rather than 16.
+ *
+ * That did not matter while every size in the theme was a rem and moved
+ * together. It matters now that body copy is in pixels, because the two
+ * notations only agree when the root is exactly 16. These two rules pin the
+ * reference widths to the sizes they are drawn at; between and above them the
+ * calc is the governing term and they change nothing.
+ */
+@media (min-width: 1440px) {
+  html {
+    font-size: clamp(12px, calc(100vw / 120), 16px);
+  }
+}
+
+@media (min-width: 1920px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+body {
+  @apply bg-paper text-ink antialiased;
+}
+
+/*
+ * The page gutter, on every full-width band: the header, the sections, the
+ * footer, an article.
+ *
+ * The design gives it three values — 24px at 360, 40px at 1024's tablet, and
+ * 6.25rem on the desktop canvas — and stepping between them moved the logo and
+ * every heading under it sideways at each breakpoint. These interpolate instead,
+ * so the gutter grows with the window and still passes through the drawn value
+ * at each width it was drawn for.
+ *
+ * Above the desktop breakpoint the value stops mattering for position: the
+ * container inside is max-w-content and centres itself, so the gutter only sets
+ * the least margin the content may have. It stays 6.25rem there, unchanged.
+ * (That is also why the header carrying 7rem where the sections carried 6.25rem
+ * went unnoticed — until a scrollbar at exactly 1024 made the container bind for
+ * one and not the other, putting the logo 3px off the heading below it.)
+ */
+.gutter {
+  padding-inline: clamp(24px, calc(24px + (100vw - 360px) * 0.039216), 40px);
+}
+
+@media (min-width: 768px) {
+  .gutter {
+    padding-inline: calc(40px + (100vw - 768px) * 0.087891);
+  }
+}
+
+@media (min-width: 1024px) {
+  .gutter {
+    padding-inline: 6.25rem;
+  }
+}
+
+/* The header is sticky and 80px tall at every width, so a heading reached
+   through its anchor would come to rest underneath it. In pixels for the same
+   reason the header is: 6rem would be 72px once the root drops to 12px, which
+   is less clearance than the header needs. */
+:target {
+  scroll-margin-top: 96px;
+}
+
+/* Article body. Sizes and vertical rhythm come from the typography plugin
+   config; only what the plugin cannot express lives here. */
+.prose {
+  @apply max-w-none;
+}
+
+.prose a {
+  @apply font-medium text-ink underline underline-offset-2 hover:opacity-70;
+}
+
+.prose strong {
+  @apply font-semibold;
+}
+
+.prose img {
+  @apply mx-auto rounded-lg;
+}
+
+.prose hr {
+  @apply border-line;
+}
+
+.prose blockquote {
+  @apply border-l-2 border-line-strong pl-5 not-italic text-muted;
+}
+
+/* Scrolls instead of forcing the article column wider than its measure. */
+.prose table {
+  @apply block w-full overflow-x-auto border-collapse text-body;
+}
+
+.prose thead th {
+  @apply border-b border-line px-5 py-4 text-left font-semibold;
+}
+
+.prose tbody td {
+  @apply border-b border-line px-5 py-4 align-top;
+}
+
+.prose tbody tr:last-child td {
+  @apply border-b-0;
+}
+
+/* Code */
+.prose :not(pre) > code {
+  @apply rounded bg-surface px-1.5 py-0.5 text-[0.9em] font-medium text-ink;
+  font-family: var(--font-mono), monospace;
+}
+
+.prose :not(pre) > code::before,
+.prose :not(pre) > code::after {
+  content: '`';
+}
+
 pre[class*='language-'] {
-  @apply my-6 overflow-x-auto rounded-lg border border-gray-200 dark:border-gray-800;
-  padding: 1rem 1.25rem !important;
-  font-size: 0.875rem !important;
-  line-height: 1.6;
-  background: #2d2d2d !important;
+  @apply overflow-x-auto rounded-lg bg-surface;
+  padding: 1.25rem !important;
+  margin: 0;
 }
 
 code[class*='language-'] {
   font-family: var(--font-mono), 'Menlo', 'Monaco', 'Courier New', monospace;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: #24292f;
   text-shadow: none;
 }
 
-/* Light mode code blocks */
-@media (prefers-color-scheme: light) {
-  :root:not(.dark) pre[class*='language-'] {
-    background: #f5f5f5 !important;
-    border-color: #e5e5e5;
-  }
-}
-
-/* Dark mode code blocks */
-.dark pre[class*='language-'] {
-  background: #1e1e1e !important;
-  border-color: #333;
-}
-
-/* One Dark Pro Theme Colors */
-pre[class*='language-'] {
-  background: #282c34 !important;
-}
-
-code[class*='language-'] {
-  color: #abb2bf;
-}
-
+/* Light syntax palette, tuned to stay quiet against the grey block. */
 .token.comment,
 .token.prolog,
 .token.doctype,
 .token.cdata {
-  color: #5c6370;
+  color: #57606a;
   font-style: italic;
 }
 
 .token.punctuation {
-  color: #abb2bf;
+  color: #24292f;
 }
 
 .token.property,
@@ -73,7 +201,7 @@ code[class*='language-'] {
 .token.constant,
 .token.symbol,
 .token.deleted {
-  color: #d19a66;
+  color: #0550ae;
 }
 
 .token.selector,
@@ -82,7 +210,7 @@ code[class*='language-'] {
 .token.char,
 .token.builtin,
 .token.inserted {
-  color: #98c379;
+  color: #0a3069;
 }
 
 .token.operator,
@@ -90,136 +218,31 @@ code[class*='language-'] {
 .token.url,
 .language-css .token.string,
 .style .token.string {
-  color: #56b6c2;
+  color: #cf222e;
 }
 
 .token.atrule,
 .token.attr-value,
 .token.keyword {
-  color: #c678dd;
+  color: #cf222e;
 }
 
 .token.function,
 .token.class-name {
-  color: #61afef;
+  color: #8250df;
 }
 
 .token.regex,
 .token.important,
 .token.variable {
-  color: #e06c75;
-}
-
-.token.decorator {
-  color: #e5c07b;
-}
-
-:not(pre) > code {
-  @apply rounded-md bg-gray-100 px-1.5 py-0.5 text-sm font-semibold text-gray-800 dark:bg-gray-800 dark:text-gray-200;
-  font-family: var(--font-mono), monospace;
-}
-
-:not(pre) > code::before,
-:not(pre) > code::after {
-  content: '`';
+  color: #953800;
 }
 
 /* Math equations */
 .katex-display {
-  @apply my-6 overflow-x-auto overflow-y-hidden;
+  @apply overflow-x-auto overflow-y-hidden;
 }
 
 .katex {
   @apply text-base;
-}
-
-/* Prose styling overrides */
-.prose {
-  @apply max-w-none;
-}
-
-.prose > :first-child {
-  margin-top: 0 !important;
-}
-
-.prose > :last-child {
-  margin-bottom: 0 !important;
-}
-
-.prose img {
-  @apply mx-auto rounded-lg;
-}
-
-.prose hr {
-  @apply my-8 border-gray-200 dark:border-gray-800;
-}
-
-.prose blockquote {
-  @apply border-l-4 border-primary-500 bg-gray-50 py-1 font-normal not-italic dark:bg-gray-900;
-}
-
-.prose thead {
-  @apply border-b border-gray-300 dark:border-gray-700;
-}
-
-.prose tbody tr {
-  @apply border-b border-gray-200 dark:border-gray-800;
-}
-
-.prose tbody tr:last-child {
-  border-bottom: none;
-}
-
-/* Better link styling */
-.prose a {
-  @apply font-medium text-primary-600 no-underline hover:text-primary-700 hover:underline dark:text-primary-400 dark:hover:text-primary-300;
-}
-
-/* Headings with better spacing */
-.prose h2 {
-  @apply mb-4 mt-10 border-b border-gray-200 pb-2 dark:border-gray-800;
-}
-
-.prose h3 {
-  @apply mb-3 mt-8;
-}
-
-.prose h4 {
-  @apply mb-2 mt-6;
-}
-
-/* Lists */
-.prose ul,
-.prose ol {
-  @apply my-6;
-}
-
-.prose li {
-  @apply my-2;
-}
-
-/* Tables */
-.prose table {
-  @apply my-6 w-full border-collapse;
-}
-
-.prose th {
-  @apply bg-gray-50 px-4 py-2 text-left font-semibold dark:bg-gray-900;
-}
-
-.prose td {
-  @apply px-4 py-2;
-}
-
-/* Table of contents */
-.toc {
-  @apply space-y-2 text-sm;
-}
-
-.toc a {
-  @apply block text-gray-600 transition-colors hover:text-primary-600 dark:text-gray-400 dark:hover:text-primary-400;
-}
-
-.toc a.active {
-  @apply font-semibold text-primary-600 dark:text-primary-400;
 }

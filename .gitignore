@@ -16,7 +16,11 @@
 # misc
 .DS_Store
 *.pem
-.claude
+# Local Claude Code state stays out; skills describe this repo's conventions and
+# are shared. Excluding the contents rather than the directory keeps the negation
+# effective — git cannot re-include a path under an excluded directory.
+.claude/*
+!.claude/skills/
 
 # debug
 npm-debug.log*

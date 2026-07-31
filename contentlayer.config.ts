@@ -4,7 +4,6 @@ import GithubSlugger from 'github-slugger';
 import remarkGfm from 'remark-gfm';
 import remarkMath from 'remark-math';
 import rehypeSlug from 'rehype-slug';
-import rehypeAutolinkHeadings from 'rehype-autolink-headings';
 import rehypeKatex from 'rehype-katex';
 import rehypePrismGenerator from 'rehype-prism-plus/generator';
 import {refractor} from 'refractor/lib/all.js';
@@ -64,6 +63,8 @@ export const Blog = defineDocumentType(() => ({
     tags: {type: 'list', of: {type: 'string'}, required: false},
     draft: {type: 'boolean', required: false},
     summary: {type: 'string', required: false},
+    image: {type: 'string', required: false, default: '/images/blog/default-cover.webp'},
+    category: {type: 'enum', options: ['Tech', 'Business', 'Product'], required: false, default: 'Tech'},
     authors: {type: 'list', of: {type: 'string'}, required: false, default: ['default']},
     layout: {type: 'string', required: false, default: 'PostLayout'},
   },
@@ -92,6 +93,33 @@ export const Author = defineDocumentType(() => ({
   },
 }));
 
+/**
+ * A tab stop on the two blocks that scroll.
+ *
+ * globals.css gives `.prose table` and `pre` `overflow-x: auto` so a wide table
+ * or a long line of code does not force the article column wider than its
+ * measure. What sits off the right edge is then reachable with a pointer and
+ * with nothing else; axe reports it as scrollable-region-focusable. The fix is
+ * the tab stop, not the scrolling.
+ *
+ * Written out rather than reaching for unist-util-visit, which is in the tree
+ * only as somebody else's dependency.
+ */
+function rehypeFocusableScrollers() {
+  type Node = {type?: string; tagName?: string; properties?: object; children?: Node[]};
+
+  return (tree: Node) => {
+    const walk = (node: Node) => {
+      if (node.type === 'element' && (node.tagName === 'table' || node.tagName === 'pre')) {
+        node.properties = {...node.properties, tabIndex: 0};
+      }
+      node.children?.forEach(walk);
+    };
+
+    walk(tree);
+  };
+}
+
 export default makeSource({
   contentDirPath: 'data',
   documentTypes: [Blog, Author],
@@ -99,10 +127,12 @@ export default makeSource({
   mdx: {
     remarkPlugins: [remarkGfm, remarkMath],
     rehypePlugins: [
+      // rehypeSlug alone: ids keep in-page anchors working without turning every
+      // heading into a link.
       rehypeSlug,
-      [rehypeAutolinkHeadings, {behavior: 'wrap'}],
       rehypeKatex,
       [rehypePrismPlus, {defaultLanguage: 'js', ignoreMissing: true}],
+      rehypeFocusableScrollers,
     ],
   },
 });

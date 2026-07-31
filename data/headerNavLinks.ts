@@ -1,7 +1,6 @@
 const headerNavLinks = [
-  {href: '/', title: 'Home'},
+  {href: '/compiler', title: 'Compiler'},
   {href: '/blog', title: 'Blog'},
-  {href: 'https://fractalyze.gitbook.io', title: 'GitBook', external: true},
 ];
 
 export default headerNavLinks;
