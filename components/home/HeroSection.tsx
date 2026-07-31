@@ -46,9 +46,11 @@ export function HeroSection() {
           {/* shrink-0, or the title's max-content basis wins the whole row and
               squeezes this column to 148px on a 768 tablet. */}
           <div className="flex w-full flex-col gap-5 md:w-[18rem] md:shrink-0 xl:w-[24.375rem]">
+            {/* The column is a rem width holding pixel type, so it narrows to
+                244px at 1024 while the copy stays 18px. The 114-character line
+                this replaces ran to five rows there against a two-row title. */}
             <p className="text-body-sm text-ink md:text-body-lg">
-              We build, optimize, and operate production cryptography systems — powered by our
-              compiler and orchestration stack.
+              We build, optimize, and operate production cryptography systems.
             </p>
             <div>
               <ContactButton variant="solid" className="w-[132px] justify-center" />

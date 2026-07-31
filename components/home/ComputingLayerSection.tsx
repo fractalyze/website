@@ -240,10 +240,8 @@ export function ComputingLayerSection() {
               </ul>
             </div>
 
-            {/* Arrives as one piece, against the other column's nine steps.
-                Hidden below the tablet with its opposite number, so the
-                comparison is never half a comparison. */}
-            <div className="hidden w-full md:block">
+            {/* Arrives as one piece, against the other column's nine steps. */}
+            <div className="w-full">
               <Reveal className="flex flex-col items-center gap-2 rounded-xl border border-line bg-paper p-5 text-ink">
                 <AppHeader />
                 <ExchangeArrows />
