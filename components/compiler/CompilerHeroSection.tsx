@@ -5,7 +5,7 @@ import {ArrowTailIcon} from '@/components/icons/CompilerIcons';
 
 export function CompilerHeroSection() {
   return (
-    <section className="bg-paper px-6 py-12 md:px-10 md:py-16 xl:px-section xl:py-20">
+    <section className="bg-paper gutter py-12 md:py-16 xl:py-20">
       {/* Tablet keeps the desktop's two columns, narrowing the image rather than
           dropping it; mobile stacks title, copy, button, image. */}
       <div className="mx-auto flex max-w-content flex-col items-start gap-8 md:flex-row md:items-center md:justify-between md:gap-10 xl:gap-40">

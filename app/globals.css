@@ -72,6 +72,39 @@ body {
   @apply bg-paper text-ink antialiased;
 }
 
+/*
+ * The page gutter, on every full-width band: the header, the sections, the
+ * footer, an article.
+ *
+ * The design gives it three values — 24px at 360, 40px at 1024's tablet, and
+ * 6.25rem on the desktop canvas — and stepping between them moved the logo and
+ * every heading under it sideways at each breakpoint. These interpolate instead,
+ * so the gutter grows with the window and still passes through the drawn value
+ * at each width it was drawn for.
+ *
+ * Above the desktop breakpoint the value stops mattering for position: the
+ * container inside is max-w-content and centres itself, so the gutter only sets
+ * the least margin the content may have. It stays 6.25rem there, unchanged.
+ * (That is also why the header carrying 7rem where the sections carried 6.25rem
+ * went unnoticed — until a scrollbar at exactly 1024 made the container bind for
+ * one and not the other, putting the logo 3px off the heading below it.)
+ */
+.gutter {
+  padding-inline: clamp(24px, calc(24px + (100vw - 360px) * 0.039216), 40px);
+}
+
+@media (min-width: 768px) {
+  .gutter {
+    padding-inline: calc(40px + (100vw - 768px) * 0.087891);
+  }
+}
+
+@media (min-width: 1024px) {
+  .gutter {
+    padding-inline: 6.25rem;
+  }
+}
+
 /* The header is sticky and 80px tall at every width, so a heading reached
    through its anchor would come to rest underneath it. In pixels for the same
    reason the header is: 6rem would be 72px once the root drops to 12px, which

@@ -4,7 +4,7 @@ import {Reveal} from '@/components/Reveal';
 
 export function ClosingBandSection() {
   return (
-    <section className="relative isolate px-6 py-16 md:px-10 md:py-20 xl:px-section xl:py-section">
+    <section className="relative isolate gutter py-16 md:py-20 xl:py-section">
       <Image
         src={bandImage}
         alt=""

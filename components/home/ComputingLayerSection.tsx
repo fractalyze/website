@@ -163,7 +163,7 @@ function ProcessRow({steps, tone}: {steps: string[][]; tone: 'brand' | 'blue'}) 
 
 export function ComputingLayerSection() {
   return (
-    <section className="bg-paper px-6 py-16 md:px-10 md:py-20 xl:px-section xl:py-section">
+    <section className="bg-paper gutter py-16 md:py-20 xl:py-section">
       <div className="mx-auto flex max-w-content flex-col items-center gap-8 md:gap-10">
         <div className="flex max-w-measure flex-col items-center gap-4 text-center md:gap-5">
           <h2 className="font-display text-title-2 text-ink md:text-title-1 xl:text-display-4">

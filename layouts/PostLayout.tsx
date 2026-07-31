@@ -42,7 +42,7 @@ function ArrowIcon({direction}: {direction: 'left' | 'right'}) {
 
 const PostLayout = ({content, title, date, readingTime, previous, next}: PostLayoutProps) => {
   return (
-    <article className="bg-paper px-6 py-12 md:px-10 md:py-16 xl:px-section xl:py-20">
+    <article className="bg-paper gutter py-12 md:py-16 xl:py-20">
       {/*
         Alone on the site, an article is sized in pixels rather than rem.
         Everything else scales with the viewport so the design keeps its

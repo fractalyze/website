@@ -34,7 +34,7 @@ export default function BlogPage() {
     }));
 
   return (
-    <section className="bg-paper px-6 py-12 md:px-10 md:py-16 xl:px-section xl:py-20">
+    <section className="bg-paper gutter py-12 md:py-16 xl:py-20">
       <div className="mx-auto flex max-w-content flex-col gap-8 md:gap-10">
         <div className="flex flex-col gap-4 md:gap-5">
           {/* The title steps rather than scales: below 1280 the root is pinned at

@@ -17,7 +17,7 @@ export function Footer() {
     // px-section is 6.25rem, which the 16px root below the desktop breakpoint
     // makes 100px a side — a third of a 360px screen gone to gutters, under a
     // page whose own gutters are 24px.
-    <footer className="bg-paper px-6 py-12 md:px-10 md:py-16 xl:px-section xl:py-20">
+    <footer className="bg-paper gutter py-12 md:py-16 xl:py-20">
       <div className="mx-auto flex max-w-content flex-col gap-8">
         <ul className="flex items-center gap-5 text-subtle">
           {social.map(({key, label, Icon, href}) =>

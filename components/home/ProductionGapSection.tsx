@@ -2,7 +2,7 @@ import {Reveal} from '@/components/Reveal';
 
 export function ProductionGapSection() {
   return (
-    <section className="bg-ink px-6 py-16 md:px-10 md:py-20 xl:px-section xl:py-section">
+    <section className="bg-ink gutter py-16 md:py-20 xl:py-section">
       <Reveal className="mx-auto flex max-w-[75rem] flex-col items-center gap-4 text-center md:gap-5">
         <h2 className="font-display text-title-2 text-paper md:text-title-1 xl:text-display-4">
           The Production Gap

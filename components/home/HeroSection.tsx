@@ -4,7 +4,7 @@ import {ContactButton} from '@/components/ContactButton';
 
 export function HeroSection() {
   return (
-    <section className="bg-paper px-6 py-12 md:px-10 md:py-16 xl:px-section xl:py-20">
+    <section className="bg-paper gutter py-12 md:py-16 xl:py-20">
       <div className="mx-auto flex max-w-content flex-col items-center gap-8 md:gap-12 xl:gap-20">
         {/* Tablet keeps the two columns the desktop draws — title left, copy and
             the call to action right — and drops the image below them. Mobile

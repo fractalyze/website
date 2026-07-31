@@ -40,7 +40,7 @@ export function Header() {
   useEffect(() => {
     // Tailwind's xl, and the width app/globals.css hands the root back to the
     // desktop clamp at. All three have to name the same number.
-    const desktop = window.matchMedia('(min-width: 1280px)');
+    const desktop = window.matchMedia('(min-width: 1024px)');
     const sync = () => {
       if (desktop.matches) setMenuOpen(false);
     };
@@ -53,7 +53,7 @@ export function Header() {
     // Transparent rather than absent at rest: a border that appears would
     // otherwise add its pixel to the header and nudge the page down.
     <header
-      className={`sticky top-0 z-50 border-b bg-paper px-6 transition-colors duration-200 md:px-10 xl:px-28 ${
+      className={`gutter sticky top-0 z-50 border-b bg-paper transition-colors duration-200 ${
         scrolled ? 'border-line' : 'border-transparent'
       }`}
     >
@@ -63,8 +63,11 @@ export function Header() {
         ink on the 1024 tablet and 155x26 on the 1920 desktop — but a rem is 16px
         below the breakpoint and 12px above it, so h-20 drew an 80px bar on a
         phone against a 60px one at 1440: the small screen got the bigger header.
-        The gutters keep scaling because they set the header against the sections
-        under it, which do the same.
+        The gutter is the shared one, so the mark sits over the heading below it
+        at every width. It used to carry 7rem where the sections carried 6.25rem,
+        which agreed everywhere the centred container hid the difference and
+        disagreed by 3px at 1024 with a scrollbar, where it bound for one and not
+        the other.
       */}
       <div className="mx-auto flex h-[80px] max-w-content items-center justify-between">
         <div className="flex items-center gap-20">

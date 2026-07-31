@@ -16,7 +16,7 @@ const FOCUSABLE = 'a[href], button:not([disabled])';
 // because a row reaches both edges of the screen, so a ring drawn outside one
 // would have its sides cut off.
 const ROW =
-  'flex min-h-6 items-center border-b border-line px-6 py-5 text-label font-medium text-ink transition-opacity hover:opacity-70 focus-visible:-outline-offset-2 md:px-10';
+  'gutter flex min-h-6 items-center border-b border-line py-5 text-label font-medium text-ink transition-opacity hover:opacity-70 focus-visible:-outline-offset-2';
 
 type Props = {
   /** Must match the hamburger's aria-controls. */

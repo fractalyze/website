@@ -80,7 +80,7 @@ const markLabels = {yes: 'supported', no: 'not supported', partial: 'partial'};
 
 export function WhyCompilerSection() {
   return (
-    <section className="bg-surface px-6 py-16 md:px-10 md:py-20 xl:px-section xl:py-section">
+    <section className="bg-surface gutter py-16 md:py-20 xl:py-section">
       <Reveal className="mx-auto flex max-w-content flex-col items-center gap-8 md:gap-10">
         <div className="flex max-w-[57.25rem] flex-col items-center gap-4 text-center md:gap-5">
           <h2 className="font-display text-title-2 text-ink md:text-title-1 xl:text-display-4">
@@ -156,7 +156,7 @@ export function WhyCompilerSection() {
             <tbody>
               {rows.map((row) => (
                 <tr key={row.capability} className="h-20 border border-line">
-                  <th scope="row" className="pl-2 text-left align-middle md:pl-5">
+                  <th scope="row" className="pl-1 text-left align-middle md:pl-5">
                     <span className="block text-[13px] font-semibold leading-[16px] md:text-body-lg md:leading-[19.8px]">
                       {row.capability}
                     </span>
