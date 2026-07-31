@@ -46,28 +46,27 @@ export function PipelineSection() {
           </p>
         </div>
 
-        {/* The six stages run across the page from `lg` and stack downwards below
-            it. `lg`, not `md`, because the row is what it is: measured at 1024 it
-            needs 890px of the 944 the tablet gutters leave, and a 768 viewport
-            has 688. Stacking is what the mobile frame draws, so the only
-            question was where to switch, and 1024 is the width it was drawn at. */}
-        <ol className="flex w-full flex-col items-stretch gap-2 lg:w-auto lg:flex-row lg:items-center lg:justify-center xl:gap-4">
+        {/* The six stages run across the page on desktop and stack downwards
+            below it. The row is what it is: it needs about 890px, and a 768
+            tablet leaves 688 once the gutters are out. Stacking is what the
+            mobile frame draws. */}
+        <ol className="flex w-full flex-col items-stretch gap-2 xl:w-auto xl:flex-row xl:items-center xl:justify-center xl:gap-4">
           {stages.map((stage, index) => (
             <li
               key={stage}
-              className="flex flex-col items-stretch gap-2 lg:flex-row lg:items-center xl:gap-4"
+              className="flex flex-col items-stretch gap-2 xl:flex-row xl:items-center xl:gap-4"
             >
               <span className="rounded-xl border border-line bg-paper px-6 py-6 text-center text-title-4 font-medium text-ink xl:px-10 xl:py-8">
                 {stage}
               </span>
               {index < stages.length - 1 && (
-                <span className="mx-auto h-6 w-px bg-ink lg:mx-0 lg:h-px lg:w-6 xl:w-10" aria-hidden />
+                <span className="mx-auto h-6 w-px bg-ink xl:mx-0 xl:h-px xl:w-10" aria-hidden />
               )}
             </li>
           ))}
         </ol>
 
-        <div className="grid w-full grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-4 xl:w-[81.25rem] xl:max-w-full">
+        <div className="grid w-full grid-cols-1 gap-5 md:grid-cols-2 xl:w-[81.25rem] xl:max-w-full xl:grid-cols-4">
           {layers.map(({Icon, title, body}) => (
             <article
               key={title}

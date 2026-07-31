@@ -11,10 +11,13 @@ export function HeroSection() {
             unstacks that into title, copy, button, image. */}
         <div className="flex w-full flex-col items-start gap-6 md:flex-row md:items-center md:justify-between md:gap-10 xl:gap-20">
           {/* Stepped, not inherited: display-1 is 5rem, and the root is pinned at
-              16px below 1280 against the 12px it clamps to at 1280, so the
-              desktop size would draw 80px on a phone against 60px on a desktop.
-              The forced break goes with it — below 1280 the title wraps to the
-              column it is given. */}
+              16px below 1024 against the 12px it clamps to there, so the desktop
+              size would draw 80px on a phone against 60px on a desktop. The
+              forced break goes with it — below 1024 the title wraps to the
+              column it is given.
+              The two lines hold at every desktop width because the root scales
+              with the viewport there: the title is 11.63 times the font size
+              wide, and the column it sits in scales by the same factor. */}
           <h1 className="font-display text-[2.25rem] uppercase leading-[1.1] text-ink md:text-[2.75rem] xl:shrink-0 xl:whitespace-nowrap xl:text-display-1 xl:leading-[4.5rem]">
             The Computing Layer{' '}
             <br className="hidden xl:inline" />

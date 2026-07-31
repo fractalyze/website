@@ -191,7 +191,15 @@ export function ComputingLayerSection() {
 
             {/* Revealed step by step: the length of the descent is the point
                 this column is making. */}
-            <div className="w-full overflow-x-auto md:overflow-visible">
+            {/* Focusable, or the only way to reach what is off the right edge
+                is a pointer. A scroll container that no key can move is a
+                keyboard dead end. */}
+            <div
+              className="w-full overflow-x-auto md:overflow-visible"
+              tabIndex={0}
+              role="group"
+              aria-label="Today, in detail"
+            >
               <div className="flex min-w-[calc(34.5rem+2.625rem)] flex-col items-center gap-2 rounded-xl border border-line bg-paper p-5 text-ink md:min-w-0">
                 {[
                   <AppHeader key="app" />,
@@ -236,7 +244,12 @@ export function ComputingLayerSection() {
             </div>
 
             {/* Arrives as one piece, against the other column's nine steps. */}
-            <div className="w-full overflow-x-auto md:overflow-visible">
+            <div
+              className="w-full overflow-x-auto md:overflow-visible"
+              tabIndex={0}
+              role="group"
+              aria-label="With Fractalyze, in detail"
+            >
               <Reveal className="flex min-w-[calc(34.5rem+2.625rem)] flex-col items-center gap-2 rounded-xl border border-line bg-paper p-5 text-ink md:min-w-0">
                 <AppHeader />
                 <ExchangeArrows />

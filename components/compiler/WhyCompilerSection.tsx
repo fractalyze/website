@@ -114,11 +114,17 @@ export function WhyCompilerSection() {
             leave more than that, so the scrollbar only ever appears on a phone.
             The mobile frame drops this table altogether, which would drop the
             comparison the section is built around. */}
-        <div className="w-full overflow-x-auto">
+        <div
+          className="w-full overflow-x-auto"
+          tabIndex={0}
+          role="group"
+          aria-label="Compiler capability comparison"
+        >
           <table className="mx-auto w-full min-w-[41rem] max-w-full table-fixed border-collapse text-ink xl:w-[81.25rem] xl:min-w-0">
             <thead>
               <tr className="border border-line-strong bg-surface-sunken">
-                <th className="w-[10.5rem] p-0 md:w-[13rem] xl:w-[18.75rem]" />
+                {/* The corner cell labels nothing, so it is not a header. */}
+                <td className="w-[10.5rem] p-0 md:w-[13rem] xl:w-[18.75rem]" />
                 {columns.map((column, index) => (
                   <th
                     key={column}

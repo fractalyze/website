@@ -8,6 +8,15 @@ const config: Config = {
     './layouts/**/*.{js,ts,jsx,tsx,mdx}',
   ],
   theme: {
+    // Two breakpoints, three tiers, one per canvas the design was drawn on,
+    // replacing Tailwind's five. `xl` is the desktop breakpoint: 1024, not
+    // Tailwind's 1280, because 1024 is the width the tablet frames were drawn at
+    // and so the width at which they stop applying. The root rule in globals.css
+    // switches there too and the two have to stay in step.
+    screens: {
+      md: '768px',
+      xl: '1024px',
+    },
     extend: {
       fontFamily: {
         display: ['"Times New Roman"', 'Times', 'serif'],
