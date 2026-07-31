@@ -4,20 +4,24 @@ import {CpuIcon, FpgaIcon, GpuIcon, TpuIcon} from '@/components/icons/PlatformIc
 const DIAGRAM_WIDTH = 552;
 const COLUMN_GAP = 8;
 
+// Every line is kept under 56px at 12px, which is what a chip has to spend once
+// the panel is one of two columns at 1024 — the narrowest the diagram is ever
+// drawn. The labels are 12px at every width now, so a chip that fits at 1920 no
+// longer fits everywhere: "Benchmarking &" ran 33px past its chip at 1024.
 const todaySpecialistWork = [
-  ['Compiler', 'Optimization'],
-  ['Runtime &', 'Memory Tuning'],
-  ['GPU Kernel', 'Engineering'],
-  ['Benchmarking &', 'Profiling'],
-  ['Infra /', 'Deployment'],
+  ['Compiler', 'Optimize'],
+  ['Runtime', 'Tuning'],
+  ['GPU', 'Kernels'],
+  ['Bench &', 'Profiling'],
+  ['Infra &', 'Deploy'],
 ];
 
 const todayHandwork = [
   ['Manual', 'Tuning'],
-  ['Debugging &', 'Logging'],
-  ['Integration &', 'Handoffs'],
+  ['Debug &', 'Logging'],
+  ['Integrate', 'Handoffs'],
   ['QA &', 'Validation'],
-  ['Vendor-specific', 'Fixes'],
+  ['Vendor', 'Fixes'],
 ];
 
 const todayHardwareWork = 'Hardware-Specific Implementations';
@@ -141,7 +145,7 @@ function ProcessRow({steps, tone}: {steps: string[][]; tone: 'brand' | 'blue'}) 
             tone === 'brand' ? 'bg-accent' : 'bg-accent-blue'
           }`}
         >
-          <span className="whitespace-nowrap">
+          <span>
             {lines[0]}
             <br />
             {lines[1]}
@@ -191,11 +195,8 @@ export function ComputingLayerSection() {
 
             {/* Revealed step by step: the length of the descent is the point
                 this column is making.
-                Dropped below the tablet rather than scrolled. The diagram is
-                drawn against a hard 552px column grid with its connector
-                coordinates computed from it, so it cannot reflow; it needs a
-                674px viewport and a phone does not have one. The bullets above
-                carry the same argument in prose. */}
+                Hidden below the tablet. Even with the labels cut, five chips to
+                a row need 430px of viewport, and the common phone is 390. */}
             <div className="hidden w-full md:block">
               <div className="flex flex-col items-center gap-2 rounded-xl border border-line bg-paper p-5 text-ink">
                 {[
