@@ -3,7 +3,6 @@
 import Link from 'next/link';
 import {RefObject, useEffect, useRef, useState} from 'react';
 import headerNavLinks from '@/data/headerNavLinks';
-import {contactLink} from './ContactButton';
 
 // The header's border transition and the Reveal easing already use these.
 const DURATION_MS = 200;
@@ -37,7 +36,6 @@ type Props = {
  * collapse.
  */
 export function NavMenu({id, open, onClose, triggerRef}: Props) {
-  const contact = contactLink();
   const [present, setPresent] = useState(open);
   const panelRef = useRef<HTMLDivElement>(null);
   const wasOpen = useRef(open);
@@ -184,11 +182,6 @@ export function NavMenu({id, open, onClose, triggerRef}: Props) {
                 </Link>
               </li>
             ))}
-            <li>
-              <a {...contact} className={ROW} onClick={onClose}>
-                Contact Us
-              </a>
-            </li>
           </ul>
         </div>
       )}

@@ -75,7 +75,12 @@ export function Header() {
             <img
               src="/logo/fractalyze-logo-black.svg"
               alt="Fractalyze"
-              className="h-[42px] w-auto"
+              // Stepped once, at the tablet: the frames ink the mark 136x24 on
+              // the 360 canvas and 156x26 on the 1024 one. Pinning it to one
+              // size compared the tablet with the desktop, which do agree, and
+              // missed the phone, which does not — and the 15px that costs is
+              // what the call to action beside it needs at 360.
+              className="h-[38px] w-auto md:h-[42px]"
             />
           </Link>
           <nav aria-label="Main" className="hidden xl:block">
@@ -97,19 +102,24 @@ export function Header() {
             </ul>
           </nav>
         </div>
-        <ContactButton className="hidden xl:inline-flex" />
-        {/* The name stays "Menu"; aria-expanded is what carries the state. */}
-        <button
-          ref={hamburgerRef}
-          type="button"
-          aria-label="Menu"
-          aria-expanded={menuOpen}
-          aria-controls={MENU_ID}
-          onClick={() => setMenuOpen((value) => !value)}
-          className="-mr-2 flex h-10 w-10 items-center justify-center text-ink transition-opacity hover:opacity-70 xl:hidden"
-        >
-          {menuOpen ? <CloseIcon /> : <MenuIcon />}
-        </button>
+        {/* In the bar at every width, not folded into the menu below the
+            desktop breakpoint: it is the one thing on the header a reader is
+            meant to act on, and a hamburger hides it behind a tap. */}
+        <div className="flex items-center gap-2">
+          <ContactButton />
+          {/* The name stays "Menu"; aria-expanded is what carries the state. */}
+          <button
+            ref={hamburgerRef}
+            type="button"
+            aria-label="Menu"
+            aria-expanded={menuOpen}
+            aria-controls={MENU_ID}
+            onClick={() => setMenuOpen((value) => !value)}
+            className="-mr-2 flex h-10 w-10 items-center justify-center text-ink transition-opacity hover:opacity-70 xl:hidden"
+          >
+            {menuOpen ? <CloseIcon /> : <MenuIcon />}
+          </button>
+        </div>
       </div>
       <NavMenu
         id={MENU_ID}

@@ -27,7 +27,7 @@ export function ContactButton({variant = 'outline', className}: Props) {
   return (
     <a
       {...contactLink()}
-      className={`inline-flex h-[40px] items-center rounded-[6px] px-[12px] text-label font-medium transition-opacity hover:opacity-70 ${variants[variant]} ${className ?? ''}`}
+      className={`inline-flex h-[40px] items-center whitespace-nowrap rounded-[6px] px-[12px] text-label font-medium transition-opacity hover:opacity-70 ${variants[variant]} ${className ?? ''}`}
     >
       Contact Us
     </a>
