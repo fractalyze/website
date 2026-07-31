@@ -179,8 +179,14 @@ export function ComputingLayerSection() {
         {/* Side by side only at desktop. Each panel carries a diagram drawn to a
             552px grid, and halving the width of a screen that is already narrower
             than that leaves nothing to draw it in. */}
-        <div className="grid w-full grid-cols-1 gap-5 xl:w-[81.25rem] xl:max-w-full xl:grid-cols-2">
-          <div className="flex flex-col gap-5 rounded-2xl border border-line bg-surface p-4 md:p-6">
+        {/* Subgrid at the desktop step, where the two panels stand side by
+            side: badge, prose and diagram then share three rows across both, so
+            the drawings start on the same line and end on the same one. Left to
+            themselves the panels each stacked their own content, and a prose
+            block 17px taller on one side pushed that side's diagram down and
+            shortened it by the same amount. */}
+        <div className="grid w-full grid-cols-1 gap-5 xl:w-[81.25rem] xl:max-w-full xl:grid-cols-2 xl:grid-rows-[auto_auto_1fr]">
+          <div className="flex flex-col gap-5 rounded-2xl border border-line bg-surface p-4 md:p-6 xl:grid xl:row-span-3 xl:grid-rows-subgrid">
             <span className="w-fit rounded-full border border-line bg-paper px-4 py-1.5 text-caption text-muted">
               Today
             </span>
@@ -202,7 +208,7 @@ export function ComputingLayerSection() {
                 this column is making.
                 */}
             <div className="w-full">
-              <div className="flex flex-col items-center gap-2 rounded-xl border border-line bg-paper p-5 text-ink">
+              <div className="flex h-full flex-col items-center gap-2 rounded-xl border border-line bg-paper p-5 text-ink">
                 {[
                   <AppHeader key="app" />,
                   <ArrowRow key="fan" count={5} />,
@@ -230,7 +236,9 @@ export function ComputingLayerSection() {
             </div>
           </div>
 
-          <div className="flex flex-col gap-5 rounded-2xl bg-ink p-4 md:p-6">
+          {/* The border is transparent rather than absent: the panel opposite
+              has one, and without it this box measures 2px wider inside. */}
+          <div className="flex flex-col gap-5 rounded-2xl border border-transparent bg-ink p-4 md:p-6 xl:grid xl:row-span-3 xl:grid-rows-subgrid">
             <span className="w-fit rounded-full border border-line bg-paper px-4 py-1.5 text-caption text-muted">
               With Fractalyze
             </span>
@@ -250,15 +258,16 @@ export function ComputingLayerSection() {
 
             {/* Arrives as one piece, against the other column's nine steps. */}
             <div className="w-full">
-              <Reveal className="flex flex-col items-center gap-2 rounded-xl border border-line bg-paper p-5 text-ink">
+              <Reveal className="flex h-full flex-col items-center gap-2 rounded-xl border border-line bg-paper p-5 text-ink">
                 <AppHeader />
                 <ExchangeArrows />
-                {/* Empty, so it has no height of its own to take. It stands in
-                    for the hardware column opposite it, and the figures are what
-                    that column comes to once its rows are stacked: 12rem on a
-                    phone, 16rem at tablet, and the drawn 18.8125rem beside the
-                    "Today" card. */}
-                <div className="flex h-[12rem] w-full flex-col gap-2 rounded-2xl border border-accent bg-accent/40 p-5 md:h-[16rem] xl:h-[18.8125rem]">
+                {/* Stacked, this column is shorter than the nine steps opposite
+                    it. On a phone and a tablet it takes the drawn height; at the
+                    desktop step, where the two diagrams share a row, it absorbs
+                    whatever that row leaves rather than carrying a number tuned
+                    to one width — 18.8125rem matched at 1920 and was 27px short
+                    at 1024. */}
+                <div className="flex h-[12rem] w-full flex-col gap-2 rounded-2xl border border-accent bg-accent/40 p-5 md:h-[16rem] xl:h-auto xl:flex-1">
                   {['Orchestration Layer', 'Compiler Layer'].map((layer) => (
                     <div
                       key={layer}
