@@ -76,7 +76,12 @@ const PostLayout = ({content, title, date, readingTime, previous, next}: PostLay
 
         {/* The three links total about 350px of label and icon, so on a phone
             they come apart into two rows rather than compressing into one. */}
-        <nav className="flex flex-col items-start gap-5 border-t border-line pt-6 text-[14px] text-ink md:flex-row md:items-center md:justify-between">
+        {/* Named, because the header carries a nav too and two unnamed
+            navigation landmarks are indistinguishable to anyone listing them. */}
+        <nav
+          aria-label="Post"
+          className="flex flex-col items-start gap-5 border-t border-line pt-6 text-[14px] text-ink md:flex-row md:items-center md:justify-between"
+        >
           <Link href="/blog" className="flex items-center gap-1 transition-opacity hover:opacity-70">
             <MenuIcon />
             View List

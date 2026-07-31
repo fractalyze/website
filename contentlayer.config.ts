@@ -93,6 +93,33 @@ export const Author = defineDocumentType(() => ({
   },
 }));
 
+/**
+ * A tab stop on the two blocks that scroll.
+ *
+ * globals.css gives `.prose table` and `pre` `overflow-x: auto` so a wide table
+ * or a long line of code does not force the article column wider than its
+ * measure. What sits off the right edge is then reachable with a pointer and
+ * with nothing else; axe reports it as scrollable-region-focusable. The fix is
+ * the tab stop, not the scrolling.
+ *
+ * Written out rather than reaching for unist-util-visit, which is in the tree
+ * only as somebody else's dependency.
+ */
+function rehypeFocusableScrollers() {
+  type Node = {type?: string; tagName?: string; properties?: object; children?: Node[]};
+
+  return (tree: Node) => {
+    const walk = (node: Node) => {
+      if (node.type === 'element' && (node.tagName === 'table' || node.tagName === 'pre')) {
+        node.properties = {...node.properties, tabIndex: 0};
+      }
+      node.children?.forEach(walk);
+    };
+
+    walk(tree);
+  };
+}
+
 export default makeSource({
   contentDirPath: 'data',
   documentTypes: [Blog, Author],
@@ -105,6 +132,7 @@ export default makeSource({
       rehypeSlug,
       rehypeKatex,
       [rehypePrismPlus, {defaultLanguage: 'js', ignoreMissing: true}],
+      rehypeFocusableScrollers,
     ],
   },
 });

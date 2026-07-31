@@ -78,7 +78,7 @@ export function Header() {
               className="h-[42px] w-auto"
             />
           </Link>
-          <nav className="hidden xl:block">
+          <nav aria-label="Main" className="hidden xl:block">
             <ul className="flex items-center gap-6">
               {headerNavLinks.map((link) => (
                 <li key={link.title}>
