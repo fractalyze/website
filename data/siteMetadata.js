@@ -2,7 +2,13 @@ const siteMetadata = {
   title: 'Fractalyze',
   author: 'Fractalyze Team',
   headerTitle: 'Fractalyze',
-  description: 'Building Zorch - The Pytorch for Zero-Knowledge. Accelerating the Verifiable Internet.',
+  // The site's own positioning, in the site's own words: the hero's claim after
+  // its title. This is the root `<meta name="description">` and the text every
+  // share card of the home page carries, so it is read far more often off the
+  // site than on it — and it named a single product, Zorch, long after the site
+  // stopped being about one. `/compiler` and `/blog` declare their own.
+  description:
+    'The computing layer for cryptography. We build, optimize, and operate production cryptography systems.',
   language: 'en-us',
   siteUrl: 'https://www.fractalyze.io',
   email: 'contact@fractalyze.io',

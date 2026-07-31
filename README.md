@@ -1,6 +1,6 @@
 # Fractalyze Website
 
-The official website for Fractalyze - Building Zorch, the Pytorch for Zero-Knowledge.
+The official website for Fractalyze — the computing layer for cryptography.
 
 ## Project Structure
 
