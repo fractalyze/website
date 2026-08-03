@@ -80,10 +80,9 @@ export function BenchmarkSection() {
           <h2 className="font-display text-title-2 text-paper md:text-title-1 xl:text-display-4">
             The Verifiable Difference a Compiler Makes
           </h2>
-          <p className="text-body-sm text-paper md:text-body-lg">
-            Explore real-time benchmark data on compilation throughput, compute cost reduction,{' '}
-            <br className="hidden xl:inline" />
-            and verification latency compared with manual optimization.
+          <p className="text-balance text-body-sm text-paper md:text-body-lg">
+            Explore real-time benchmark data on compilation throughput, compute cost reduction, and
+            verification latency compared with manual optimization.
           </p>
         </div>
 

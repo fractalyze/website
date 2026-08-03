@@ -39,10 +39,9 @@ export function PipelineSection() {
           <h2 className="font-display text-title-2 text-ink md:text-title-1 xl:text-display-4">
             From Python to the Hardware
           </h2>
-          <p className="text-body-sm text-ink md:text-body-lg">
-            One pipeline: a Python framework for SNARKs, lowered through StableHLO and{' '}
-            <br className="hidden xl:inline" />
-            optimized all the way down to CPU and GPU kernels.
+          <p className="text-balance text-body-sm text-ink md:text-body-lg">
+            One pipeline: a Python framework for SNARKs, lowered through StableHLO and optimized all
+            the way down to CPU and GPU kernels.
           </p>
         </div>
 

@@ -9,13 +9,10 @@ export function ProductionGapSection() {
         </h2>
         <p className="text-body-sm text-paper md:text-body-lg">
           Advanced cryptography is moving from research into production, powering privacy,
-          verifiability, and secure collaboration in modern systems.{' '}
-          {/* The break is the desktop line the copy was written to; below 1280 the
-              paragraph is narrow enough that forcing it only strands a short line. */}
-          <br className="hidden xl:inline" />
-          But it is still out of reach for most teams: the computation is orders of magnitude too
-          heavy, the systems are hand built by a small pool of specialists, and the road from
-          prototype to production takes years.
+          verifiability, and secure collaboration in modern systems. But it is still out of reach
+          for most teams: the computation is orders of magnitude too heavy, the systems are hand
+          built by a small pool of specialists, and the road from prototype to production takes
+          years.
         </p>
       </Reveal>
     </section>

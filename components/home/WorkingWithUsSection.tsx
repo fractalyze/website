@@ -33,10 +33,9 @@ export function WorkingWithUsSection() {
           <h2 className="font-display text-title-2 text-ink md:text-title-1 xl:text-display-4">
             Working With Us
           </h2>
-          <p className="text-body-sm text-ink md:text-body-lg">
-            Building production cryptography takes more than software.{' '}
-            <br className="hidden xl:inline" />
-            Our engineers work as part of your team, from first design to live operations
+          <p className="text-balance text-body-sm text-ink md:text-body-lg">
+            Building production cryptography takes more than software. Our engineers work as part of
+            your team, from first design to live operations.
           </p>
         </div>
 
