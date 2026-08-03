@@ -58,9 +58,8 @@ export function CompilerOrchestrationSection() {
             Compiler &amp; Orchestration
           </h2>
           <p className="text-body-sm text-paper md:text-body-lg">
-            A unified platform that automatically transforms high-level cryptographic applications{' '}
-            <br className="hidden xl:inline" />
-            into optimized execution for any target hardware.
+            Two layers do the work: a compiler that turns Python into hardware-specific execution,
+            and orchestration that runs it across a fleet of CPUs, GPUs, and FPGAs.
           </p>
         </div>
 
