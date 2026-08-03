@@ -112,9 +112,8 @@ export function ComputingLayerSection() {
           <h2 className="font-display text-title-2 text-ink md:text-title-1 xl:text-display-4">
             The Computing Layer for Cryptography
           </h2>
-          <p className="text-body-sm text-ink md:text-body-lg">
-            A unified platform that automatically transforms high-level cryptographic applications{' '}
-            <br className="hidden xl:inline" />
+          <p className="text-balance text-body-sm text-ink md:text-body-lg">
+            A unified platform that automatically transforms high-level cryptographic applications
             into optimized execution for any target hardware.
           </p>
         </div>

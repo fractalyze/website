@@ -57,7 +57,7 @@ export function CompilerOrchestrationSection() {
           <h2 className="font-display text-title-2 text-paper md:text-title-1 xl:text-display-4">
             Compiler &amp; Orchestration
           </h2>
-          <p className="text-body-sm text-paper md:text-body-lg">
+          <p className="text-balance text-body-sm text-paper md:text-body-lg">
             Two layers do the work: a compiler that turns Python into hardware-specific execution,
             and orchestration that runs it across a fleet of CPUs, GPUs, and FPGAs.
           </p>
