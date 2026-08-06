@@ -1,19 +1,19 @@
 ---
-title: 'One Policy, One Payment: Least-Privilege Agent Payments over x402'
+title: 'One Policy, One Payment: Least-Privilege AI Agent Payments over x402'
 date: '2026-08-06'
 tags: ['x402', 'agent-payments', 'stablecoin', 'usdc', 'zkp', 'groth16', 'eip-1271']
 draft: false
 category: 'Tech'
-summary: "An AI agent shouldn't hold a key to your money. In our PoC the agent releases escrowed USDC only by proving the payment satisfies a policy the user signed. The proof is packed into the signature field of a standard x402 payment, so the merchant never changes."
+summary: "AI agent payments need least privilege: an agent shouldn't hold a key to your money. Our PoC releases escrowed USDC only against a zero-knowledge proof of a signed policy, inside a standard x402 payment. Now proposed as ERC-8366."
 authors: ['Jun']
 image: '/blog/covers/abstract-prism-blur.webp'
 ---
 
-## Why Agent Payments Need Least Privilege
+## Why AI Agent Payments Need Least Privilege
 
-Agent payments have stopped being hypothetical. [x402](https://www.x402.org) revived HTTP's long-dormant `402 Payment Required` status code into a convention for charging money on a normal HTTP request: the server answers with a 402 and its payment terms, the client retries with an `X-PAYMENT` header, and a stablecoin transfer settles on-chain. Coinbase published the protocol in 2025, and it now sits under the Linux Foundation's [x402 Foundation](https://www.linuxfoundation.org/press/linux-foundation-launches-x402-foundation-with-coinbase-and-cloudflare-to-advance-internet-native-payments). The plumbing for "an AI agent pays for something over HTTP" exists.
+AI agent payments have stopped being hypothetical. [x402](https://www.x402.org) revived HTTP's long-dormant `402 Payment Required` status code into a convention for charging money on a normal HTTP request: the server answers with a 402 and its payment terms, the client retries with an `X-PAYMENT` header, and a stablecoin transfer settles on-chain. Coinbase published the protocol in 2025, and it now sits under the Linux Foundation's [x402 Foundation](https://www.linuxfoundation.org/press/linux-foundation-launches-x402-foundation-with-coinbase-and-cloudflare-to-advance-internet-native-payments). The plumbing for "an AI agent pays for something over HTTP" exists.
 
-But sending money was never the hard part of agent payments. Trusting an agent to spend it is. Today you pick one of two bad options. Have a human approve each payment: safe, but it kills the autonomy this plumbing exists for, because at agent speed the human becomes the bottleneck. Or give the agent the keys, or a blanket allowance: autonomous, but unbounded. An agent is a language model reading untrusted input from the network, and one bug or one prompt injection and the funds are gone, sent anywhere, for anything.
+But sending money was never the hard part of AI agent payments. Trusting an agent to spend it is. Today you pick one of two bad options. Have a human approve each payment: safe, but it kills the autonomy this plumbing exists for, because at agent speed the human becomes the bottleneck. Or give the agent the keys, or a blanket allowance: autonomous, but unbounded. An agent is a language model reading untrusted input from the network, and one bug or one prompt injection and the funds are gone, sent anywhere, for anything.
 
 What is missing is delegation by constraint. The user states what is allowed, the agent acts freely within that, and the rail itself refuses to move money that falls outside the envelope. **If you want autonomous agent payments for real, the agent must be given authority over exactly one payment, and nothing else.** Not a wallet, not a budget, not a key: one payment, whose conditions the user fixed in advance, enforced by cryptography rather than by the agent's good behavior.
 
@@ -49,7 +49,7 @@ The agent is free to choose which flight to buy. It is not free to break the env
 | USDC (EIP-3009) | on-chain | Standard payment rail. Routes contract senders through EIP-1271. |
 | Escrow Wallet | on-chain | Holds the escrow. Verifies the proof inside `isValidSignature`. |
 
-## The Standards Stack
+## The Standards Stack: x402, EIP-3009, USDC v2.2, EIP-1271
 
 A harness that requires every merchant to deploy new contracts and speak a new protocol is a research demo. The reason this design works is that the proof is carried inside a **standard** payment: the merchant runs stock x402 and never learns the difference. Four existing standards stack so that a ZK proof can stand in where a signature normally goes, each layer knowing only the one directly below it:
 
