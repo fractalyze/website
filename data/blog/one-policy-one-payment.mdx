@@ -1,0 +1,167 @@
+---
+title: 'One Policy, One Payment: Least-Privilege Agent Payments over x402'
+date: '2026-08-06'
+tags: ['x402', 'agent-payments', 'stablecoin', 'usdc', 'zkp', 'groth16', 'eip-1271']
+draft: false
+category: 'Tech'
+summary: "An AI agent shouldn't hold a key to your money. In our PoC the agent releases escrowed USDC only by proving the payment satisfies a policy the user signed. The proof is packed into the signature field of a standard x402 payment, so the merchant never changes."
+authors: ['Jun']
+image: '/blog/covers/abstract-prism-blur.webp'
+---
+
+## Why Agent Payments Need Least Privilege
+
+Agent payments have stopped being hypothetical. [x402](https://www.x402.org) revived HTTP's long-dormant `402 Payment Required` status code into a convention for charging money on a normal HTTP request: the server answers with a 402 and its payment terms, the client retries with an `X-PAYMENT` header, and a stablecoin transfer settles on-chain. Coinbase published the protocol in 2025, and it now sits under the Linux Foundation's [x402 Foundation](https://www.linuxfoundation.org/press/linux-foundation-launches-x402-foundation-with-coinbase-and-cloudflare-to-advance-internet-native-payments). The plumbing for "an AI agent pays for something over HTTP" exists.
+
+But sending money was never the hard part of agent payments. Trusting an agent to spend it is. Today you pick one of two bad options. Have a human approve each payment: safe, but it kills the autonomy this plumbing exists for, because at agent speed the human becomes the bottleneck. Or give the agent the keys, or a blanket allowance: autonomous, but unbounded. An agent is a language model reading untrusted input from the network, and one bug or one prompt injection and the funds are gone, sent anywhere, for anything.
+
+What is missing is delegation by constraint. The user states what is allowed, the agent acts freely within that, and the rail itself refuses to move money that falls outside the envelope. **If you want autonomous agent payments for real, the agent must be given authority over exactly one payment, and nothing else.** Not a wallet, not a budget, not a key: one payment, whose conditions the user fixed in advance, enforced by cryptography rather than by the agent's good behavior.
+
+We built a PoC of this, a policy-gated payer wired end to end into x402. This post explains the design.
+
+## One Policy = One Payment
+
+The user never signs a transaction. The user signs a **policy**: the set of conditions a payment must satisfy. In our PoC the policy for booking a flight says:
+
+- the price is under a cap (say, \$300), and the cap itself stays private: only a commitment to it goes on-chain, never the number,
+- the payee is the merchant's address (`to == payTo`),
+- the amount is exactly the quoted price (`value == price`),
+- the quote is genuine, signed by the airline.
+
+The user approves the policy (`allowPolicy`), funds an escrow wallet with USDC bound to it, and hands the agent a natural-language goal: *I escrowed funds under this policy; find a flight that satisfies it and pay.* Nothing about that sentence is enforced. Only the signed policy is.
+
+Funds release only against a **proof**. The escrow releases money when presented with a zero-knowledge proof that the policy holds (the quote's signature verifies, the price is under the cap, the amount and payee match), and the proof is bound to that specific payment's authorization, so it authorizes nothing else. One policy, one payment: even if everything in the agent's environment goes wrong, the damage is capped at the single payment the user already agreed to make.
+
+The key property: **the entire agent is untrusted.** The agent builds the proof itself, in the untrusted zone, and that is safe: if the inputs don't satisfy the circuit, no valid proof comes out. Security comes from the circuit and on-chain verification, not from sandboxing the agent or hiding anything from it. Concretely, with the flight policy above, these cases cannot happen, even with no other guardrails:
+
+- The agent tries to book a \$500 flight. `500 < 300` is false, so no valid proof exists, and USDC never moves.
+- The agent, or an attacker who hijacked it, tries to pay its own address. The payee check fails, so no valid proof exists.
+- The agent replays the payment to drain the escrow twice. The nonce is single-use at the token, so the second attempt reverts.
+
+The agent is free to choose which flight to buy. It is not free to break the envelope. And the envelope is exactly what you put in it: fields you include are enforced, fields you leave out stay the agent's discretion. The PoC policy does not pin which specific flight the agent picked, so two flights that satisfy the same policy are interchangeable. You delegate an envelope, not a script.
+
+| Component | Zone | Role |
+|---|---|---|
+| User / Owner | trusted | Root of trust. Sets the loss limit by signing the policy. |
+| Agent | **untrusted** | Does all the off-chain work. Can't forge a policy-breaking payment. |
+| Policy circuit (Groth16) | spec | Defines what a valid payment must satisfy. Swappable proof system. |
+| Airline | external | x402 merchant, quote signer, and facilitator that settles. |
+| USDC (EIP-3009) | on-chain | Standard payment rail. Routes contract senders through EIP-1271. |
+| Escrow Wallet | on-chain | Holds the escrow. Verifies the proof inside `isValidSignature`. |
+
+## The Standards Stack
+
+A harness that requires every merchant to deploy new contracts and speak a new protocol is a research demo. The reason this design works is that the proof is carried inside a **standard** payment: the merchant runs stock x402 and never learns the difference. Four existing standards stack so that a ZK proof can stand in where a signature normally goes, each layer knowing only the one directly below it:
+
+```text
+x402              HTTP 402 "payment required" envelope   (how the ask travels)
+ └─ EIP-3009      transferWithAuthorization              (gasless signed transfer)
+     └─ USDC V2.2  bytes-signature overload              (the slot that carries the proof)
+         └─ EIP-1271  isValidSignature                   (what actually checks it)
+```
+
+**[x402](https://docs.cdp.coinbase.com/x402/welcome)** carries the ask. The merchant answers a request it wants paid with a 402 and a JSON body of terms: scheme, network, asset, amount, and the `payTo` address. Its `exact` scheme means "pay exactly this amount of this asset to this address," which maps onto a single USDC transfer. The client retries with an `X-PAYMENT` header carrying the payment.
+
+```text
+client (agent)                    airline (x402 server)
+  |   POST book_flight               |
+  |--------------------------------->|
+  |   402 Payment Required           |   terms: scheme=exact, asset=USDC,
+  |<---------------------------------|          amount, payTo
+  |   POST book_flight               |
+  |   X-PAYMENT: <proof-as-sig>      |
+  |--------------------------------->|
+  |   200 OK + ticket                |
+  |<---------------------------------|
+```
+
+**[EIP-3009](https://eips.ethereum.org/EIPS/eip-3009)** is the transfer inside that header. A token holder authorizes a transfer by signing an off-chain EIP-712 message (`from`, `to`, `value`, a validity window, and a random single-use `nonce`), and a third party submits it and pays the gas. It splits who *authorizes* the payment from who *settles* it, and the authorization carries a signature. That signature field is what we repurpose.
+
+**[USDC v2.2](https://www.circle.com/blog/announcing-usdc-v2-2)** is what makes the repurposing possible. Early USDC hard-coded `transferWithAuthorization(..., uint8 v, bytes32 r, bytes32 s)`: ECDSA only, so a contract could never be the payer. V2.2 added a `bytes signature` overload (standardized as [ERC-7598](https://eips.ethereum.org/EIPS/eip-7598)): when `from` is a contract, USDC hands those bytes to a signature checker that calls the contract's own `isValidSignature`. This is the single dependency that pins the whole design to USDC v2.2+.
+
+| USDC version | signature argument | contract payer? |
+|---|---|---|
+| V2.0 / V2.1 | `v, r, s` (ECDSA) | no |
+| V2.2 | `bytes signature` overload | yes, routes to EIP-1271 |
+
+**[EIP-1271](https://eips.ethereum.org/EIPS/eip-1271)** is what actually checks the proof. A contract has no private key, so this standard lets it decide for itself what counts as a valid signature: implement `isValidSignature(bytes32 hash, bytes signature)` and return the magic value. Our escrow wallet implements it to run ZK verification: it recomputes the EIP-712 digest, looks up the policy commitment stored for that nonce, and verifies the Groth16 proof carried in `signature`. "The signature is valid" becomes "the policy proof is valid."
+
+```text
+EOA       :  ecrecover(hash, v, r, s) == signer address ?
+contract  :  signer.isValidSignature(hash, signature) == 0x1626ba7e ?
+                                       |
+                       our wallet: verify ZK policy proof
+```
+
+## The Full Flow
+
+Put together, over x402, with an airline as the merchant. The numbers on the arrows match the steps below; steps (2) and (4) happen inside the agent, shopping through the airline's MCP server and building the proof.
+
+```text
+off-chain                                            on-chain (settlement)
+=========                                            =====================
+
++-----------------+  (1) allowPolicy + fund escrow
+|  User / Owner   |----------------------------------------------------------+
++-----------------+                                                          |
+                                                                             v
++-----------------+  (3) 402 demand      +-------------+         +-----------------+
+|      Agent      |<---------------------|             |         |  Escrow Wallet  |
+|   (untrusted)   |                      |   Airline   |         | EIP-1271 verify |
+|  - recv 402     |                      | x402+facil. |         +--------+--------+
+|  - build proof  |  (5) X-PAYMENT       |             |             ^         |
+|  - send pay     |--------------------->|             |         (6) |         | verify
++-----------------+  (proof = sig)       +------+------+      isValid|         v
+                                                |             Sig    | +------------------+
+                                         (6)    | transfer           | | Groth16 Verifier |
+                                                v WithAuth           | | price<cap, payTo |
+                                         +-----------+               | +------------------+
+                                         |   USDC    |---------------+
+                                         | EIP-3009  |
+                                         +-----+-----+
+                                               |  (7) escrowed USDC -> airline
+                                               +------------------------------->
+```
+
+1. **The user sets the policy**: approves it, funds the escrow, and tasks the agent in natural language.
+2. **The agent shops.** It searches flights through the airline's MCP server and gets back an airline-signed quote.
+3. **The agent asks to book** and receives an x402 `402` carrying the EIP-3009 payment terms: `payTo` and the amount.
+4. **The agent builds the Groth16 proof**: the airline's signature on the quote verifies, `value == price`, `price < cap`, `to == payTo`. This runs entirely in the untrusted zone.
+5. **The proof ships as a signature**: packed into the `bytes` slot, sent in the `X-PAYMENT` header.
+6. **The facilitator submits `transferWithAuthorization`.** Because the USDC sender is a contract, USDC calls the escrow wallet's `isValidSignature`; the wallet checks the digest, looks up the policy for that nonce, and runs Groth16 verification. On success, USDC moves from escrow to the airline, and the token burns the nonce so the authorization can never be replayed.
+7. **The airline confirms the transfer on-chain and issues the ticket.**
+
+The agent only ever talks to the airline, over plain x402. The escrow wallet, USDC, and the verifier live in the on-chain settlement zone, out of the agent's reach.
+
+## From PoC to Standard: ERC-8366
+
+The pattern in this post is not specific to our PoC, so we extracted it into a proposed standard: [ERC-8366: Zero-Knowledge Spending Policies](https://ethereum-magicians.org/t/erc-8366-zero-knowledge-spending-policies/29281) ([draft text](https://github.com/ethereum/ERCs/pull/1929)). The interface is deliberately small:
+
+```solidity
+interface IZKSpendingPolicy {
+    function allowPolicy(bytes32 nonce, bytes32 paramsCommit, address verifier) external;
+    function revokePolicy(bytes32 nonce) external;
+    function allowedPolicy(bytes32 nonce)
+        external view returns (bytes32 paramsCommit, address verifier);
+    function verifyPolicy(bytes calldata authorization, bytes calldata proof)
+        external view returns (bool);
+}
+```
+
+`verifyPolicy` is the core: the policy check itself, callable by anyone as a static call. An agent can pre-flight its own proof with an `eth_call` before submitting anything; a facilitator can confirm a payment will settle before relaying it. ERC-1271's `isValidSignature` is specified as a thin adapter over the same check, which is what plugs a conforming contract into x402, USDC, and everything else that verifies contract signatures; an optional `settle` function covers rails with no signature slot at all.
+
+Because the standard is a function set rather than a contract type, it composes: a dedicated escrow, a Safe module, or an ERC-4337 account can all conform. And the rule that makes it safe to implement is simple to state: the contract constructs every public input itself, from the registered policy, the authorization, and the environment. Nothing is taken from the prover, so the classic unchecked-public-input bug cannot be written.
+
+There is a [reference implementation](https://github.com/fractalyze/erc-8366) (a Foundry suite running against a real Groth16 proof, not a mock), and the discussion thread is already probing the next layer: composing independent review verdicts as an optional policy clause. If you are building in this space, both are open.
+
+## The Next Problem: Dynamic Policies
+
+The point of all this stands on infrastructure that is already live: least-privilege agent payments are not a protocol proposal. They compose out of deployed standards, with zero changes on the merchant side, and everything above exists today: the PoC runs end to end, the standard is drafted, the reference implementation is public.
+
+What does not exist yet is a way to create policies at the speed agents will need them. The demo policy is four constraints and a signature check, hand-written and hand-audited, and that was fine exactly once. Real agent payments will want policies minted dynamically: a budget shaped for this trip, a merchant class discovered mid-task, a review-verdict clause added for one unusual purchase. Each new shape today means a new circuit, a new audit, and for Groth16 a new trusted setup and verifier deployment.
+
+That collision is, we think, the important open problem in this space: policies have to become cheap to create, while staying guaranteed, because the circuit is the spending control and a subtly wrong circuit is a subtly broken lock. Universal verifiers remove the per-shape deployment, and setup-free proof systems remove the ceremony, but neither answers the hard half: knowing that a freshly generated circuit enforces exactly the policy the owner meant. How to generate policies dynamically without giving up that guarantee is where this design space goes next.
+
+We are also floating the design with the x402 community in [an issue on the x402 repo](https://github.com/x402-foundation/x402/issues/2641), including how it differs from AP2 mandates, ERC-8150, and ERC-8004. The open question there worth solving next: budgets that span several merchants, one commitment authorizing a decrementing budget across many settlements instead of one escrow per payment.
+
+If you are building agent payments and the question "how much can the agent lose?" bothers you as much as it bothers us, talk to us.
