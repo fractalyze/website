@@ -85,10 +85,18 @@ frames sits correctly next to the others on `/blog`.
 | `whiteboard-session.webp` | Presenting at a whiteboard | Talks, workshops, teaching |
 | `focused-at-laptop.webp` | One person working, low light | Deep work, research notes |
 
-Prefer the abstract four for technical posts and keep the people photographs for
-posts actually about the team; a stock face on a compiler benchmark reads as
-filler. Vary the choice across consecutive posts so the listing does not show the
-same picture twice in a row.
+Any frame in the library can carry any post. Reach for an abstract one when a
+technical post has no concrete subject, but the scene and people photographs are
+fair game too: `window-over-mountains` on a benchmark write-up reads as ground
+covered, not as filler.
+
+What matters more is that no two posts wear the same picture, because `/blog`
+shows them together on one screen. Check the whole set before you choose, not
+just the last two or three:
+
+```bash
+grep -h '^image:' data/blog/*.mdx | sort | uniq -c | sort -rn
+```
 
 ### Sourcing a new one
 
