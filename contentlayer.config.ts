@@ -94,7 +94,7 @@ export const Author = defineDocumentType(() => ({
 }));
 
 /**
- * A tab stop on the two blocks that scroll.
+ * A tab stop on the blocks that scroll.
  *
  * globals.css gives `.prose table` and `pre` `overflow-x: auto` so a wide table
  * or a long line of code does not force the article column wider than its
@@ -102,17 +102,51 @@ export const Author = defineDocumentType(() => ({
  * with nothing else; axe reports it as scrollable-region-focusable. The fix is
  * the tab stop, not the scrolling.
  *
+ * A diagram scrolls for a different reason and needs the same stop. An SVG
+ * figure is drawn at the measure, so scaling it down to a phone would take its
+ * labels below reading size; `.prose .diagram` keeps the drawing at its own
+ * width and scrolls the row instead. The class is set here rather than matched
+ * in CSS so the tab stop and the overflow always land on the same element.
+ *
  * Written out rather than reaching for unist-util-visit, which is in the tree
  * only as somebody else's dependency.
  */
 function rehypeFocusableScrollers() {
-  type Node = {type?: string; tagName?: string; properties?: object; children?: Node[]};
+  type Node = {
+    type?: string;
+    tagName?: string;
+    properties?: Record<string, unknown>;
+    children?: Node[];
+    value?: string;
+  };
+
+  // A paragraph holding one SVG image and nothing else: what `![alt](x.svg)`
+  // compiles to. Whitespace between the tags is still a text node.
+  const isDiagram = (node: Node) => {
+    if (node.tagName !== 'p') return false;
+
+    const meaningful = (node.children ?? []).filter(
+      (child) => child.type !== 'text' || (child.value ?? '').trim() !== '',
+    );
+
+    if (meaningful.length !== 1) return false;
+
+    const [only] = meaningful;
+    const src = only.properties?.src;
+
+    return only.tagName === 'img' && typeof src === 'string' && src.endsWith('.svg');
+  };
 
   return (tree: Node) => {
     const walk = (node: Node) => {
       if (node.type === 'element' && (node.tagName === 'table' || node.tagName === 'pre')) {
         node.properties = {...node.properties, tabIndex: 0};
       }
+
+      if (node.type === 'element' && isDiagram(node)) {
+        node.properties = {...node.properties, tabIndex: 0, className: 'diagram'};
+      }
+
       node.children?.forEach(walk);
     };
 

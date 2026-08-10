@@ -131,6 +131,18 @@ body {
   @apply mx-auto rounded-lg;
 }
 
+/* An SVG diagram is drawn at the article measure, so shrinking it to a narrower
+   screen would take its labels below reading size. It keeps its own width and
+   the row scrolls, the same trade the tables make. The class comes from
+   contentlayer.config.ts, which also puts the tab stop here. */
+.prose .diagram {
+  @apply overflow-x-auto;
+}
+
+.prose .diagram img {
+  @apply max-w-none rounded-none;
+}
+
 .prose hr {
   @apply border-line;
 }
