@@ -73,7 +73,7 @@ Start with the second row, because it is where every live system stops: 10, 5, 1
 
 The design move is to take the hashing off-chain and prove it instead of paying for it. The employer's machine builds the complete depth-8 subtree of all 256 output notes. The proof shows the notes form exactly that subtree and that the input note equals the sum of the outputs, so no value appears or disappears. The contract then attaches the whole subtree at level 8 of the main tree with a handful of hashes. And because a payout always emits exactly 256 commitments, padded with zero-value notes, the chain never even learns how many people were really paid.
 
-Measured on the live pool, not estimated: one 256-recipient payout is 3,905,519 L2 gas, which is 15,256 gas per recipient, roughly 90 times cheaper per recipient than Zeto's own published figures. Proving one batch takes about 1.6 seconds on a single GPU, of which the proof itself is 0.47 seconds. A 100,000-person payroll is 391 such batches: about ten minutes of proving and roughly 0.009 ETH in fees, well under \$50.
+Measured on the live pool, not estimated: one 256-recipient payout is 3,905,519 L2 gas, which is 15,256 gas per recipient, roughly 90 times cheaper per recipient than Zeto's own published figures. Proving one batch takes about 1.6 seconds on a single GPU, of which the proof itself is 0.47 seconds for a circuit of 2.8 million constraints. A 100,000-person payroll is 391 such batches: about ten minutes of proving and roughly 0.009 ETH in fees, well under \$50.
 
 ### The Auditor Always Gets a Copy
 
@@ -113,11 +113,15 @@ In a note-based pool, money arrives as separate notes, and a zero-knowledge circ
 
 ![Twenty notes fold to eleven, then to two, then the payment goes out with one change note, all from a single Confirm](/blog/confidential-stablecoin-infrastructure/note-consolidation.svg)
 
+Each fold is one transaction that reads the ten largest notes and writes one, at 3,053,435 gas. Selecting largest-first is what makes the plan a decision rather than a guess: if any ten notes cover the amount, the largest ten do, so a selection that overruns the circuit proves no ten-note cover exists. The wallet works out the whole path before asking for anything, then says what it will cost in the only unit the user cares about: your balance is in twenty pieces, so this takes three approvals.
+
 ### Finding Your Balance Without Scanning the Pool
 
-This is the last row of the comparison table. In Railgun or zkBob, "receiving money" means your wallet downloads and trial-decrypts the entire pool's history to find your notes, because a public index server structurally cannot know which note is whose. bongtu's enforced disclosure also solves this: since one institution-internal instance already opens every envelope, it can serve an owner-keyed index.
+This is the last row of the comparison table. In Railgun or zkBob, "receiving money" means your wallet downloads and trial-decrypts the entire pool's history to find your notes, because a public index server holds only public data and structurally cannot know which note is whose. It cannot even hand you a membership path for your own note, since asking for one would reveal which leaf is yours. bongtu's enforced disclosure also solves this: since one institution-internal instance already opens every envelope, it can serve an owner-keyed index.
 
 ![Today's pools make the device scan and trial-decrypt the whole pool; an owner-keyed index answers with one signed request at any pool size](/blog/confidential-stablecoin-infrastructure/scan-vs-lookup.svg)
+
+Read authorisation is a signature by the key being queried over a hash of that key and a timestamp, accepted only inside a five-minute window and checked before any lookup runs, so the endpoint never leaks whether an owner has notes at all. The wallet trades one signature for a read-only session token and then pages history with a cursor, at no further signatures.
 
 Because so much rests on the indexer, it verifies itself constantly: it re-checks its copy of the tree against the chain on every insert and every restart, re-decrypts every payout's ciphertext as it lands, and raises an alarm naming the transaction if anything published disagrees with what was proved.
 

@@ -1,14 +1,11 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="730" height="470" viewBox="0 0 730 470" font-family="-apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif">
+<svg xmlns="http://www.w3.org/2000/svg" width="730" height="232" viewBox="0 0 730 232" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif">
   <style>
     .box  { fill:none; stroke:#000; stroke-width:1.5; }
     .boxf { fill:#F5F5F5; stroke:#000; stroke-width:1.5; }
-    .boxd { fill:none; stroke:#BBB; stroke-width:1.5; stroke-dasharray:5 4; }
-    .arrow { stroke:#000; stroke-width:1.6; fill:none; }
-    .arrowm { stroke:#999; stroke-width:1.4; fill:none; stroke-dasharray:4 4; }
-    .t { fill:#000; font-size:13.5px; font-weight:600; }
-    .s { fill:#666; font-size:11.5px; }
-    .m { fill:#000; font-size:12.5px; }
-    .n { fill:#666; font-size:11.5px; }
+    .arrow { stroke:#000; stroke-width:1.7; fill:none; }
+    .t { fill:#000; font-size:15px; font-weight:600; }
+    .s { fill:#666; font-size:14px; }
+    .cap { fill:#666; font-size:13px; text-anchor:middle; }
   </style>
   <defs>
     <marker id="d" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
@@ -19,45 +16,27 @@
     </marker>
   </defs>
 
-  <!-- two input secrets -->
-  <rect class="box" x="8" y="30" width="216" height="78" rx="7"/>
-  <text class="t" x="24" y="56">Classical half</text>
-  <text class="s" x="24" y="78">ECDH shared secret. Both</text>
-  <text class="s" x="24" y="96">public halves sit on chain</text>
+  <rect class="box" x="8" y="20" width="204" height="66" rx="7"/>
+  <text class="t" x="26" y="48">Classical half</text>
+  <text class="s" x="26" y="72">ECDH shared secret</text>
 
-  <rect class="box" x="8" y="150" width="216" height="78" rx="7"/>
-  <text class="t" x="24" y="176">Post-quantum half</text>
-  <text class="s" x="24" y="198">ML-KEM-768 encapsulation</text>
-  <text class="s" x="24" y="216">secret, the NIST standard</text>
+  <rect class="box" x="8" y="118" width="204" height="66" rx="7"/>
+  <text class="t" x="26" y="146">Post-quantum half</text>
+  <text class="s" x="26" y="170">ML-KEM-768 secret</text>
 
-  <!-- into one hash -->
-  <line class="arrow" x1="228" y1="66" x2="266" y2="106" marker-end="url(#d)"/>
-  <line class="arrow" x1="228" y1="192" x2="266" y2="152" marker-end="url(#d)"/>
-  <rect class="box" x="272" y="90" width="164" height="78" rx="7"/>
-  <text class="t" x="288" y="116">Envelope key</text>
-  <text class="s" x="288" y="138">one hash over both</text>
-  <text class="s" x="288" y="156">secrets and the transcript</text>
+  <line class="arrow" x1="220" y1="53" x2="262" y2="86" marker-end="url(#d)"/>
+  <line class="arrow" x1="220" y1="151" x2="262" y2="118" marker-end="url(#d)"/>
 
-  <!-- ciphertext -->
-  <line class="arrow" x1="440" y1="129" x2="478" y2="129" marker-end="url(#d)"/>
-  <rect class="boxf" x="484" y="72" width="238" height="114" rx="7"/>
-  <text class="t" x="500" y="98">Auditor ciphertext</text>
-  <text class="s" x="500" y="120">published on chain with the</text>
-  <text class="s" x="500" y="138">payout, carries the whole</text>
-  <text class="s" x="500" y="156">operation, kept forever by</text>
-  <text class="s" x="500" y="174">anyone watching</text>
+  <rect class="box" x="270" y="69" width="176" height="66" rx="7"/>
+  <text class="t" x="288" y="97">Envelope key</text>
+  <text class="s" x="288" y="121">one hash over both</text>
 
-  <!-- proof binds the PQ half -->
-  <path class="arrow" d="M 354 226 v -50" marker-end="url(#d)"/>
-  <rect class="box" x="240" y="230" width="292" height="60" rx="7"/>
-  <text class="m" x="256" y="254">The proof commits to the PQ secret</text>
-  <text class="n" x="256" y="276">so a sender cannot skip the lattice half</text>
+  <line class="arrow" x1="452" y1="102" x2="490" y2="102" marker-end="url(#d)"/>
 
-  <line class="arrowm" x1="622" y1="186" x2="640" y2="330" marker-end="url(#dm)"/>
+  <rect class="boxf" x="498" y="69" width="224" height="66" rx="7"/>
+  <text class="t" x="516" y="97">Auditor ciphertext</text>
+  <text class="s" x="516" y="121">published on chain</text>
 
-  <!-- adversary strip -->
-  <rect class="boxd" x="8" y="336" width="714" height="88" rx="7"/>
-  <text class="m" x="26" y="364">Harvest now, decrypt later: an adversary records the ciphertext today</text>
-  <text class="m" x="26" y="386">and waits for quantum hardware.</text>
-  <text class="n" x="26" y="410">Breaking the classical half then yields one input to the hash and opens nothing.</text>
+  <path class="arrow" d="M 110 190 v 20" style="stroke:#999;stroke-dasharray:4 4" marker-end="url(#dm)"/>
+  <text class="cap" x="110" y="228">the proof commits to this secret</text>
 </svg>

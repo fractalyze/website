@@ -1,46 +1,31 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="730" height="400" viewBox="0 0 730 400" font-family="-apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif">
+<svg xmlns="http://www.w3.org/2000/svg" width="730" height="234" viewBox="0 0 730 234" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif">
   <style>
-    .cell  { fill:none; stroke:#000; stroke-width:1.1; }
-    .cellf { fill:#000; stroke:#000; stroke-width:1.1; }
+    .cell  { fill:none; stroke:#000; stroke-width:1.2; }
+    .cellf { fill:#000; stroke:#000; stroke-width:1.2; }
     .split { stroke:#E0E0E0; stroke-width:1.5; }
-    .t { fill:#000; font-size:14px; font-weight:600; }
-    .s { fill:#666; font-size:11.5px; }
-    .b { fill:#000; font-size:13px; font-weight:600; }
-    .n { fill:#666; font-size:11.5px; }
+    .t { fill:#000; font-size:16px; font-weight:600; }
+    .s { fill:#666; font-size:14px; }
+    .b { fill:#000; font-size:15px; font-weight:600; }
   </style>
 
-  <line class="split" x1="365" y1="14" x2="365" y2="376"/>
+  <line class="split" x1="365" y1="10" x2="365" y2="224"/>
 
-  <!-- left: today -->
   <text class="t" x="8" y="34">Pools shipping today</text>
-  <text class="s" x="8" y="56">the index server holds only public</text>
-  <text class="s" x="8" y="74">data, so the work lands on your device</text>
+  <text class="s" x="8" y="60">the device scans the whole pool</text>
   <g class="cell">
     <g id="s">
-      <rect x="8"   y="98" width="13" height="13"/><rect x="27"  y="98" width="13" height="13"/><rect x="46"  y="98" width="13" height="13"/><rect x="65"  y="98" width="13" height="13"/><rect x="84"  y="98" width="13" height="13"/><rect x="103" y="98" width="13" height="13"/><rect x="122" y="98" width="13" height="13"/><rect x="141" y="98" width="13" height="13"/><rect x="160" y="98" width="13" height="13"/><rect x="179" y="98" width="13" height="13"/><rect x="198" y="98" width="13" height="13"/><rect x="217" y="98" width="13" height="13"/><rect x="236" y="98" width="13" height="13"/><rect x="255" y="98" width="13" height="13"/><rect x="274" y="98" width="13" height="13"/><rect x="293" y="98" width="13" height="13"/>
+      <rect x="8"   y="84" width="14" height="14"/><rect x="27"  y="84" width="14" height="14"/><rect x="46"  y="84" width="14" height="14"/><rect x="65"  y="84" width="14" height="14"/><rect x="84"  y="84" width="14" height="14"/><rect x="103" y="84" width="14" height="14"/><rect x="122" y="84" width="14" height="14"/><rect x="141" y="84" width="14" height="14"/><rect x="160" y="84" width="14" height="14"/><rect x="179" y="84" width="14" height="14"/><rect x="198" y="84" width="14" height="14"/><rect x="217" y="84" width="14" height="14"/><rect x="236" y="84" width="14" height="14"/><rect x="255" y="84" width="14" height="14"/><rect x="274" y="84" width="14" height="14"/><rect x="293" y="84" width="14" height="14"/>
     </g>
     <use href="#s" y="19"/>
     <use href="#s" y="38"/>
     <use href="#s" y="57"/>
   </g>
-  <text class="n" x="8" y="204">Download and trial-decrypt every</text>
-  <text class="n" x="8" y="224">record ever published, recompute</text>
-  <text class="n" x="8" y="244">every spend marker, rebuild the whole</text>
-  <text class="n" x="8" y="264">tree. Asking for one membership path</text>
-  <text class="n" x="8" y="284">would reveal which leaf is yours.</text>
-  <text class="b" x="8" y="326">The scan grows with the pool, forever.</text>
+  <text class="b" x="8" y="200">Grows with the pool, forever.</text>
 
-  <!-- right: bongtu -->
   <text class="t" x="389" y="34">bongtu</text>
-  <text class="s" x="389" y="56">the auditor key already opens every</text>
-  <text class="s" x="389" y="74">envelope, so the index is keyed by owner</text>
-  <rect class="cellf" x="389" y="98" width="26" height="26"/>
-  <text class="b" x="427" y="110">one signed request</text>
-  <text class="n" x="427" y="130">five-minute window</text>
-  <text class="n" x="389" y="204">Read authorisation is a signature by</text>
-  <text class="n" x="389" y="224">the queried key, checked before any</text>
-  <text class="n" x="389" y="244">lookup, so the endpoint never leaks</text>
-  <text class="n" x="389" y="264">whether an owner has notes. The honest</text>
-  <text class="n" x="389" y="284">cost: that server reads every amount.</text>
-  <text class="b" x="389" y="326">The same one request at any pool size.</text>
+  <text class="s" x="389" y="60">the index is keyed by owner</text>
+  <rect class="cellf" x="389" y="84" width="34" height="34"/>
+  <text class="s" x="435" y="100">one signed request,</text>
+  <text class="s" x="435" y="120">five-minute window</text>
+  <text class="b" x="389" y="200">The same request at any size.</text>
 </svg>

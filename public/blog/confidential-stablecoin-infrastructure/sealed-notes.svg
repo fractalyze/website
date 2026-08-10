@@ -1,14 +1,14 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="730" height="330" viewBox="0 0 730 330" font-family="-apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif">
+<svg xmlns="http://www.w3.org/2000/svg" width="730" height="212" viewBox="0 0 730 212" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif">
   <style>
-    .box  { fill:none; stroke:#000; stroke-width:1.5; }
-    .tri  { fill:none; stroke:#000; stroke-width:1.8; stroke-linejoin:round; }
+    .box { fill:none; stroke:#000; stroke-width:1.5; }
+    .tri { fill:none; stroke:#000; stroke-width:1.8; stroke-linejoin:round; }
     .leaf { fill:#000; }
-    .leafh { fill:#fff; stroke:#000; stroke-width:1.2; }
-    .arrow { stroke:#000; stroke-width:1.6; fill:none; }
-    .t { fill:#000; font-size:14px; font-weight:600; }
-    .s { fill:#666; font-size:12px; }
-    .c { fill:#000; font-size:12.5px; font-family:ui-monospace, 'SF Mono', Menlo, Consolas, monospace; }
-    .cap { fill:#666; font-size:12px; text-anchor:middle; }
+    .leafh { fill:#fff; stroke:#000; stroke-width:1.3; }
+    .arrow { stroke:#000; stroke-width:1.8; fill:none; }
+    .t { fill:#000; font-size:16px; font-weight:600; }
+    .s { fill:#666; font-size:14px; }
+    .c { fill:#000; font-size:13px; font-family:ui-monospace, 'SF Mono', Menlo, Consolas, monospace; }
+    .cap { fill:#666; font-size:13px; text-anchor:middle; }
   </style>
   <defs>
     <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
@@ -16,42 +16,27 @@
     </marker>
   </defs>
 
-  <!-- 1. the note -->
-  <rect class="box" x="8" y="40" width="232" height="132" rx="8"/>
-  <text class="t" x="24" y="70">One sealed note</text>
-  <text class="c" x="24" y="98">commit(amount, owner)</text>
-  <text class="s" x="24" y="128">on chain: one 32-byte</text>
-  <text class="s" x="24" y="146">commitment. amount and</text>
-  <text class="s" x="24" y="164">owner stay hidden</text>
-  <text class="cap" x="124" y="204">what money is</text>
+  <rect class="box" x="8" y="40" width="210" height="110" rx="8"/>
+  <text class="t" x="26" y="76">One sealed note</text>
+  <text class="c" x="26" y="112">commit(amount, owner)</text>
+  <text class="cap" x="113" y="182">what money is</text>
 
-  <line class="arrow" x1="244" y1="106" x2="272" y2="106" marker-end="url(#a)"/>
+  <line class="arrow" x1="228" y1="95" x2="254" y2="95" marker-end="url(#a)"/>
 
-  <!-- 2. the tree -->
-  <path class="tri" d="M 372 44 L 452 170 L 292 170 Z"/>
-  <circle class="leaf"  cx="313" cy="161" r="4"/>
-  <circle class="leafh" cx="333" cy="161" r="4"/>
-  <circle class="leafh" cx="353" cy="161" r="4"/>
-  <circle class="leaf"  cx="373" cy="161" r="4"/>
-  <circle class="leafh" cx="393" cy="161" r="4"/>
-  <circle class="leafh" cx="413" cy="161" r="4"/>
-  <circle class="leafh" cx="433" cy="161" r="4"/>
-  <text class="cap" x="372" y="204">one shared Merkle tree</text>
-  <text class="cap" x="372" y="222">filled: yours</text>
-  <text class="cap" x="372" y="240">hollow: everyone else's</text>
+  <path class="tri" d="M 365 46 L 430 150 L 300 150 Z"/>
+  <circle class="leaf"  cx="316" cy="140" r="4.5"/>
+  <circle class="leafh" cx="336" cy="140" r="4.5"/>
+  <circle class="leafh" cx="356" cy="140" r="4.5"/>
+  <circle class="leaf"  cx="376" cy="140" r="4.5"/>
+  <circle class="leafh" cx="396" cy="140" r="4.5"/>
+  <circle class="leafh" cx="416" cy="140" r="4.5"/>
+  <text class="cap" x="365" y="182">one shared tree, filled leaves are yours</text>
 
-  <line class="arrow" x1="456" y1="106" x2="484" y2="106" marker-end="url(#a)"/>
+  <line class="arrow" x1="476" y1="95" x2="502" y2="95" marker-end="url(#a)"/>
 
-  <!-- 3. spending -->
-  <rect class="box" x="490" y="40" width="232" height="132" rx="8"/>
-  <text class="t" x="506" y="70">To spend, prove it</text>
-  <text class="s" x="506" y="98">"I own notes covering this</text>
-  <text class="s" x="506" y="116">amount, and here are the</text>
-  <text class="s" x="506" y="134">new sealed notes they</text>
-  <text class="s" x="506" y="152">become"</text>
-  <text class="cap" x="606" y="204">how money moves</text>
-  <text class="cap" x="606" y="222">which leaves are yours</text>
-  <text class="cap" x="606" y="240">is never revealed</text>
-
-  <text class="s" x="8" y="300">Every confidential pool works this way. What follows is what had to be built around it.</text>
+  <rect class="box" x="512" y="40" width="210" height="110" rx="8"/>
+  <text class="t" x="530" y="72">To spend it</text>
+  <text class="s" x="530" y="104">prove you own notes</text>
+  <text class="s" x="530" y="126">covering the amount</text>
+  <text class="cap" x="617" y="182">how money moves</text>
 </svg>
