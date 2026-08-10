@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="730" height="470" viewBox="0 0 730 470" font-family="-apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif">
+  <style>
+    .cell { fill:none; stroke:#000; stroke-width:1.2; }
+    .tri  { fill:#F5F5F5; stroke:#000; stroke-width:1.8; stroke-linejoin:round; }
+    .trio { fill:none; stroke:#000; stroke-width:1.8; stroke-linejoin:round; }
+    .arrow { stroke:#000; stroke-width:1.8; fill:none; }
+    .split { stroke:#E0E0E0; stroke-width:1.5; }
+    .t { fill:#000; font-size:14px; font-weight:600; }
+    .s { fill:#666; font-size:11.5px; }
+    .b { fill:#000; font-size:13px; font-weight:600; }
+    .n { fill:#666; font-size:12px; }
+    .cap { fill:#666; font-size:11.5px; text-anchor:middle; }
+  </style>
+  <defs>
+    <marker id="c" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#000"/>
+    </marker>
+  </defs>
+
+  <line class="split" x1="365" y1="14" x2="365" y2="400"/>
+
+  <!-- left: append one at a time -->
+  <text class="t" x="8" y="34">Append 256 notes one at a time</text>
+  <text class="s" x="8" y="56">O(256) on chain: up to 255 leaves,</text>
+  <text class="s" x="8" y="74">32 Poseidon hashes each</text>
+  <g class="cell">
+    <g id="r">
+      <rect x="8"   y="96" width="14" height="14"/><rect x="28"  y="96" width="14" height="14"/><rect x="48"  y="96" width="14" height="14"/><rect x="68"  y="96" width="14" height="14"/><rect x="88"  y="96" width="14" height="14"/><rect x="108" y="96" width="14" height="14"/><rect x="128" y="96" width="14" height="14"/><rect x="148" y="96" width="14" height="14"/><rect x="168" y="96" width="14" height="14"/><rect x="188" y="96" width="14" height="14"/><rect x="208" y="96" width="14" height="14"/><rect x="228" y="96" width="14" height="14"/><rect x="248" y="96" width="14" height="14"/><rect x="268" y="96" width="14" height="14"/><rect x="288" y="96" width="14" height="14"/><rect x="308" y="96" width="14" height="14"/>
+    </g>
+    <use href="#r" y="20"/>
+    <use href="#r" y="40"/>
+    <use href="#r" y="60"/>
+  </g>
+  <text class="b" x="8" y="212">Does not fit under the block limit.</text>
+  <text class="n" x="8" y="236">Which is why no live confidential pool</text>
+  <text class="n" x="8" y="256">does mass payouts.</text>
+
+  <!-- right: prove the subtree, graft it -->
+  <text class="t" x="389" y="34">Prove one depth-8 subtree</text>
+  <text class="s" x="389" y="56">then graft it at level 8:</text>
+  <text class="s" x="389" y="74">O(log 256) on chain</text>
+
+  <path class="tri" d="M 455 100 L 512 176 L 398 176 Z"/>
+  <text class="cap" x="455" y="196">256 new notes,</text>
+  <text class="cap" x="455" y="212">one proof</text>
+  <line class="arrow" x1="524" y1="140" x2="562" y2="140" marker-end="url(#c)"/>
+  <path class="trio" d="M 646 94 L 712 176 L 580 176 Z"/>
+  <path class="tri" d="M 646 148 L 660 165 L 632 165 Z" style="stroke-width:1.2"/>
+  <text class="cap" x="646" y="196">main tree,</text>
+  <text class="cap" x="646" y="212">one graft</text>
+
+  <text class="b" x="389" y="248">15,256 gas per recipient.</text>
+  <text class="n" x="389" y="272">Value conservation is proved in the</text>
+  <text class="n" x="389" y="292">same proof: the input note equals</text>
+  <text class="n" x="389" y="312">the sum of all 256 outputs.</text>
+
+  <!-- footer spanning -->
+  <line class="split" x1="8" y1="368" x2="722" y2="368"/>
+  <text class="n" x="8" y="396">A payout always emits exactly 256 commitments, padded with zero-value notes,</text>
+  <text class="n" x="8" y="418">so even the number of people paid stays hidden.</text>
+</svg>
