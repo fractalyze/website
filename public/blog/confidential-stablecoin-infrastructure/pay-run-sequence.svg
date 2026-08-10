@@ -2,7 +2,7 @@
   <style>
     .box  { fill:none; stroke:#000; stroke-width:1.5; }
     .boxi { fill:#F5F5F5; stroke:#000; stroke-width:1.5; stroke-dasharray:5 4; }
-    .life { stroke:#DDD; stroke-width:1.5; stroke-dasharray:2 5; }
+    .life { stroke:#BBB; stroke-width:1.5; stroke-dasharray:4 4; }
     .arrow { stroke:#000; stroke-width:1.7; fill:none; }
     .h  { fill:#000; font-size:14px; font-weight:600; text-anchor:middle; }
     .hs { fill:#666; font-size:12px; text-anchor:middle; }
