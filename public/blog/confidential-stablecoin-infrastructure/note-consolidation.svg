@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="730" height="166" viewBox="0 0 730 166" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif">
+  <style>
+    .cell  { fill:none; stroke:#000; stroke-width:1.2; }
+    .cellf { fill:#000; stroke:#000; stroke-width:1.2; }
+    .arrow { stroke:#000; stroke-width:1.8; fill:none; }
+    .t { fill:#000; font-size:15px; font-weight:600; }
+    .s { fill:#666; font-size:13px; }
+    .b { fill:#000; font-size:15px; font-weight:600; }
+    .lbl { fill:#666; font-size:13px; text-anchor:middle; }
+  </style>
+  <defs>
+    <marker id="e" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#000"/>
+    </marker>
+  </defs>
+
+  <text class="t" x="8" y="32">Balance held</text>
+  <text class="s" x="8" y="54">20 notes</text>
+  <g class="cell">
+    <rect x="8"  y="74" width="14" height="14"/><rect x="27" y="74" width="14" height="14"/><rect x="46" y="74" width="14" height="14"/><rect x="65" y="74" width="14" height="14"/><rect x="84" y="74" width="14" height="14"/>
+    <rect x="8"  y="93" width="14" height="14"/><rect x="27" y="93" width="14" height="14"/><rect x="46" y="93" width="14" height="14"/><rect x="65" y="93" width="14" height="14"/><rect x="84" y="93" width="14" height="14"/>
+    <rect x="8"  y="112" width="14" height="14"/><rect x="27" y="112" width="14" height="14"/><rect x="46" y="112" width="14" height="14"/><rect x="65" y="112" width="14" height="14"/><rect x="84" y="112" width="14" height="14"/>
+    <rect x="8"  y="131" width="14" height="14"/><rect x="27" y="131" width="14" height="14"/><rect x="46" y="131" width="14" height="14"/><rect x="65" y="131" width="14" height="14"/><rect x="84" y="131" width="14" height="14"/>
+  </g>
+
+  <text class="lbl" x="152" y="96">fold 1</text>
+  <line class="arrow" x1="122" y1="110" x2="182" y2="110" marker-end="url(#e)"/>
+
+  <text class="t" x="206" y="32">After fold 1</text>
+  <text class="s" x="206" y="54">11 notes</text>
+  <g class="cell">
+    <rect x="206" y="74" width="14" height="14"/><rect x="225" y="74" width="14" height="14"/><rect x="244" y="74" width="14" height="14"/><rect x="263" y="74" width="14" height="14"/><rect x="282" y="74" width="14" height="14"/>
+    <rect x="206" y="93" width="14" height="14"/><rect x="225" y="93" width="14" height="14"/><rect x="244" y="93" width="14" height="14"/><rect x="263" y="93" width="14" height="14"/><rect x="282" y="93" width="14" height="14"/>
+    <rect x="206" y="112" width="14" height="14"/>
+  </g>
+
+  <text class="lbl" x="350" y="96">fold 2</text>
+  <line class="arrow" x1="320" y1="110" x2="380" y2="110" marker-end="url(#e)"/>
+
+  <text class="t" x="404" y="32">After fold 2</text>
+  <text class="s" x="404" y="54">2 notes</text>
+  <g class="cell">
+    <rect x="404" y="74" width="14" height="14"/><rect x="423" y="74" width="14" height="14"/>
+  </g>
+
+  <text class="lbl" x="510" y="96">payment</text>
+  <line class="arrow" x1="464" y1="110" x2="556" y2="110" marker-end="url(#e)"/>
+
+  <text class="t" x="580" y="32">Payment sent</text>
+  <text class="s" x="580" y="54">one out, one change</text>
+  <rect class="cellf" x="580" y="74" width="14" height="14"/>
+  <rect class="cell"  x="599" y="74" width="14" height="14"/>
+</svg>

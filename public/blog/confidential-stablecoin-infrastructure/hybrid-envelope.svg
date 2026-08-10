@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="730" height="232" viewBox="0 0 730 232" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif">
+  <style>
+    .box  { fill:none; stroke:#000; stroke-width:1.5; }
+    .boxf { fill:#F5F5F5; stroke:#000; stroke-width:1.5; }
+    .arrow { stroke:#000; stroke-width:1.7; fill:none; }
+    .t { fill:#000; font-size:15px; font-weight:600; }
+    .s { fill:#666; font-size:14px; }
+    .cap { fill:#666; font-size:13px; text-anchor:middle; }
+  </style>
+  <defs>
+    <marker id="d" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#000"/>
+    </marker>
+    <marker id="dm" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#999"/>
+    </marker>
+  </defs>
+
+  <rect class="box" x="8" y="20" width="204" height="66" rx="7"/>
+  <text class="t" x="26" y="48">Classical half</text>
+  <text class="s" x="26" y="72">ECDH shared secret</text>
+
+  <rect class="box" x="8" y="118" width="204" height="66" rx="7"/>
+  <text class="t" x="26" y="146">Post-quantum half</text>
+  <text class="s" x="26" y="170">ML-KEM-768 secret</text>
+
+  <line class="arrow" x1="220" y1="53" x2="262" y2="86" marker-end="url(#d)"/>
+  <line class="arrow" x1="220" y1="151" x2="262" y2="118" marker-end="url(#d)"/>
+
+  <rect class="box" x="270" y="69" width="176" height="66" rx="7"/>
+  <text class="t" x="288" y="97">Envelope key</text>
+  <text class="s" x="288" y="121">one hash over both</text>
+
+  <line class="arrow" x1="452" y1="102" x2="490" y2="102" marker-end="url(#d)"/>
+
+  <rect class="boxf" x="498" y="69" width="224" height="66" rx="7"/>
+  <text class="t" x="516" y="97">Auditor ciphertext</text>
+  <text class="s" x="516" y="121">published on chain</text>
+
+  <path class="arrow" d="M 110 190 v 20" style="stroke:#999;stroke-dasharray:4 4" marker-end="url(#dm)"/>
+  <text class="cap" x="110" y="228">the proof commits to this secret</text>
+</svg>

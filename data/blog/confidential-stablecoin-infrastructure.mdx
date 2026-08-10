@@ -1,0 +1,136 @@
+---
+title: 'Designing Confidential Stablecoin Infrastructure at Scale'
+date: '2026-08-10'
+tags: ['stablecoin', 'privacy', 'confidential-finance', 'payroll', 'zeto', 'giwa', 'zkp']
+draft: false
+category: 'Product'
+summary: "Stablecoins won the volume war and still carry nobody's salary. Confidential transfers at payroll scale need hidden amounts, an audit nobody can skip, and one transaction that pays hundreds of people. We designed and built all of it, end to end. bongtu, open source and live on testnet, is the proof."
+authors: ['Jun']
+image: '/blog/covers/abstract-fluted-glass.webp'
+---
+
+## Stablecoin Privacy Does Not Scale Today
+
+Stablecoins have already won the volume war. They settle [tens of trillions of dollars a year](https://a16zcrypto.com/posts/article/state-of-crypto-report-2025/), more raw volume than PayPal and on the order of Visa. And yet almost none of it is the money that structures ordinary life. No salaries. Almost no vendor invoices. No corporate treasuries that anyone would recognize as such.
+
+The blocker is not speed, and it is not fees. It is that a public chain turned money into a broadcast. When you use a bank, you take four guarantees for granted: your balance is yours alone, outsiders can't see how much you send, outsiders can't see who you send to, and a regulator can still audit you. A public stablecoin fails the first three: post a payroll on-chain and you have published every employee's salary, forever. Privacy tools fix those three and then fail the fourth: a mixer hides everything from everyone, including the auditor, which is why [Tornado Cash was sanctioned](https://home.treasury.gov/news/press-releases/jy0916).
+
+There is also a fifth requirement nobody advertises: scale. A payroll is not a payment, it is a hundred thousand payments that clear together or not at all. Confidential finance means all five at once, and all five at once is the unsolved half of stablecoin mass adoption. This is the problem we work on, and we built the whole thing, end to end.
+
+The rest of this post follows that claim in order. First, what we built and how one pay run flows through it. Then how it compares with the confidential-token systems shipping today. Then the three design decisions behind the differences in that comparison: paying 256 people in one transaction, an audit the sender cannot skip, and ciphertext that stays safe after quantum computers. And finally, the details that decide whether a company can run it day to day, and what a real deployment adds on top.
+
+## What We Built
+
+[bongtu](https://github.com/fractalyze/bongtu) is that build, live on testnet today: a confidential transfer layer where one transaction pays up to 256 recipients, every amount is readable only by its recipient and a designated auditor, and the auditor can open every transfer from chain data alone. It runs on [GIWA](https://docs.giwa.io/giwa-chain/en), the Ethereum L2 that Dunamu, the operator of Upbit, is building on the OP Stack with a Korean won stablecoin ecosystem in view; if won-denominated salaries ever settle on a public chain, this is the shape they will need. It extends [Zeto](https://github.com/hyperledger-labs/zeto), the Hyperledger Labs privacy-token framework, and it is fully open source: contracts, circuits, both web apps, the indexer, and the prover.
+
+Before the components, the money model, because everything else builds on it. Inside the pool, money lives as sealed notes:
+
+![A note is a commitment to an amount and an owner, one leaf in a shared Merkle tree, spent by proving ownership in zero knowledge](/blog/confidential-stablecoin-infrastructure/sealed-notes.svg)
+
+Each note is a commitment to an amount and an owner, sitting as one leaf in a shared Merkle tree, and spending means proving in zero knowledge that you own notes covering the amount, without revealing which leaves are yours. That model is how every serious private-token design works, and it is what bongtu inherits from Zeto. What makes the system institutional is everything built around that model, and the fastest way to see the moving parts is to follow one pay run end to end:
+
+![One pay run across the employer console, the GPU proving service, the pool contract on GIWA, the indexer holding the auditor key, and a recipient wallet](/blog/confidential-stablecoin-infrastructure/pay-run-sequence.svg)
+
+The deposit is the one public step, by design: money entering a confidential pool from a transparent chain is visible on the way in. Everything after it is sealed. The employer's console hands the recipient list to a GPU proving service over an institution-internal link, gets a proof back in seconds, and submits one transaction carrying the proof and a fixed-size ciphertext. The pool contract verifies and grafts the new notes into the tree. The indexer, the one place that holds the auditor key, opens every published envelope and re-checks it against what the proof promised. And a recipient's wallet loads its balance with one signed request instead of scanning the pool.
+
+## The Demos and the Code
+
+Everything in this post is public and running today:
+
+- [Bongtu Wallet](https://bongtu.fractalyze.io): the recipient side. Self-custody, proofs generated in the browser, balance loads in one signed request. Desktop only.
+- [Payroll console](https://payroll.fractalyze.io): the employer side. Builds a 255-recipient worksheet and settles it as one private disbursement. Testnet, access-gated.
+- [github.com/fractalyze/bongtu](https://github.com/fractalyze/bongtu): the full source, contracts, circuits, proving service, indexer, and both apps, with circuit specs and design documents for every component.
+- BongtuPool on GIWA Sepolia: the live pool contract, source-verified on the GIWA explorer. Every number in this post is measured against it.
+
+## Comparison with Existing Systems
+
+We verified every claim below against each project's source code and deployed artifacts, not marketing pages. The receipts are in the [repo](https://github.com/fractalyze/bongtu).
+
+| | **bongtu** | Zeto | Railgun | zkBob | Token-2022 |
+|---|---|---|---|---|---|
+| Private P2P transfer | ✅ | ✅ | ✅ | ✅ | ⚠️ |
+| **Mass payout per tx** | ✅ **256** | 10 | 5 | 127 | ❌ |
+| Hides amount | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Hides who pays whom | ✅ | ✅ | ✅ | ✅ | ❌ |
+| Hides recipient count | ✅ padded to 256 | ⚠️ | ⚠️ | ⚠️ | ❌ |
+| **Enforced audit** | ✅ in-proof | ✅ | ❌ voluntary | ❌ voluntary | ✅ |
+| Scoped, per-period disclosure | ✅ epoch keys | ❌ | ❌ | ❌ | ❌ |
+| Post-quantum ciphertexts | ✅ hybrid ML-KEM | ⚠️ | ❌ | ❌ | ❌ |
+| Find your own payments | ✅ indexed lookup | ❌ scan everything | ❌ scan everything | ❌ scan everything | n/a |
+| Live today | ✅ | ✅ | ✅ | ❌ pools sunset | ✅ |
+
+Three clarifications on the table: Railgun's 5 outputs rise to 13 only when spending a single input note; zkBob did ship 127-recipient batches, but its pools have shut down; Token-2022 hides amounts but not who pays whom.
+
+## The Three Design Decisions
+
+The first column of that table was earned by three design decisions, one bold row at a time: the mass payout, the enforced audit, and the post-quantum ciphertext. This section walks through them in order.
+
+### Paying 256 People in One Transaction
+
+Start with the second row, because it is where every live system stops: 10, 5, 127-but-shut-down, none. The reason is the same everywhere. A confidential pool pays a heavy on-chain price per note it creates: a full Merkle update, dozens of Poseidon hashes computed inside the EVM, the single most expensive thing these systems do. That per-recipient work is exactly what dies at payroll size. 256 sequential appends do not fit under the block limit, let alone 100,000.
+
+![Appending 256 notes one at a time is O(256) on chain and does not fit in a block; proving they form one depth-8 subtree and grafting it is O(log 256)](/blog/confidential-stablecoin-infrastructure/append-vs-graft.svg)
+
+The design move is to take the hashing off-chain and prove it instead of paying for it. The employer's machine builds the complete depth-8 subtree of all 256 output notes. The proof shows the notes form exactly that subtree and that the input note equals the sum of the outputs, so no value appears or disappears. The contract then attaches the whole subtree at level 8 of the main tree with a handful of hashes. And because a payout always emits exactly 256 commitments, padded with zero-value notes, the chain never even learns how many people were really paid.
+
+Measured on the live pool, not estimated: one 256-recipient payout is 3,905,519 L2 gas, which is 15,256 gas per recipient, roughly 90 times cheaper per recipient than Zeto's own published figures. Proving one batch takes about 1.6 seconds on a single GPU, of which the proof itself is 0.47 seconds for a circuit of 2.8 million constraints. A 100,000-person payroll is 391 such batches: about ten minutes of proving and roughly 0.009 ETH in fees, well under \$50.
+
+### The Auditor Always Gets a Copy
+
+Batching moves the money. The next question is the one a compliance officer asks: if every payment is hidden, what guarantees the auditor still sees them? In the table this is the "enforced audit" row, and it is where Railgun and zkBob answer "the sender is supposed to attach a copy." Voluntary disclosure is etiquette, not a property an institution can build on, because the one sender you care about is the dishonest one.
+
+Here, each of the 256 envelopes is encrypted to the designated auditor key **inside the zero-knowledge proof**. The circuit commits to one aggregated hash over all 256 auditor ciphertexts, and the contract checks that hash against the ciphertext actually published, in the same transaction that moves the money. The contract also injects the auditor's key into the statement itself, so a sender cannot encrypt to a key of its own choosing and call it disclosure. A payout that skips the auditor's copy, garbles it, or addresses it wrongly is not a policy violation someone has to catch later. It is an invalid transaction the chain refuses. There is no honest-sender assumption anywhere in the system, which also buys non-repudiation: the sender cannot later claim the auditor's copy was never made, because the payment would not have settled without it.
+
+The auditor key rotates per epoch, so disclosure is scoped by period: an authority gets exactly the window it is entitled to see, this quarter's disbursements for this quarter's audit, not access to all of history. The result is a strict hierarchy of visibility:
+
+| Party | Holds | Can read |
+|---|---|---|
+| **Auditor** | the auditor key pair | every note created or destroyed by anyone: sender, per-note amount, recipients, from chain data alone, with no user key |
+| **Employer** | an ordinary sender key | the payout it authored and its own notes, nothing about anyone else's transfers |
+| **Recipient wallet** | its own spending key | its own notes only |
+| **Proving service** | no key of its own | everything in a proof request: the sender's spending key, the input note, the full recipient list |
+| **Anyone watching** | nothing | commitments, spend markers, roots, ciphertext, senders, and deposit and withdraw amounts. Never a transfer amount, a payout total, or which leaf a spend consumed |
+
+The auditor and the proving service see plaintext; both are institution-internal infrastructure run by the institution itself, not public services. We see nothing.
+
+### Protecting Published Ciphertext from Quantum Computers
+
+Enforced disclosure creates the next problem itself. The auditor envelope is now the most valuable ciphertext the system publishes, it carries the entire operation, and everything published on chain stays there forever. That invites an attack with a name: harvest now, decrypt later. Record the ciphertext today, decrypt it the day quantum hardware arrives. The envelope design we inherited was keyed by a classical elliptic-curve exchange whose public halves both sit on chain, so one future break would have opened every past payroll. We replaced it.
+
+![The envelope key is one hash over both a classical ECDH secret and an ML-KEM-768 secret, and the proof commits to the post-quantum secret that was used](/blog/confidential-stablecoin-infrastructure/hybrid-envelope.svg)
+
+Every envelope key is a hybrid: it folds the classical shared secret together with a post-quantum key-encapsulation secret (ML-KEM-768, the NIST lattice standard) in one hash. An adversary who someday breaks the classical half recovers one input to that hash and learns nothing. And the same mechanism that makes the audit unskippable makes the lattice half unskippable: the proof commits to the post-quantum secret that was actually used.
+
+Just as deliberate is what we did not make post-quantum. The signatures and the proofs stay classical, because if those ever break, the damage is forging new transactions at that future time, and they can be swapped for post-quantum versions before that day comes. Published ciphertext is the one thing that can never be taken back, so it had to come first.
+
+## Two Details for Daily Operation
+
+The design decisions above are what the comparison table can show. Below them sit quieter pieces of work that never make a feature list but decide whether a company can actually run the system day to day: how a fragmented balance gets spent and how a wallet finds its own money.
+
+### Spending a Balance That Arrived in Pieces
+
+In a note-based pool, money arrives as separate notes, and a zero-knowledge circuit is a fixed shape: the number of input notes it can take is decided when the circuit is built, because proving time and verification cost are fixed with it. Our transfer circuit reads up to ten input notes and writes two, the payment and the change. So a balance that arrived in twenty pieces cannot be spent in one transaction, no matter what it adds up to; the notes simply do not fit through the circuit in one pass. Most pools stop there and tell the user to consolidate by hand. Our wallet does the planning instead:
+
+![Twenty notes fold to eleven, then to two, then the payment goes out with one change note, all from a single Confirm](/blog/confidential-stablecoin-infrastructure/note-consolidation.svg)
+
+Each fold is one transaction that reads the ten largest notes and writes one, at 3,053,435 gas. Selecting largest-first is what makes the plan a decision rather than a guess: if any ten notes cover the amount, the largest ten do, so a selection that overruns the circuit proves no ten-note cover exists. The wallet works out the whole path before asking for anything, then says what it will cost in the only unit the user cares about: your balance is in twenty pieces, so this takes three approvals.
+
+### Finding Your Balance Without Scanning the Pool
+
+This is the last row of the comparison table. In Railgun or zkBob, "receiving money" means your wallet downloads and trial-decrypts the entire pool's history to find your notes, because a public index server holds only public data and structurally cannot know which note is whose. It cannot even hand you a membership path for your own note, since asking for one would reveal which leaf is yours. bongtu's enforced disclosure also solves this: since one institution-internal instance already opens every envelope, it can serve an owner-keyed index.
+
+![Today's pools make the device scan and trial-decrypt the whole pool; an owner-keyed index answers with one signed request at any pool size](/blog/confidential-stablecoin-infrastructure/scan-vs-lookup.svg)
+
+Read authorisation is a signature by the key being queried over a hash of that key and a timestamp, accepted only inside a five-minute window and checked before any lookup runs, so the endpoint never leaks whether an owner has notes at all. The wallet trades one signature for a read-only session token and then pages history with a cursor, at no further signatures.
+
+Because so much rests on the indexer, it verifies itself constantly: it re-checks its copy of the tree against the chain on every insert and every restart, re-decrypts every payout's ciphertext as it lands, and raises an alarm naming the transaction if anything published disagrees with what was proved.
+
+To be equally clear about our own gaps, three things stand between this testnet and mainnet: a multi-party ceremony for the proving keys, splitting the single admin key behind a multisig and timelock, and moving institution-side proving into trusted hardware. We would rather list those than have them found.
+
+## What We Offer
+
+bongtu is a general, open-source implementation of the baseline requirements of confidential stablecoin transfers: hidden amounts and recipients, an audit that cannot be skipped, payouts at batch scale, and balances a wallet can actually find. A real deployment starts where that baseline ends. Payroll is one use case; vendor payments, B2B settlement, treasury operations, and fund distributions each add their own rules on top: who may see what, for which period, on which rail, under which jurisdiction's audit requirements.
+
+And much of the engineering lives past the protocol design. Every circuit change regenerates its verifier and proving keys, so an upgrade is not a patch: it is a re-audit and, with Groth16, a new trusted-setup ceremony. For this PoC we used Groth16, which gives the smallest proofs and the cheapest on-chain verification; a production deployment that weighs upgrade agility more heavily might choose a universal-setup or transparent proof system instead. Auditor keys need custody and rotation windows that do not break payments in flight. Upgrade authority needs to be split before it matters. Proving infrastructure that sees plaintext needs a home the institution can defend. None of these decisions are exotic, but every one of them has to be made correctly, and made again each time the system evolves.
+
+That is the work we do. If confidential finance is the product you want to build, or the problem your institution has, talk to us. And if you want to check our work first, [everything is in the repo](https://github.com/fractalyze/bongtu): the code, the circuit specs, the design documents, and the detailed technical documentation for every component.
