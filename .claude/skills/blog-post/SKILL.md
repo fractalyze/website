@@ -61,7 +61,7 @@ invent a `summary` that overstates a result — lift it from the opening paragra
 Every post needs an `image`, and it is the first thing a reader sees. Work down
 this list and stop at the first step that yields one:
 
-1. A fitting cover already in `public/blog/covers/` — see the table below.
+1. An **unused** cover already in `public/blog/covers/` — see the table below.
 2. A search, if an image API key is in the environment — see [Sourcing a new
    one](#sourcing-a-new-one).
 3. **Ask the user for an image URL.** Say plainly that the library has no good
@@ -90,13 +90,20 @@ technical post has no concrete subject, but the scene and people photographs are
 fair game too: `window-over-mountains` on a benchmark write-up reads as ground
 covered, not as filler.
 
-What matters more is that no two posts wear the same picture, because `/blog`
-shows them together on one screen. Check the whole set before you choose, not
-just the last two or three:
+**A cover is used once.** `/blog` shows every post on one screen, so a repeated
+frame is immediately visible and makes two unrelated posts look like a pair.
+Never pick a file that already appears in another post, no matter how well it
+fits. List what is taken before you choose, and check the whole set rather than
+the last two or three:
 
 ```bash
-grep -h '^image:' data/blog/*.mdx | sort | uniq -c | sort -rn
+grep -h '^image:' data/blog/*.mdx | sort        # taken
+ls public/blog/covers/                          # everything
 ```
+
+When every frame is taken, that is the signal to go to step 2 or step 3 above.
+Do not reuse and do not fall back to the default; the user stocks the library
+with new frames, so asking is the expected outcome, not a failure.
 
 ### Sourcing a new one
 
