@@ -6,7 +6,7 @@ draft: false
 category: 'Tech'
 summary: "Every major zkVM GPU prover interprets its AIR constraints, because compiling them makes a kernel that ptxas never finishes. Zorch compiles anyway: cone-aware scheduling took compile time from 613s to 19.5s and beat the interpreter by 2.34x."
 authors: ['Ryan Kim']
-image: '/blog/covers/abstract-prism-facets.webp'
+image: '/blog/covers/window-over-mountains.webp'
 ---
 
 > **TL;DR** Every major zkVM GPU prover today evaluates its AIR constraints with an **interpreter**: SP1 walks a bytecode tape, OpenVM walks monomial descriptors, ZisK walks an expression stream. There is a good reason. The alternative, compiling the constraint circuit into native GPU code, dies in the CUDA backend: a big chip unrolls into a ~400,000-line kernel that `ptxas -O3` never finishes. **Zorch** (our ZK compiler stack: FRX, a fork of JAX, on top of our fork of XLA) takes the compile path anyway. The trick is not a bigger hammer; it is a schedule: *you must cut the kernel to compile it, and you can only cut where few values are live, so emit the circuit in a minimum-live order first.* Cone-aware scheduling plus outlining brought compile time **613 s → 19.5 s**, made the kernel **2.34× faster than the interpreter** (1,489 → 635 µs), moved the zerocheck stage **191.5 → 135.3 ms**, under the 156.9 ms of SP1's GPU prover at the time, and keccak, which previously **did not compile at all, compiles**.
