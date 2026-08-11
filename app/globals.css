@@ -173,8 +173,13 @@ pre[class*='language-'] {
   margin: 0;
 }
 
+/* JetBrains Mono leads here and DM Mono does not appear at all. Mixing the two
+   is what broke ASCII diagrams: DM Mono ships without box drawing, so those
+   characters fell to a fallback face at a different advance width and the
+   columns drifted. One face, one width. Inline code keeps DM Mono, since it
+   sits in prose and never has to line up. */
 code[class*='language-'] {
-  font-family: var(--font-mono), 'Menlo', 'Monaco', 'Courier New', monospace;
+  font-family: 'JetBrains Mono', 'Menlo', 'Monaco', 'Courier New', monospace;
   font-size: 0.875rem;
   line-height: 1.5;
   color: #24292f;

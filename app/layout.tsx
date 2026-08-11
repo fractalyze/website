@@ -75,6 +75,11 @@ export default function RootLayout({
           crossOrigin="anonymous"
         />
         <link rel="stylesheet" href="/fonts/pretendard/pretendard.css" />
+        {/* Code blocks only, and deliberately not preloaded: the declaration
+            costs one stylesheet, while the woff2 itself is fetched only once a
+            page actually renders a glyph in its ranges. Most pages have no code
+            block and never pay for it. */}
+        <link rel="stylesheet" href="/fonts/jetbrains-mono/jetbrains-mono.css" />
       </head>
       <body className={`${dmMono.variable} font-sans`}>
         <div className="flex min-h-screen flex-col">

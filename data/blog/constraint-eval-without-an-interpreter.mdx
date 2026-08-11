@@ -305,8 +305,8 @@ The hidden cost of a cut is the set of **live values crossing it**: everything m
 **This is where the perspective flips**, the pivot of the whole design:
 
 ```text
-❌ "choose better cut points"        →  a dense schedule has no good cut points
-✅ "emit in an order that creates
+x  "choose better cut points"        →  a dense schedule has no good cut points
+o  "emit in an order that creates
     good cut points"                 →  fix the schedule first
 ```
 
@@ -346,7 +346,7 @@ tape                                    notes
 cone 0 ┌ v0 = mul  a, b                 a·b, shared. computed HERE, once
        │ v1 = add  v0, c                C0
        └ acc += v1 · α[0]               cone 0 ends → folds immediately
-cone 1 ┌ v2 = mul  v0, c                C1  ★ v0 is NOT recomputed
+cone 1 ┌ v2 = mul  v0, c                C1  * v0 is NOT recomputed
        └ acc += v2 · α[1]
 cone 2 ┌ v3 = sub  b, c                 C2
        └ acc += v3 · α[2]
@@ -450,10 +450,10 @@ The min-live-set schedule flattened that whole row, so **every cut is already na
 The algorithm is a sliding window:
 
 ```text
-   ① from the current position, view [ +min_chunk , +region_cap ] as a window
-   ② choose the cut candidate inside it with the fewest crossing values
+   1. from the current position, view [ +min_chunk , +region_cap ] as a window
+   2. choose the cut candidate inside it with the fewest crossing values
       (ties → latest position, to keep pieces long)
-   ③ cut there, restart ① from the cut
+   3. cut there, restart from step 1
 ```
 
 The outliner knows nothing about cones. It only minimizes crossings, and lands on cone-segment boundaries anyway, because that is where values naturally die ([§3.1]), and past a segment boundary the next segment recomputes its own shared values ([§3.5]), so essentially only the accumulator crosses.

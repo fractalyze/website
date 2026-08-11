@@ -1,0 +1,24 @@
+/* JetBrains Mono (SIL OFL 1.1, see OFL.txt) — code blocks only.
+ *
+ * DM Mono is the site's mono face, but next/font serves it subsetted and the
+ * ranges it ships stop short of box drawing (U+2500-257F), block elements
+ * (U+2580-259F), geometric shapes, and the left/right arrows. ASCII diagrams
+ * mixing those with plain ASCII therefore drew half their characters from a
+ * fallback face whose advance width differs, and every such diagram lost its
+ * column alignment.
+ *
+ * This subset keeps the ranges an ASCII diagram can reach for, and every glyph
+ * in it advances 600/1000 em, so a block renders from one face at one width.
+ * Regular only: the syntax palette in globals.css sets colours and never
+ * font-weight, so no bold cut is loaded.
+ */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url(./JetBrainsMono-Regular.subset.woff2) format('woff2');
+  unicode-range: U+0020-007E, U+00A0-00FF, U+0370-03FF, U+2000-206F, U+2070-209F,
+    U+20A0-20CF, U+2100-214F, U+2190-21FF, U+2200-22FF, U+2500-257F, U+2580-259F,
+    U+25A0-25FF;
+}
