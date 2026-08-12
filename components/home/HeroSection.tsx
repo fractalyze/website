@@ -57,7 +57,7 @@ export function HeroSection() {
             {/* The column is a rem width holding pixel type, so it narrows to
                 244px at 1024 while the copy stays 18px. */}
             <p className="text-body-sm text-ink md:text-body-lg">
-              We build, optimize, and operate production systems powered by ZK, FHE, MPC, and TEE.
+              We build, optimize, and operate production systems.
             </p>
             <div>
               <ContactButton variant="solid" className="w-[132px] justify-center" />
