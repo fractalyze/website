@@ -12,11 +12,11 @@ image: '/blog/covers/window-over-mountains.webp'
 
 ## 1. Why this one kernel
 
-Two terms up front. **Zorch** is our ZK proving stack built around a compiler: constraints and provers are written against **FRX** (our fork of [JAX](https://github.com/jax-ml/jax), adding finite-field types and ops) and compiled by **our fork of [XLA](https://github.com/openxla/xla)** (adding ZK codegen); throughout, *FRX* and *XLA* mean these forks. A **cone** is standard circuit vocabulary — *logic cone*, *cone of influence* — for everything reachable backwards from an output node. Here: the backward slice of one constraint.
+Two terms up front. **Zorch** is our ZK proving stack built around a compiler: constraints and provers are written against **FRX** (our fork of [JAX](https://github.com/jax-ml/jax), adding finite-field types and ops) and compiled by **our fork of [XLA](https://github.com/openxla/xla)** (adding ZK codegen); throughout, *FRX* and *XLA* mean these forks. A **cone** is standard circuit vocabulary (*logic cone*, *cone of influence*) for everything reachable backwards from an output node. Here: the backward slice of one constraint.
 
 ### 1.1 Two thirds of a shard is one stage
 
-Profile SP1's own GPU prover over a real workload — shard 17 of an [RSP](https://github.com/succinctlabs/rsp) proof of Ethereum mainnet block [21740136](https://etherscan.io/block/21740136), on an RTX 5090, warm and byte-matched — and one stage dominates.
+Profile SP1's own GPU prover over a real workload (shard 17 of an [RSP](https://github.com/succinctlabs/rsp) proof of Ethereum mainnet block [21740136](https://etherscan.io/block/21740136), on an RTX 5090, warm and byte-matched), and one stage dominates.
 
 ![Stage breakdown of a 234.8 ms SP1 shard, with zerocheck taking 67 percent](/blog/constraint-eval-without-an-interpreter/stage-breakdown.png)
 
@@ -24,7 +24,7 @@ Nothing else matters until this does.
 
 ### 1.2 What the compiler is handed
 
-Zerocheck proves that every AIR constraint vanishes on every real row, via sumcheck. Each round eliminates one row variable, and evaluating that round's polynomial requires the batched constraint $C_\alpha$ — the verifier's randomness folding $K$ constraints into one — computed at three points, on every row. That per-row circuit is **`constraint_eval`**, the entire subject of this article. Everything from here is systems.
+Zerocheck proves that every AIR constraint vanishes on every real row, via sumcheck. Each round eliminates one row variable, and evaluating that round's polynomial requires the batched constraint $C_\alpha$ (the verifier's randomness folding $K$ constraints into one) computed at three points, on every row. That per-row circuit is **`constraint_eval`**, the entire subject of this article. Everything from here is systems.
 
 The circuit is not small:
 
@@ -34,15 +34,15 @@ The circuit is not small:
 | trace columns   |              hundreds |                      **2,640** |
 | serialized      |       3,583 field ops |       **~50,000 instructions** |
 
-This is not an SP1-specific problem. **Any AIR-based zkVM** — SP1, OpenVM, ZisK, RISC Zero — has this loop in some form. (Lookup-centric designs like Jolt are the exception.)
+This is not an SP1-specific problem. **Any AIR-based zkVM** (SP1, OpenVM, ZisK, RISC Zero) has this loop in some form. (Lookup-centric designs like Jolt are the exception.)
 
 Where does the circuit come from? A chip's constraints are written in an MLIR chip dialect, exported to one batched `[N, cols] → [N, K]` FRX function per chip with every helper inlined and every loop unrolled, traced to StableHLO, and only then handed to codegen.
 
 ![The export pipeline fanning out into four emission strategies, grouped as circuit-as-data and circuit-as-code](/blog/constraint-eval-without-an-interpreter/one-ir-many-strategies.png)
 
-One property matters later: **the chip MLIR is tied to no proof system and no backend**, and the evaluation strategy is chosen at the *final codegen stage*. So one exported body is the single common input to every strategy in this article — monolithic, interpreter, cone, and monomial are swappable emissions of the same circuit.
+One property matters later: **the chip MLIR is tied to no proof system and no backend**, and the evaluation strategy is chosen at the *final codegen stage*. So one exported body is the single common input to every strategy in this article: monolithic, interpreter, cone, and monomial are swappable emissions of the same circuit.
 
-From the compiler's seat, then, the input is **a branch-free, pure field-arithmetic DAG of thousands to tens of thousands of nodes.** No branches is a blessing — the schedule is completely free. The size is the curse.
+From the compiler's seat, then, the input is **a branch-free, pure field-arithmetic DAG of thousands to tens of thousands of nodes.** No branches is a blessing: the schedule is completely free. The size is the curse.
 
 ## 2. Everyone interprets, and that is rational
 
@@ -53,7 +53,7 @@ The circuit lives in device memory as data, and a fixed kernel walks it.
 | prover | the circuit lives as | the kernel does |
 | ------ | -------------------- | --------------- |
 | **SP1**, through early 2026 | an `Instruction16` tape from a host-side liveness register allocator | `switch` over ~76 opcodes into a scratch array `K expr_f[MEMORY_SIZE]` ([`zerocheck_eval.cu`](https://github.com/succinctlabs/sp1/blob/98ce1c364/sp1-gpu/crates/sys/lib/zerocheck/zerocheck_eval.cu#L37-L110)) |
-| **SP1**, since [#2795](https://github.com/succinctlabs/sp1/pull/2795) | one `ConstraintDag` with explicit sharing, chunked under a register-pressure budget ([`chunker.rs`](https://github.com/succinctlabs/sp1/blob/a630089d9/sp1-gpu/crates/air/src/ir/chunker.rs#L1-L34)) | still bytecode — `switch (instr.opcode)` over `BcOp` ([`sequential.cu`](https://github.com/succinctlabs/sp1/blob/a630089d9/sp1-gpu/crates/sys/lib/zerocheck/sequential.cu#L69-L134)) |
+| **SP1**, since [#2795](https://github.com/succinctlabs/sp1/pull/2795) | one `ConstraintDag` with explicit sharing, chunked under a register-pressure budget ([`chunker.rs`](https://github.com/succinctlabs/sp1/blob/a630089d9/sp1-gpu/crates/air/src/ir/chunker.rs#L1-L34)) | still bytecode: `switch (instr.opcode)` over `BcOp` ([`sequential.cu`](https://github.com/succinctlabs/sp1/blob/a630089d9/sp1-gpu/crates/sys/lib/zerocheck/sequential.cu#L69-L134)) |
 | **OpenVM** | monomial form in device buffers: packed variable descriptors + headers ([`monomial.cuh`](https://github.com/openvm-org/stark-backend/blob/v2.0.0-beta.2/crates/cuda-backend/cuda/include/monomial.cuh#L5-L42)) | decodes a packed variable, loads its column, folds per monomial ([`batch_mle_monomial.cu`](https://github.com/openvm-org/stark-backend/blob/v2.0.0-beta.2/crates/cuda-backend/cuda/src/logup_zerocheck/batch_mle_monomial.cu#L14-L90)) |
 | **ZisK** (pil2-proofman) | an ops stream compiled from PIL at setup | the most literal of the three ([`expressions_gpu.cu`](https://github.com/0xPolygonHermez/pil2-proofman/blob/v0.18.0/pil2-stark/src/starkpil/expressions_gpu.cu#L543-L555)) |
 
@@ -66,7 +66,7 @@ switch (op) {
 }
 ```
 
-Note SP1's convergence with what follows: the DAG rewrite added **cross-constraint sharing** and **peak register pressure as a first-class budget** — exactly the two pillars of [§3], built from the data side. Two teams arriving at the same structure from opposite directions is good evidence this is the shape of the problem, not an implementation quirk. Note also what that pipeline *is*: trace → IR → register allocation → bytecode. **A small bespoke compiler**, aimed at bytecode instead of native code.
+Note SP1's convergence with what follows: the DAG rewrite added **cross-constraint sharing** and **peak register pressure as a first-class budget**, exactly the two pillars of [§3], built from the data side. Two teams arriving at the same structure from opposite directions is good evidence this is the shape of the problem, not an implementation quirk. Note also what that pipeline *is*: trace → IR → register allocation → bytecode. **A small bespoke compiler**, aimed at bytecode instead of native code.
 
 ### 2.2 What interpretation costs
 
@@ -76,19 +76,19 @@ The fourth is structural, and cannot be engineered away.
 
 ![The same value written by both strategies: the compiled one lands in the SM register file, the interpreted one is forced into off-chip local memory](/blog/constraint-eval-without-an-interpreter/interpreter-registers.png)
 
-The interpreted program's "registers" are an array indexed at run time — `expr_f[instr.a]` in SP1's old kernel, `regs[instr.out]` in the new one. **GPU hardware registers cannot be dynamically indexed**, so the compiler is forced to place these arrays in *local memory*: thread-private storage that physically lives in device memory, cached through L1. SP1's own source says it plainly — the chunker keeps chunks small so the per-thread array stays inside "the **L1-cached local-memory** window" ([`chunker.rs`](https://github.com/succinctlabs/sp1/blob/a630089d9/sp1-gpu/crates/air/src/ir/chunker.rs#L17-L33)). So when that prover budgets "`max_reg` ≲ 128", those are **slots in a local-memory array, not physical registers**.
+The interpreted program's "registers" are an array indexed at run time: `expr_f[instr.a]` in SP1's old kernel, `regs[instr.out]` in the new one. **GPU hardware registers cannot be dynamically indexed**, so the compiler is forced to place these arrays in *local memory*: thread-private storage that physically lives in device memory, cached through L1. SP1's own source says it plainly: the chunker keeps chunks small so the per-thread array stays inside "the **L1-cached local-memory** window" ([`chunker.rs`](https://github.com/succinctlabs/sp1/blob/a630089d9/sp1-gpu/crates/air/src/ir/chunker.rs#L17-L33)). So when that prover budgets "`max_reg` ≲ 128", those are **slots in a local-memory array, not physical registers**.
 
-One honest counterpoint: an interpreter's *code* is tiny, so it never worries about instruction-cache pressure, while a 450,000-line compiled kernel pays for instruction fetch too. But the sum is lopsided — on the same circuit, our interpreter measured **1,489 µs/exec against 635 µs/exec compiled**.
+One honest counterpoint: an interpreter's *code* is tiny, so it never worries about instruction-cache pressure, while a 450,000-line compiled kernel pays for instruction fetch too. But the sum is lopsided: on the same circuit, our interpreter measured **1,489 µs/exec against 635 µs/exec compiled**.
 
-> **We built an interpreter too**, so we know that arm well — same design, a tape walked by an `scf.for` loop. It carried us past the compile wall (CPU byte-match went from 1 h+ timeouts to ~30 s), and it was the thing the cone path eventually had to beat.
+> **We built an interpreter too**, so we know that arm well: same design, a tape walked by an `scf.for` loop. It carried us past the compile wall (CPU byte-match went from 1 h+ timeouts to ~30 s), and it was the thing the cone path eventually had to beat.
 
 ## 3. The compiler path: making the circuit compile
 
-From the compiler's seat there are three sub-problems, and they pull against each other — fixing one worsens another.
+From the compiler's seat there are three sub-problems, and they pull against each other: fixing one worsens another.
 
-1. **Size** — emitted as code, the circuit is so large the backend dies super-linearly.
-2. **Duplication** — emitted per constraint, overlapping subgraphs are recomputed.
-3. **Pressure** — deduplicate, and values live long enough to exhaust registers.
+1. **Size.** Emitted as code, the circuit is so large the backend dies super-linearly.
+2. **Duplication.** Emitted per constraint, overlapping subgraphs are recomputed.
+3. **Pressure.** Deduplicate, and values live long enough to exhaust registers.
 
 ### 3.1 Cones, one DAG, one tape
 
@@ -100,22 +100,22 @@ But cones overlap. If $C_0$ and $C_1$ both use $a \cdot b$, expanding each cone 
 
 ![Three overlapping constraint cones serialized into one tape, whose live ranges need only two register slots](/blog/constraint-eval-without-an-interpreter/cone-dag-tape.png)
 
-- **Rule ① — walk a DAG, not per-cone trees.** In the original HLO, `a·b` is one node that both $C_0$ and $C_1$ point at. Serialization emits one value per node, in the earliest cone that needs it.
-- **Rule ② — the register file survives cone boundaries.** Cone 0 ending does not clear `v0`'s slot; cone 1 reads it directly. ① alone is useless without this — clear registers at each cone and you recompute regardless of sharing.
+- **Rule ①: walk a DAG, not per-cone trees.** In the original HLO, `a·b` is one node that both $C_0$ and $C_1$ point at. Serialization emits one value per node, in the earliest cone that needs it.
+- **Rule ②: the register file survives cone boundaries.** Cone 0 ending does not clear `v0`'s slot; cone 1 reads it directly. ① alone is useless without this: clear registers at each cone and you recompute regardless of sharing.
 
-And a value's slot is released **immediately after its last use — per instruction, not per cone**. The peak of that live count is the tape's `max_regs`. Real scale: the Global chip is 3,583 field ops with **`max_regs` = 43** — of 3,583 values, at most 43 are ever simultaneously alive.
+And a value's slot is released **immediately after its last use: per instruction, not per cone**. The peak of that live count is the tape's `max_regs`. Real scale: the Global chip is 3,583 field ops with **`max_regs` = 43**. Of 3,583 values, at most 43 are ever simultaneously alive.
 
-Recognition of this structure is conservative: any unrecognized pattern makes the planner fall back to the monolithic body. The contract is one line — *correct-but-slow, never a miscompile* — but the price is real, since on wide chips that fallback is ~20× slower.
+Recognition of this structure is conservative: any unrecognized pattern makes the planner fall back to the monolithic body. The contract is one line: *correct-but-slow, never a miscompile*. But the price is real, since on wide chips that fallback is ~20× slower.
 
 ### 3.2 The pivot: cut width is a property of the schedule
 
-Now size. The fix is obvious — **cut the function**: slice the straight-line kernel into contiguous regions, hoist each into a `device` function, leave calls behind, and the backend only ever sees small pieces. (This is not splitting the kernel: the functions stay inside one kernel, operands travel in registers, no HBM round-trip.)
+Now size. The fix is obvious. **Cut the function**: slice the straight-line kernel into contiguous regions, hoist each into a `device` function, leave calls behind, and the backend only ever sees small pieces. (This is not splitting the kernel: the functions stay inside one kernel, operands travel in registers, no HBM round-trip.)
 
-We tried the obvious version — cut the original XLA body mechanically every 256 ops. Compile time went **613 s → 1,350 s**, 2.2× *worse*. The hidden cost of a cut is the set of **live values crossing it**: everything made before it and still needed after must be returned by the region and held by the entry. In XLA's dense schedule every cut crossed hundreds of values, forcing a memory ABI and spills. Shrinking the chunk didn't help — the boundary stayed saturated.
+We tried the obvious version: cut the original XLA body mechanically every 256 ops. Compile time went **613 s → 1,350 s**, 2.2× *worse*. The hidden cost of a cut is the set of **live values crossing it**: everything made before it and still needed after must be returned by the region and held by the entry. In XLA's dense schedule every cut crossed hundreds of values, forcing a memory ABI and spills. Shrinking the chunk didn't help: the boundary stayed saturated.
 
 This is where the perspective flips, and it is the pivot of the whole design:
 
-> A dense schedule has no good cut points to choose. **Emit in an order that creates good cut points** — fix the schedule first.
+> A dense schedule has no good cut points to choose. **Emit in an order that creates good cut points.** Fix the schedule first.
 
 ![Live-value profiles: XLA's dense schedule is a plateau in the hundreds, the cone-aware schedule a sawtooth returning to one, peaking at 43](/blog/constraint-eval-without-an-interpreter/live-profile.png)
 
@@ -125,27 +125,27 @@ $$
 \boxed{\text{cut-width} \;\le\; \texttt{max\_regs}}
 $$
 
-That schedule flattens the whole live row, so **every cut is already narrow** and the outliner merely picks the narrowest — a sliding window taking the candidate with the fewest crossing values, ties broken toward the latest position to keep pieces long. It knows nothing about cones and lands on cone boundaries anyway, because that is where values die. Measured: median region interface **432 B → 64 B**, kernel entry **453k → 31k lines**.
+That schedule flattens the whole live row, so **every cut is already narrow** and the outliner merely picks the narrowest: a sliding window taking the candidate with the fewest crossing values, ties broken toward the latest position to keep pieces long. It knows nothing about cones and lands on cone boundaries anyway, because that is where values die. Measured: median region interface **432 B → 64 B**, kernel entry **453k → 31k lines**.
 
 ### 3.3 When the schedule isn't enough: the pressure cap
 
-Push cross-cone reuse to the limit and chips answer differently. Global peaks at 43 live extension-field values. keccak peaks at 2,300 — its sharing is genuinely that wide, and no schedule makes it smaller.
+Push cross-cone reuse to the limit and chips answer differently. Global peaks at 43 live extension-field values. keccak peaks at 2,300: its sharing is genuinely that wide, and no schedule makes it smaller.
 
 ![Peak live values per chip on a log scale: Global at 43, keccak at 2,300, against a 63-value architectural ceiling and the 128 segment cap](/blog/constraint-eval-without-an-interpreter/pressure-cap.png)
 
 An extension-field element is four 32-bit registers, so 2,300 live values is ~9,200 registers against a per-thread limit of 255. Everything spills, and before that, LLVM's register allocator effectively never terminates on the interference graph.
 
-One knob remains: **give back some reuse.** Group cones into **segments** with a hard rule — peak live within a segment ≤ 128 — and deliberately sever the register file at segment boundaries, so shared values that straddle one get **recomputed** by the next segment. For keccak that is 38,283 field ops at peak 128: **+64% arithmetic**. The trade is "doesn't compile and spills everything" against "+64% ops". The accumulation order is untouched, so results stay byte-identical, and chips with low peaks never trigger it.
+One knob remains: **give back some reuse.** Group cones into **segments** with a hard rule (peak live within a segment ≤ 128) and deliberately sever the register file at segment boundaries, so shared values that straddle one get **recomputed** by the next segment. For keccak that is 38,283 field ops at peak 128: **+64% arithmetic**. The trade is "doesn't compile and spills everything" against "+64% ops". The accumulation order is untouched, so results stay byte-identical, and chips with low peaks never trigger it.
 
-> **Reuse and pressure are two faces of one coin.** Rule ② of [§3.1] and this cap point in exactly opposite directions, and the cap is the **explicit knob** between them — the compiler doesn't know "the answer", it turns the trade-off into a measurable parameter.
+> **Reuse and pressure are two faces of one coin.** Rule ② of [§3.1] and this cap point in exactly opposite directions, and the cap is the **explicit knob** between them: the compiler doesn't know "the answer", it turns the trade-off into a measurable parameter.
 
 ### 3.4 Three more things that mattered
 
-**Lanes.** The exported body is a tensor program, full of `slice` / `broadcast` / `reverse` / `transpose`. Rather than emit those as code, the emitter tracks where every element of every intermediate tensor comes from — a *lane* — so every shape-only operation becomes index algebra on lane vectors, costing **zero instructions**. On a real EC-shaped fixture, 8 shape ops and 6 elementwise ops compile to exactly 6 field instructions. keccak's constraints are full of per-row bit-order `reverse` and bignum chips use band-sum `transpose`; without the lane model those chips fall back to monolithic. This is half of what saved keccak.
+**Lanes.** The exported body is a tensor program, full of `slice` / `broadcast` / `reverse` / `transpose`. Rather than emit those as code, the emitter tracks where every element of every intermediate tensor comes from (a *lane*), so every shape-only operation becomes index algebra on lane vectors, costing **zero instructions**. On a real EC-shaped fixture, 8 shape ops and 6 elementwise ops compile to exactly 6 field instructions. keccak's constraints are full of per-row bit-order `reverse` and bignum chips use band-sum `transpose`; without the lane model those chips fall back to monolithic. This is half of what saved keccak.
 
-**Thresholds.** Circuits below 3,400 ops never take the cone path. Monolithic compilation, when it finishes, is the fastest runtime — fully inlined, maximal `ptxas` freedom — so small chips are *deliberately* left monolithic. **The cone path does not beat monolithic; it goes where monolithic cannot.** At that size its real competitor was the interpreter. At the other end, above 20,000 ops the region cap drops 4,096 → 1,024: at 4,096 the regions spill ~23 KB/thread and the kernel *compiles but fails to launch*.
+**Thresholds.** Circuits below 3,400 ops never take the cone path. Monolithic compilation, when it finishes, is the fastest runtime (fully inlined, maximal `ptxas` freedom), so small chips are *deliberately* left monolithic. **The cone path does not beat monolithic; it goes where monolithic cannot.** At that size its real competitor was the interpreter. At the other end, above 20,000 ops the region cap drops 4,096 → 1,024: at 4,096 the regions spill ~23 KB/thread and the kernel *compiles but fails to launch*.
 
-**And then `ptxas` un-does it.** At keccak scale (PTX 30–260 MB), `ptxas -O3` **re-inlines every outlined function** — PTX has no no-inline directive, so whole-program optimization merges the regions back into the entry and register allocation explodes into 1–2 h, 50 GB RSS, and OOM. The fix is physical separation of compile units: above 16 MB of PTX, switch to relocatable compilation (`ptxas -c` + `nvlink`), so each region is its own `-O3` unit and re-inlining is structurally impossible.
+**And then `ptxas` un-does it.** At keccak scale (PTX 30–260 MB), `ptxas -O3` **re-inlines every outlined function**: PTX has no no-inline directive, so whole-program optimization merges the regions back into the entry and register allocation explodes into 1–2 h, 50 GB RSS, and OOM. The fix is physical separation of compile units: above 16 MB of PTX, switch to relocatable compilation (`ptxas -c` + `nvlink`), so each region is its own `-O3` unit and re-inlining is structurally impossible.
 
 ## 4. Results
 
@@ -157,45 +157,45 @@ End to end, the effect on the stage:
 
 ![The zerocheck stage: 191.5 ms interpreted, 135.3 ms cone-aware, crossing under SP1's 156.9 ms](/blog/constraint-eval-without-an-interpreter/zerocheck-stage.png)
 
-The `constraint_eval` kernel itself went **1,489 → 635 µs/exec (2.34×)**. CPU moves the same way: compile 138 s → 1.62 s, runtime 1.25 → 0.58 s/exec. And KeccakPermute — which previously did not compile at all, `ptxas` running 1–2 h and then OOM — now compiles and runs on GPU, byte-identical to SP1.
+The `constraint_eval` kernel itself went **1,489 → 635 µs/exec (2.34×)**. CPU moves the same way: compile 138 s → 1.62 s, runtime 1.25 → 0.58 s/exec. And KeccakPermute (which previously did not compile at all, `ptxas` running 1–2 h and then OOM) now compiles and runs on GPU, byte-identical to SP1.
 
-**Every strategy is byte-identical.** Field addition and multiplication are exact, so reassociation and distribution produce the same element, and the alpha-fold order is never touched. Monolithic, interpreter, and cone emit bit-identical proofs — the choice is purely about performance, and every number above sat behind a byte-match gate against the SP1 reference.
+**Every strategy is byte-identical.** Field addition and multiplication are exact, so reassociation and distribution produce the same element, and the alpha-fold order is never touched. Monolithic, interpreter, and cone emit bit-identical proofs: the choice is purely about performance, and every number above sat behind a byte-match gate against the SP1 reference.
 
 ## 5. Could SP1, OpenVM, or ZisK just do the same?
 
 Fair question, and the honest answer is that nothing stops them in principle. But walk through what "the same" requires.
 
-**Emitting native code is the easy part.** Anyone can print CUDA C++ from a constraint AST. Naive emission is exactly the monolithic arm above: on a real chip the backend dies. *That wall is the reason all three provers interpret* — the interpreter is not a lack of imagination, it is a rational response.
+**Emitting native code is the easy part.** Anyone can print CUDA C++ from a constraint AST. Naive emission is exactly the monolithic arm above: on a real chip the backend dies. *That wall is the reason all three provers interpret.* The interpreter is not a lack of imagination, it is a rational response.
 
-**Beating the wall is the actual work.** It took a schedule derived to minimize live values, cuts placed at minimum crossings, pressure capped by deliberately recomputing, shape ops absorbed into lane index algebra, and compile units physically split when `ptxas` re-inlines. Every one is a compiler pass over a circuit IR. **Any solution of this shape *is* a compiler** — the claim is not "only we could", it is "to do this, you build this."
+**Beating the wall is the actual work.** It took a schedule derived to minimize live values, cuts placed at minimum crossings, pressure capped by deliberately recomputing, shape ops absorbed into lane index algebra, and compile units physically split when `ptxas` re-inlines. Every one is a compiler pass over a circuit IR. **Any solution of this shape *is* a compiler**: the claim is not "only we could", it is "to do this, you build this."
 
-**SP1 is already walking this road.** The DAG-native rewrite added a shared DAG and a register-pressure-budget chunker — two of [§3]'s pillars, from the interpreter side. What separates the designs is the last step: cashing the schedule out as native code. That is where the structural gap sits, because an interpreter's register file is a runtime-indexed array that **can never live in physical registers** ([§2.2]).
+**SP1 is already walking this road.** The DAG-native rewrite added a shared DAG and a register-pressure-budget chunker (two of [§3]'s pillars, from the interpreter side). What separates the designs is the last step: cashing the schedule out as native code. That is where the structural gap sits, because an interpreter's register file is a runtime-indexed array that **can never live in physical registers** ([§2.2]).
 
 **The leverage of a general stack is that you build it once.** The machinery lives behind an implementation-independent IR, so it is not per-prover work: the same export → compile path already serves SP1 and ZisK chips in riscv-witness and OpenVM through openvm-zorch, and the same circuit swaps between all four strategies without anyone rewriting a prover.
 
-That is the precise sense of this article's title. Not that constraint evaluation *can't* be optimized elsewhere — but that the optimization **is** a compiler, so the practical question becomes whether you build a bespoke one per prover or point a general one at the next zkVM.
+That is the precise sense of this article's title. Not that constraint evaluation *can't* be optimized elsewhere, but that the optimization **is** a compiler, so the practical question becomes whether you build a bespoke one per prover or point a general one at the next zkVM.
 
 ## 6. Conclusion
 
 Three lessons, in the order they cost us time:
 
-- **Op count is not a proxy.** We cut a circuit 105k → 3.7k ops and wall-clock did not move. The unit the backend actually chews — kernel and function *shape* — is the only lever.
+- **Op count is not a proxy.** We cut a circuit 105k → 3.7k ops and wall-clock did not move. The unit the backend actually chews, kernel and function *shape*, is the only lever.
 - **There is no cheap way to buy only compilation.** `-O0` and interpreters both pay it back at run time.
 - **You must cut to compile, and you can only cut if the schedule is narrow first.** The one-sentence version of this article.
 
-And the balance, stated plainly: interpreters are not wrong. SP1's prover solves the same sub-problems from the data side — after the DAG-native rewrite, more explicitly than ever — and never meets the compile wall at all. Choosing the code side means facing that wall, the recompute-versus-pressure trade, and `ptxas`'s re-inlining in person. For a circuit that is two thirds of the stage, that price bought 2.34× — and a keccak that exists.
+And the balance, stated plainly: interpreters are not wrong. SP1's prover solves the same sub-problems from the data side (after the DAG-native rewrite, more explicitly than ever) and never meets the compile wall at all. Choosing the code side means facing that wall, the recompute-versus-pressure trade, and `ptxas`'s re-inlining in person. For a circuit that is two thirds of the stage, that price bought 2.34×, and a keccak that exists.
 
-If you are building a zkVM, this is what a compiler buys you: one implementation-independent circuit, many swappable execution strategies, and the one strategy an interpreter can never reach — native code.
+If you are building a zkVM, this is what a compiler buys you: one implementation-independent circuit, many swappable execution strategies, and the one strategy an interpreter can never reach: native code.
 
 ## Appendix: measurement, caveats, and pointers
 
 **Setup.** All GPU numbers are an RTX 5090, warm, on shard 17 of an [RSP](https://github.com/succinctlabs/rsp) proof of Ethereum mainnet block [21740136](https://etherscan.io/block/21740136), gated on a byte-match against the SP1 reference. Setup details and the current per-stage table live in [sp1-zorch's dev docs](https://github.com/fractalyze/sp1-zorch/blob/main/docs/development.md#per-stage-comparison-shard17).
 
-**Benchmark caveat.** SP1's zerocheck prover is not one design. Every SP1 GPU number here measures the generation that existed through early 2026 — a bytecode interpreter. Upstream replaced it on 2026-06-09 with the DAG-native prover ([#2795](https://github.com/succinctlabs/sp1/pull/2795)), still interpreted but remarkably convergent with this article's ideas. Comparing against current `main` needs re-measurement.
+**Benchmark caveat.** SP1's zerocheck prover is not one design. Every SP1 GPU number here measures the generation that existed through early 2026, a bytecode interpreter. Upstream replaced it on 2026-06-09 with the DAG-native prover ([#2795](https://github.com/succinctlabs/sp1/pull/2795)), still interpreted but remarkably convergent with this article's ideas. Comparing against current `main` needs re-measurement.
 
-**Since these numbers.** They come from the cone work itself. Zerocheck has since accumulated further optimizations — a shrink-prefix shared round buffer, in-kernel folds — and the same shard currently measures **74.8 ms**, 0.48× of SP1 GPU.
+**Since these numbers.** They come from the cone work itself. Zerocheck has since accumulated further optimizations (a shrink-prefix shared round buffer, in-kernel folds), and the same shard currently measures **74.8 ms**, 0.48× of SP1 GPU.
 
-**Figures.** All plot measured values, documented hardware limits, or structure — except the live-value profile in [§3.2], whose *shape* is schematic, calibrated to the measured peaks (43 cone-aware, hundreds for XLA's dense schedule).
+**Figures.** All plot measured values, documented hardware limits, or structure, except the live-value profile in [§3.2], whose *shape* is schematic, calibrated to the measured peaks (43 cone-aware, hundreds for XLA's dense schedule).
 
 [§2.2]: #22-what-interpretation-costs
 [§3]: #3-the-compiler-path-making-the-circuit-compile
