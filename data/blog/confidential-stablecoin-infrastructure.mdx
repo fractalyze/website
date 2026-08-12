@@ -1,7 +1,7 @@
 ---
 title: 'Designing Confidential Stablecoin Infrastructure at Scale'
 date: '2026-08-10'
-tags: ['stablecoin', 'privacy', 'confidential-finance', 'payroll', 'zeto', 'giwa', 'zkp']
+tags: ['stablecoin', 'privacy', 'confidential-finance', 'payroll', 'zeto', 'zkp']
 draft: false
 category: 'Product'
 summary: "Stablecoins won the volume war and still carry nobody's salary. Confidential transfers at payroll scale need hidden amounts, an audit nobody can skip, and one transaction that pays hundreds of people. We designed and built all of it, end to end. bongtu, open source and live on testnet, is the proof."
@@ -21,7 +21,7 @@ The rest of this post follows that claim in order. First, what we built and how 
 
 ## What We Built
 
-[bongtu](https://github.com/fractalyze/bongtu) is that build, live on testnet today: a confidential transfer layer where one transaction pays up to 256 recipients, every amount is readable only by its recipient and a designated auditor, and the auditor can open every transfer from chain data alone. It runs on [GIWA](https://docs.giwa.io/giwa-chain/en), the Ethereum L2 that Dunamu, the operator of Upbit, is building on the OP Stack with a Korean won stablecoin ecosystem in view; if won-denominated salaries ever settle on a public chain, this is the shape they will need. It extends [Zeto](https://github.com/hyperledger-labs/zeto), the Hyperledger Labs privacy-token framework, and it is fully open source: contracts, circuits, both web apps, the indexer, and the prover.
+[bongtu](https://github.com/fractalyze/bongtu) is that build, live on testnet today: a confidential transfer layer where one transaction pays up to 256 recipients, every amount is readable only by its recipient and a designated auditor, and the auditor can open every transfer from chain data alone. It extends [Zeto](https://github.com/hyperledger-labs/zeto), the Hyperledger Labs privacy-token framework, and it is fully open source: contracts, circuits, both web apps, the indexer, and the prover.
 
 Before the components, the money model, because everything else builds on it. Inside the pool, money lives as sealed notes:
 
@@ -29,18 +29,18 @@ Before the components, the money model, because everything else builds on it. In
 
 Each note is a commitment to an amount and an owner, sitting as one leaf in a shared Merkle tree, and spending means proving in zero knowledge that you own notes covering the amount, without revealing which leaves are yours. That model is how every serious private-token design works, and it is what bongtu inherits from Zeto. What makes the system institutional is everything built around that model, and the fastest way to see the moving parts is to follow one pay run end to end:
 
-![One pay run across the employer console, the GPU proving service, the pool contract on GIWA, the indexer holding the auditor key, and a recipient wallet](/blog/confidential-stablecoin-infrastructure/pay-run-sequence.svg)
+![One pay run across the employer console, the GPU proving service, the pool contract, the indexer holding the auditor key, and a recipient wallet](/blog/confidential-stablecoin-infrastructure/pay-run-sequence.svg)
 
 The deposit is the one public step, by design: money entering a confidential pool from a transparent chain is visible on the way in. Everything after it is sealed. The employer's console hands the recipient list to a GPU proving service over an institution-internal link, gets a proof back in seconds, and submits one transaction carrying the proof and a fixed-size ciphertext. The pool contract verifies and grafts the new notes into the tree. The indexer, the one place that holds the auditor key, opens every published envelope and re-checks it against what the proof promised. And a recipient's wallet loads its balance with one signed request instead of scanning the pool.
 
 ## The Demos and the Code
 
-Everything in this post is public and running today:
+Everything in this post is public:
 
 - [Bongtu Wallet](https://bongtu.fractalyze.io): the recipient side. Self-custody, proofs generated in the browser, balance loads in one signed request. Desktop only.
-- [Payroll console](https://payroll.fractalyze.io): the employer side. Builds a 255-recipient worksheet and settles it as one private disbursement. Testnet, access-gated.
+- [Payroll console](https://payroll.fractalyze.io): the employer side. Builds a 255-recipient worksheet and settles it as one private disbursement. Testnet, access-gated; the proving service behind it is institution-side and runs on demand rather than as a public endpoint.
 - [github.com/fractalyze/bongtu](https://github.com/fractalyze/bongtu): the full source, contracts, circuits, proving service, indexer, and both apps, with circuit specs and design documents for every component.
-- BongtuPool on GIWA Sepolia: the live pool contract, source-verified on the GIWA explorer. Every number in this post is measured against it.
+- [BongtuPool on Base Sepolia](https://sepolia.basescan.org/address/0x2a72fea8e97fF79069B3D0165A5DB1Fef7F9322C): the live pool contract. The explorer shows bytecode only, so read the source in the repo at the deploying commit rather than taking the explorer's word for it. The gas in this post is measured against the deployed contracts, transaction by transaction, and [`docs/performance.md`](https://github.com/fractalyze/bongtu/blob/main/docs/performance.md) carries the receipts.
 
 ## Comparison with Existing Systems
 
@@ -73,7 +73,7 @@ Start with the second row, because it is where every live system stops: 10, 5, 1
 
 The design move is to take the hashing off-chain and prove it instead of paying for it. The employer's machine builds the complete depth-8 subtree of all 256 output notes. The proof shows the notes form exactly that subtree and that the input note equals the sum of the outputs, so no value appears or disappears. The contract then attaches the whole subtree at level 8 of the main tree with a handful of hashes. And because a payout always emits exactly 256 commitments, padded with zero-value notes, the chain never even learns how many people were really paid.
 
-Measured on the live pool, not estimated: one 256-recipient payout is 3,905,519 L2 gas, which is 15,256 gas per recipient, roughly 90 times cheaper per recipient than Zeto's own published figures. Proving one batch takes about 1.6 seconds on a single GPU, of which the proof itself is 0.47 seconds for a circuit of 2.8 million constraints. A 100,000-person payroll is 391 such batches: about ten minutes of proving and roughly 0.009 ETH in fees, well under \$50.
+Measured, not estimated: one 256-recipient payout is 3,905,519 L2 gas, which is 15,256 gas per recipient, roughly 90 times cheaper per recipient than Zeto's own published figures. Proving one batch takes about 1.6 seconds on a single GPU, of which the proof itself is 0.47 seconds for a circuit of 2.8 million constraints. A 100,000-person payroll is 391 such batches: about ten minutes of proving, and at the chain's current gas price roughly 0.009 ETH in fees, well under \$50.
 
 ### The Auditor Always Gets a Copy
 
@@ -113,7 +113,7 @@ In a note-based pool, money arrives as separate notes, and a zero-knowledge circ
 
 ![Twenty notes fold to eleven, then to two, then the payment goes out with one change note, all from a single Confirm](/blog/confidential-stablecoin-infrastructure/note-consolidation.svg)
 
-Each fold is one transaction that reads the ten largest notes and writes one, at 3,053,435 gas. Selecting largest-first is what makes the plan a decision rather than a guess: if any ten notes cover the amount, the largest ten do, so a selection that overruns the circuit proves no ten-note cover exists. The wallet works out the whole path before asking for anything, then says what it will cost in the only unit the user cares about: your balance is in twenty pieces, so this takes three approvals.
+Each fold is one transaction that reads the ten largest notes and writes one, at 3,068,690 gas. Selecting largest-first is what makes the plan a decision rather than a guess: if any ten notes cover the amount, the largest ten do, so a selection that overruns the circuit proves no ten-note cover exists. The wallet works out the whole path before asking for anything, then says what it will cost in the only unit the user cares about: your balance is in twenty pieces, so this takes three approvals.
 
 ### Finding Your Balance Without Scanning the Pool
 

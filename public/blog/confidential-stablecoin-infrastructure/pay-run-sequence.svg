@@ -23,7 +23,7 @@
   <rect class="box"  x="598" y="12" width="120" height="50" rx="6"/>
   <text class="h"  x="85"  y="35">Employer</text><text class="hs" x="85"  y="53">console</text>
   <text class="h"  x="230" y="35">Proving</text><text class="hs" x="230" y="53">GPU service</text>
-  <text class="h"  x="375" y="35">BongtuPool</text><text class="hs" x="375" y="53">on GIWA</text>
+  <text class="h"  x="375" y="35">BongtuPool</text><text class="hs" x="375" y="53">on-chain</text>
   <text class="h"  x="520" y="35">Indexer</text><text class="hs" x="520" y="53">auditor key</text>
   <text class="h"  x="658" y="35">Recipient</text><text class="hs" x="658" y="53">wallet</text>
 
