@@ -7,14 +7,17 @@ import {Reveal} from '@/components/Reveal';
 const engagements = [
   {
     title: 'Build',
+    // The technology choice is ours to make, not the customer's to arrive with.
+    // That is the whole claim of this card, so it leads rather than trailing the
+    // list of what we can build.
     description:
-      'We design and build next generation cryptographic systems with your team, from proving systems to private AI and beyond. We cover everything from architecture to implementation.',
+      'We design the right architecture and build production systems using ZK, FHE, MPC, TEE, or a combination of them, from proving systems to private AI and beyond.',
     image: buildImage,
   },
   {
     title: 'Optimize',
     description:
-      'We dig into your existing ZK, FHE, MPC and cryptographic workloads and rebuild their performance with our compiler stack and hardware acceleration.',
+      'We dig into your existing confidential and verifiable workloads and rebuild their performance with our compiler stack and hardware acceleration.',
     image: optimizeImage,
   },
   {
@@ -34,8 +37,8 @@ export function WorkingWithUsSection() {
             Working With Us
           </h2>
           <p className="text-balance text-body-sm text-ink md:text-body-lg">
-            Building production cryptography takes more than software. Our engineers work as part of
-            your team, from first design to live operations.
+            Building confidential and verifiable systems takes more than software. Our engineers
+            work as part of your team, from first design to live operations.
           </p>
         </div>
 
