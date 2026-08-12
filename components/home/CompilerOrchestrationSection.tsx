@@ -12,15 +12,19 @@ const pillars = [
       },
       {
         title: 'Cryptography-Aware Compilation',
-        description: 'Optimize using finite-field semantics and domain-specific compiler passes.',
+        description: 'Optimize on finite-field semantics, not generic passes.',
       },
       {
         title: 'Hardware-Aware Code Generation',
-        description: 'Generate optimized execution for CPUs, GPUs, and future accelerators.',
+        description: 'Generate tuned execution for CPUs, GPUs, and accelerators.',
       },
+      // The compiler's reach is ZK, FHE, and MPC, and the company's is those
+      // plus TEE. Keeping the wider set out of this card is deliberate: a TEE is
+      // an execution environment, not a backend this compiler emits for, and
+      // listing it here would claim a lowering path that does not exist.
       {
-        title: 'One Stack for All of Cryptography',
-        description: 'One compiler stack for ZK, FHE, and MPC built on the same underlying math.',
+        title: 'One Compiler Stack for Advanced Cryptography',
+        description: 'One stack for ZK, FHE, and MPC on shared underlying math.',
       },
     ],
   },
@@ -31,19 +35,19 @@ const pillars = [
     capabilities: [
       {
         title: 'Two-Layer Scheduling',
-        description: 'Service-level SLAs and compute placement, optimized as separate layers.',
+        description: 'Service SLAs and compute placement, optimized separately.',
       },
       {
         title: 'Hardware-Agnostic',
-        description: 'One proving service across CPU, GPU, and FPGA on any cloud.',
+        description: 'One proving service across CPU, GPU, and FPGA anywhere.',
       },
       {
         title: 'Elastic Autoscaling',
-        description: 'Scale from zero to N with demand. No idle GPU burning cost.',
+        description: 'Scale from zero to N with demand, no idle GPU cost.',
       },
       {
         title: 'Fault-Tolerant by Design',
-        description: 'Retries, lineage recovery, and checkpointing keep proofs alive.',
+        description: 'Retries, recovery, and checkpointing keep proofs alive.',
       },
     ],
   },
@@ -55,11 +59,11 @@ export function CompilerOrchestrationSection() {
       <Reveal className="mx-auto flex max-w-content flex-col items-center gap-8 md:gap-10">
         <div className="flex max-w-measure flex-col items-center gap-4 text-center md:gap-5">
           <h2 className="font-display text-title-2 text-paper md:text-title-1 xl:text-display-4">
-            Compiler &amp; Orchestration
+            The Technology Behind It
           </h2>
           <p className="text-balance text-body-sm text-paper md:text-body-lg">
-            Two layers do the work: a compiler that turns Python into hardware-specific execution,
-            and orchestration that runs it across a fleet of CPUs, GPUs, and FPGAs.
+            Purpose-built technology to build, optimize, and operate confidential and verifiable
+            systems in production.
           </p>
         </div>
 

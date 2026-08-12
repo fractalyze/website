@@ -49,11 +49,18 @@ export function PoweringSection() {
     <section className="bg-paper gutter py-16 md:py-20 xl:py-section">
       <Reveal className="mx-auto flex max-w-content flex-col items-center gap-8 md:gap-10">
         <div className="flex max-w-measure flex-col items-center gap-4 text-center md:gap-5">
+          {/* The four domains below never mentioned cryptography; only the
+              heading and this line did, and they framed the section as what the
+              compiler makes possible. Naming what we build instead lets the same
+              four read as customer problems, which is what the rest of the page
+              now says we take on. The line holds one row at every width the
+              measure is drawn at: 68 characters against the 75 it holds at 1024,
+              where it is narrowest relative to the type. */}
           <h2 className="font-display text-title-2 text-ink md:text-title-1 xl:text-display-4">
-            Powering the Next Generation of Cryptography
+            What We Build
           </h2>
           <p className="text-body-sm text-ink md:text-body-lg">
-            The next generation of applications will be built on cryptographic computation.
+            Where confidential and verifiable systems are going into production.
           </p>
         </div>
 

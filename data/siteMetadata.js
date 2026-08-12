@@ -8,7 +8,7 @@ const siteMetadata = {
   // site than on it — and it named a single product, Zorch, long after the site
   // stopped being about one. `/compiler` and `/blog` declare their own.
   description:
-    'The computing layer for cryptography. We build, optimize, and operate production cryptography systems.',
+    'The confidential and verifiable computing layer. We build, optimize, and operate production systems.',
   language: 'en-us',
   siteUrl: 'https://www.fractalyze.io',
   email: 'contact@fractalyze.io',

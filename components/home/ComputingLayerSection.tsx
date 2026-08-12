@@ -1,5 +1,4 @@
 import {Reveal} from '@/components/Reveal';
-import {CpuIcon, FpgaIcon, GpuIcon, TpuIcon} from '@/components/icons/PlatformIcons';
 
 // Every line is kept under 56px at 12px, which is what a chip has to spend once
 // the panel is one of two columns at 1024 — the narrowest the diagram is ever
@@ -25,25 +24,25 @@ const todayHandwork = [
 
 const todayHardwareWork = 'Hardware-Specific Implementations';
 
-const platforms = [
-  {label: 'CPU', Icon: CpuIcon},
-  {label: 'GPU', Icon: GpuIcon},
-  {label: 'TPU', Icon: TpuIcon},
-  {label: 'FPGA', Icon: FpgaIcon},
-];
+// Both panels open on the same box and close on the same box. What a customer
+// arrives with and what they leave with does not change between the two
+// columns, so drawing either of them differently would put the difference in
+// the wrong place: the claim is about what happens in between, and the diagram
+// should have nothing else for the eye to catch on.
+const requirements = ['Confidentiality', 'Verifiability', 'Compliance', 'Performance'];
+
+// The two diagrams hold the same five pieces in the same order, so the only
+// thing left to say how long each side takes is the gap between them. At 150ms
+// the left arrives as a sequence a reader counts; at 50ms the right arrives as
+// one motion that happens to be ordered. Last piece starts at 600ms against
+// 200ms, which is the three-to-one the panels are claiming in words.
+const TODAY_STAGGER_MS = 150;
+const FRACTALYZE_STAGGER_MS = 50;
 
 const dashed = {strokeWidth: 1.5, strokeDasharray: '3 3'} as const;
 
 function head(x: number, y: number) {
   return `M${x - 4} ${y} L${x + 4} ${y} L${x} ${y + 8} Z`;
-}
-
-function AppHeader() {
-  return (
-    <div className="flex w-full items-center justify-center rounded-lg border border-line bg-surface px-5 py-4 text-body-sm text-ink">
-      Your application
-    </div>
-  );
 }
 
 function DownArrow() {
@@ -55,23 +54,11 @@ function DownArrow() {
   );
 }
 
-function PlatformRow({withArrows = false}: {withArrows?: boolean}) {
+function StageBox({label, detail}: {label: string; detail?: string}) {
   return (
-    <div className="flex w-full items-stretch gap-2">
-      {platforms.map(({label, Icon}) => (
-        <div key={label} className="flex min-w-0 flex-1 flex-col items-center gap-2">
-          {withArrows && <DownArrow />}
-          {/* The icon is a fixed 24px and absent below the tablet rather than a
-              rem that shrinks with the page. It was drawing 15px at 1024 beside
-              a label pinned at 14, and on a phone the chip is 53px wide, which
-              flex resolved by squeezing the icon to nothing — present in the
-              box, taking a column, drawing zero pixels. */}
-          <div className="flex w-full items-center justify-center gap-1 rounded-lg border border-line bg-surface px-5 py-4">
-            <Icon className="hidden h-[24px] w-[24px] shrink-0 md:block" />
-            <span className="text-body-sm text-ink">{label}</span>
-          </div>
-        </div>
-      ))}
+    <div className="flex w-full flex-col items-center gap-1 rounded-lg border border-line bg-surface px-5 py-4 text-center">
+      <span className="text-body-sm text-ink">{label}</span>
+      {detail && <span className="text-micro text-muted">{detail}</span>}
     </div>
   );
 }
@@ -104,17 +91,18 @@ function ProcessRow({steps, tone}: {steps: string[][]; tone: 'brand' | 'blue'}) 
   );
 }
 
+
 export function ComputingLayerSection() {
   return (
     <section className="bg-paper gutter py-16 md:py-20 xl:py-section">
       <div className="mx-auto flex max-w-content flex-col items-center gap-8 md:gap-10">
         <div className="flex max-w-measure flex-col items-center gap-4 text-center md:gap-5">
           <h2 className="font-display text-title-2 text-ink md:text-title-1 xl:text-display-4">
-            The Computing Layer for Cryptography
+            From Complexity to Production
           </h2>
           <p className="text-balance text-body-sm text-ink md:text-body-lg">
-            A unified platform that automatically transforms high-level cryptographic applications
-            into optimized execution for any target hardware.
+            We bring confidential and verifiable systems to production, from architecture and
+            implementation to optimization and operations.
           </p>
         </div>
 
@@ -140,28 +128,22 @@ export function ComputingLayerSection() {
                 Many specialists. Months of engineering.
               </p>
               <ul className="list-disc pl-5 text-body-sm text-ink md:text-body">
-                <li>Protocol, compiler, GPU, and runtime engineers working in separate silos</li>
+                <li>
+                  Cryptography, security, compiler, GPU, and infrastructure specialists working
+                  across separate stacks
+                </li>
                 <li>Months of manual integration, tuning, and performance iteration</li>
                 <li>Every new scheme or hardware target starts from scratch</li>
               </ul>
             </div>
 
-            {/* The same three things stacked as the panel opposite —
-                application, one container, hardware — so the two diagrams are
-                read as one pair and the difference between them is what is
-                inside the container, not how it is drawn. The dashed connectors
-                that used to run between the inner rows are gone with the 552px
-                grid that positioned them; the arrows into and out of the
-                container are all that is left, and they are the same two the
-                other side has.
-
-                Revealed a piece at a time, against the other column's single
-                piece: the staging is now the only thing carrying "many hands,
-                months of it". */}
+            {/* Revealed a piece at a time, and slower than the column opposite.
+                Same five pieces on both sides, so the gap between them is the
+                only thing left to carry how long each side takes. */}
             <div className="w-full">
               <div className="flex h-full flex-col items-center gap-2 rounded-xl border border-line bg-paper p-1.5 text-ink md:p-5">
                 {[
-                  <AppHeader key="app" />,
+                  <StageBox key="req" label="Your requirements" detail={requirements.join(' · ')} />,
                   <DownArrow key="into" />,
                   <div
                     key="work"
@@ -172,9 +154,7 @@ export function ComputingLayerSection() {
                     // p-1.5 below the tablet, matched by the frame outside it and
                     // by the panel outside that. The five-chip row is what sets
                     // the 360 floor, so every pixel the labels are read at is a
-                    // pixel these three rings gave up: 12/6/6 against the 16/20/-
-                    // they started at, which is 24px of row and the difference
-                    // between a 10px label and an 11px one.
+                    // pixel these three rings gave up.
                     className="flex w-full flex-col gap-2 rounded-2xl border border-line bg-surface p-1.5 md:p-5"
                   >
                     <ProcessRow steps={todaySpecialistWork} tone="brand" />
@@ -186,12 +166,13 @@ export function ComputingLayerSection() {
                       {todayHardwareWork}
                     </div>
                   </div>,
-                  <PlatformRow key="platforms" withArrows />,
+                  <DownArrow key="out" />,
+                  <StageBox key="prod" label="Production system" />,
                 ].map((step, index) => (
                   // justify-center rather than a bare block: the arrow is the one
                   // child narrower than the column, and its wrapper is what has to
                   // centre it now that it sits in one.
-                  <Reveal key={step.key} className="flex w-full justify-center" delay={index * 150}>
+                  <Reveal key={step.key} className="flex w-full justify-center" delay={index * TODAY_STAGGER_MS}>
                     {step}
                   </Reveal>
                 ))}
@@ -207,45 +188,70 @@ export function ComputingLayerSection() {
             </span>
             <div className="flex flex-col gap-4">
               <h3 className="text-title-3 font-medium text-paper md:text-title-2">
-                Automated &amp; Simple
+                Production Ready
               </h3>
               <p className="text-body-sm font-medium text-paper md:text-body-lg">
-                Focus on your application, we handle the rest.
+                Focus on your application. We handle the rest.
               </p>
               <ul className="list-disc pl-5 text-body-sm text-paper md:text-body">
-                <li>One compiler automatically optimizes and generates execution code</li>
-                <li>A runtime handles high-performance execution and memory management</li>
-                <li>Orchestration scales the same workload across CPU, GPU, TPU, and FPGA</li>
+                <li>We design and build the right system for your requirements</li>
+                <li>We optimize performance with our compiler and hardware stack</li>
+                <li>We deploy, operate, and scale it in production</li>
               </ul>
             </div>
 
-            {/* Arrives as one piece, against the other column's four. */}
+            {/* Staged the same way as the column opposite but three times
+                quicker. Revealing this side all at once made the pair read as
+                two different drawings rather than the same drawing with a
+                different middle; revealing it on the same clock lost the one
+                thing the staging was for. Same order, shorter gap. */}
             <div className="w-full">
-              {/* p-1.5 below the tablet to match the frame opposite, which gave
-                  up that padding to buy its chips a readable label. */}
-              <Reveal className="flex h-full flex-col items-center gap-2 rounded-xl border border-line bg-paper p-1.5 text-ink md:p-5">
-                <AppHeader />
-                <DownArrow />
-                {/* Stacked, this column is shorter than the one opposite it —
-                    still, now that both are three things: the container here
-                    holds two rows against that one's three plus a bar. On a
-                    phone and a tablet it takes the drawn height; at the
-                    desktop step, where the two diagrams share a row, it absorbs
-                    whatever that row leaves rather than carrying a number tuned
-                    to one width — 18.8125rem matched at 1920 and was 27px short
-                    at 1024. */}
-                <div className="flex h-[12rem] w-full flex-col gap-2 rounded-2xl border border-accent bg-accent/40 p-5 md:h-[16rem] xl:h-auto xl:flex-1">
-                  {['Orchestration Layer', 'Compiler Layer'].map((layer) => (
-                    <div
-                      key={layer}
-                      className="flex min-h-0 flex-1 items-center justify-center rounded-lg bg-accent px-5 text-body-sm text-ink"
-                    >
-                      {layer}
-                    </div>
-                  ))}
-                </div>
-                <PlatformRow withArrows />
-              </Reveal>
+              <div className="flex h-full flex-col items-center gap-2 rounded-xl border border-line bg-paper p-1.5 text-ink md:p-5">
+                {[
+                  {
+                    key: 'req',
+                    grow: false,
+                    node: (
+                      <StageBox label="Your requirements" detail={requirements.join(' · ')} />
+                    ),
+                  },
+                  {key: 'into', grow: false, node: <DownArrow />},
+                  {
+                    key: 'frx',
+                    // The one step that has to stretch: at the desktop step the
+                    // diagram takes the height of the taller column opposite,
+                    // and this box is what absorbs the difference. The grow sits
+                    // on the wrapper because that is the flex child now, and the
+                    // box inside fills it.
+                    grow: true,
+                    node: (
+                      // One name and a line of small print, against eleven chips
+                      // and a bar opposite. Anything boxed in here would have
+                      // been read in the same grammar as that column — objects
+                      // in a row, counted — and a smaller count of the same
+                      // thing says "less of that work", not "none of it".
+                      <div className="flex h-[9rem] w-full flex-col items-center justify-center gap-2 rounded-2xl border border-accent bg-accent/40 p-5 text-center md:h-[11rem] xl:h-full">
+                        <span className="text-title-4 font-medium text-ink md:text-title-3">
+                          Fractalyze
+                        </span>
+                        <span className="text-balance text-micro text-muted">
+                          Powered by FRX Compiler &amp; Orchestration
+                        </span>
+                      </div>
+                    ),
+                  },
+                  {key: 'out', grow: false, node: <DownArrow />},
+                  {key: 'prod', grow: false, node: <StageBox label="Production system" />},
+                ].map((step, index) => (
+                  <Reveal
+                    key={step.key}
+                    className={`flex w-full justify-center ${step.grow ? 'xl:flex-1' : ''}`}
+                    delay={index * FRACTALYZE_STAGGER_MS}
+                  >
+                    {step.node}
+                  </Reveal>
+                ))}
+              </div>
             </div>
           </div>
         </div>
