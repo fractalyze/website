@@ -1,4 +1,5 @@
 import {HeroSection} from '@/components/home/HeroSection';
+import {WorkingWithSection} from '@/components/home/WorkingWithSection';
 import {ProductionGapSection} from '@/components/home/ProductionGapSection';
 import {PoweringSection} from '@/components/home/PoweringSection';
 import {CompilerOrchestrationSection} from '@/components/home/CompilerOrchestrationSection';
@@ -11,6 +12,7 @@ export default function Home() {
   return (
     <>
       <HeroSection />
+      <WorkingWithSection />
       <ProductionGapSection />
       <ComputingLayerSection />
       <CompilerOrchestrationSection />
