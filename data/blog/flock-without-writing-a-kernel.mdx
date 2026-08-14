@@ -220,10 +220,13 @@ structure with one compartment has nowhere to record that move.
 There is also a line the compiler cannot cross. A compiler transformation must
 preserve the output of the program it is given: Karatsuba, instruction selection,
 fusion and buffer placement are all "the same value, faster". But "this scan can
-be deleted because $C = z$" is a fact about the *protocol*, and it is not visible
-in the graph, where all the compiler sees is one array being read to produce
-another. Deleting that pass is a different program, and choosing it is the
-author's job.
+be deleted because $C = z$" is a fact about the *protocol*, not about the
+program. The graph records that one array is read to produce another. Whether the
+result happens to equal an array already in hand depends on which instance is
+being proved, and it is true of the identity instance but not of the general R1CS
+the program was written against. A compiler has to stay correct for every input
+it might be handed, so it keeps the scan. Deleting it asserts something the graph
+does not contain, which makes it a different program and the author's call.
 
 The compiler owns *how* to compute. The author owns *what* to compute. In a
 hand-written kernel those two live in the same file, which is why changing the
@@ -302,14 +305,11 @@ So, plainly:
   generation and serialisation while theirs does not, matching the windows would
   likely put us behind.
 - On flock's default arm we are at 4.12M.
-- Five weeks ago, their CPU zerocheck beat our 5090 by 3.6×, 61 ms against 222.
-  Ours is now 23.6 ms, 2.6× the other way. We did not hand-write a kernel in
-  between.
 
 One measurement settled an internal argument rather than an external one. Against
 binius-gpu's hand-written `additive_ntt_kernel` (same algorithm, same field) the
-compiler-emitted kernel is 1.8 to 2× faster, byte-identical on 10 of 10 vectors.
-That closed our hand-written-kernel FFI track. Not on principle; on the number.
+compiler-emitted kernel is 1.8 to 2× faster. That closed our hand-written-kernel
+FFI track. Not on principle; on the number.
 
 ## 6. What is left, and what we gave up
 
