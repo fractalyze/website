@@ -76,8 +76,24 @@ sumcheck rounds. Anything constant, or `O(log H)`, is `F`: Merkle's upper levels
 the *number* of sumcheck rounds, the recursion depth, host-to-device
 synchronisation, and the program boundaries that synchronisation creates.
 
-That split is where the compiler argument starts. Fusion erases `F`. Lowering
-cuts `c`. Neither is a layer the prover author owns.
+That split is where the compiler argument starts, because both terms factor the
+same way: how much work the protocol asks for, times what one unit of that work
+costs on this target.
+
+`F` counts the places the program stops — the number of sumcheck rounds, the
+recursion depth, the host round trip around each program boundary. Fusion is
+the lever on it, because fusion is what removes a boundary. `c` counts what one
+element costs once the program is running, in instructions per multiply and
+bytes moved per compression. Instruction selection is the lever on that one.
+The split is not clean in both directions — fusing two kernels that are linear
+in `H` cuts per-element memory traffic, which is `c` — but the levers map the
+way you would expect.
+
+The left factor stays the author's. Fold two rounds into one and `F` drops;
+delete a scan that the instance makes redundant and `c` drops. We wrote both,
+in Python, and section 3 is about where such changes belong. The right factor
+is what this post is about, and in a hand-written kernel it has no separate
+owner, so it lands on the kernel author — once per kernel, once per ISA.
 
 ## 2. Nineteen jumps
 
@@ -120,10 +136,20 @@ The frontier's promoted change reads:
 > three PMULL operations plus XOR/shuffle."
 
 It touches exactly two files: a field module and
-`zerocheck/multilinear/kernels/aarch64.rs`. One kernel, one ISA. The multiply in
-the NTT does not get it, and neither does the multiply in lincheck or in the
-opening; each would have to be written again. When the same identity was tried in
+`zerocheck/multilinear/kernels/aarch64.rs`. One kernel, one ISA — and the NTT is
+the check on what that means. That kernel re-implements the multiply in-kernel so
+every value stays in a q register, which means it inherits nothing from the field
+module where the Karatsuba version already sits: its `mul_q` is four schoolbook
+PMULLs, and the doc comment says as much. When the same identity was tried in
 another kernel it *regressed* the full proof and was reverted.
+
+Counting the copies makes the shape plain. There are at least five GF(2¹²⁸)
+multiplies in that crate, and each one carries its own Karatsuba decision. The
+scalar `F128::mul` picks Karatsuba on x86 and schoolbook on ARM, with a comment
+in the source giving the reason — Zen 4 wins on throughput, M-series picked the
+other. The zerocheck kernel reaches the opposite verdict on those same two ISAs.
+The NTT kernel is schoolbook on both. Five copies, five verdicts, held in step by
+hand.
 
 Our version of the same idea is a helper in a `prime-ir` lowering pass,
 +62/−35 lines:
