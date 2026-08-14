@@ -162,9 +162,15 @@ body {
   font-family: var(--font-mono), monospace;
 }
 
+/* The typography plugin prints a literal backtick either side of inline code,
+   which is markdown source leaking into the rendered page: the grey chip above
+   is already what says "this is code". Cleared here rather than in the plugin
+   config, because the plugin's own selector wraps `code` in :where() and so
+   carries no specificity, and this rule has to outweigh it. Code inside a <pre>
+   is not covered by the plugin's rule to begin with. */
 .prose :not(pre) > code::before,
 .prose :not(pre) > code::after {
-  content: '`';
+  content: none;
 }
 
 pre[class*='language-'] {
