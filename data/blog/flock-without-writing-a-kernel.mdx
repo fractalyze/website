@@ -81,7 +81,7 @@ cuts `c`. Neither is a layer the prover author owns.
 
 ## 2. Nineteen jumps
 
-### 2.1 The climb, coloured by who pays
+### 2.1 Who would have done each one
 
 Of 2,106 submissions and 222 promotions, 19 moved the frontier by at least 2%.
 Together they explain 47% of the total climb in log terms; the rest is the
@@ -108,7 +108,7 @@ One date is worth noting: on 08-01 the frontier gained 34.6% in a single day,
 which is when they brought a GPU in. We had been running as one program on a GPU
 since the first day.
 
-### 2.2 Karatsuba: the same identity, a different address
+### 2.2 Karatsuba: in a kernel, and in a lowering pass
 
 Karatsuba is the board's busiest lane, mentioned in 129 notes and present in 25
 promotions. That popularity is what makes it a good example.
@@ -159,7 +159,7 @@ return fnp.sum(combined, axis=1)
 | other kernels | written again; once regressed, then reverted | automatic |
 | prover source change | the kernel *is* the prover source | zero lines |
 
-### 2.3 Without a compiler, one grows anyway
+### 2.3 Without a compiler, a compiler grows anyway
 
 The most telling evidence is not in the notes. It is in the filenames.
 
@@ -225,8 +225,9 @@ program. The graph records that one array is read to produce another. Whether th
 result happens to equal an array already in hand depends on which instance is
 being proved, and it is true of the identity instance but not of the general R1CS
 the program was written against. A compiler has to stay correct for every input
-it might be handed, so it keeps the scan. Deleting it asserts something the graph
-does not contain, which makes it a different program and the author's call.
+it might be handed, so it keeps the scan. It can be told, and that is what the
+scheme-specific layer is for, but telling it asserts something the graph does not
+contain, which makes it a different program and the author's call.
 
 The compiler owns *how* to compute. The author owns *what* to compute. In a
 hand-written kernel those two live in the same file, which is why changing the
@@ -237,16 +238,15 @@ ISA means rewriting the algebra along with it.
 CUDA 13.3 exposed `clmad`, a carry-less multiply-accumulate, in PTX for SM 80 and
 newer. NVIDIA's own announcement uses GF(2¹²⁸) sumcheck as a motivating example.
 
-For us the instruction is close to existential. A build that falls back to a
-software carry-less multiply runs the scored size in 1,141 ms; the `clmad` build
+A build that falls back to a software carry-less multiply runs the scored size in 1,141 ms; the `clmad` build
 runs it in roughly 70 ms. One lowering decision is worth 16×.
 
 Metal has no carry-less multiply at all, and the frontier measured what that
 costs: moving zerocheck's round two to the GPU gave them 97 ms against 17 ms on
 the CPU, so they withdrew GF(2¹²⁸) multiplication from the GPU permanently. Every
 Metal offload promoted afterwards is XOR and BLAKE3 only, which makes their GPU a
-hashing coprocessor. Their remaining lane is shrinking table lookups, and that
-lane does not exist for us, because ours is an instruction rather than a table.
+hashing coprocessor. What is left for them is shrinking table lookups, and that
+option does not exist for us, because ours is an instruction rather than a table.
 
 What makes this a compiler concern rather than a kernel concern is that the best
 multiplication schedule is a property of the target, not of the algebra. We have
@@ -274,7 +274,7 @@ makes bad ones cheap to throw away, which matters about as much.
 And note who could even know the answer: it depends on the deployed toolchain
 version, not just the chip. That is not a prover author's job to track.
 
-## 5. Where that leaves the numbers
+## 5. The measurements
 
 All figures below: one RTX 5090, measured 2026-08-14 on an idle card, with the
 CUDA toolchain pinned to 13.3 for both `ptxas` and `nvlink`.
@@ -308,16 +308,16 @@ So, plainly:
 
 One measurement settled an internal argument rather than an external one. Against
 binius-gpu's hand-written `additive_ntt_kernel` (same algorithm, same field) the
-compiler-emitted kernel is 1.8 to 2× faster. That closed our hand-written-kernel
-FFI track. Not on principle; on the number.
+compiler-emitted kernel is 1.8 to 2× faster. That ended our work on hand-written-kernel
+FFI. Not on principle; on the number.
 
 ## 6. What is left, and what we gave up
 
-Profiling says the kernel lane is closed: nearly every large kernel already sits
+Profiling says there is nothing left in the kernels: nearly every large one sits
 near the memory-bandwidth roofline, and none are compute-bound. The one exception
 is not reachable from the source, for a reason we come back to below.
 
-![What is left is not a kernel, it is a boundary](/blog/flock-without-writing-a-kernel/open-window.png)
+![What is left is a program boundary, not a kernel](/blog/flock-without-writing-a-kernel/open-window.png)
 
 About a third of the opening window is device-idle. One cause is structural: as
 the Ligerito recursion descends, the work halves at each level but the kernel
