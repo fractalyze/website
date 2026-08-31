@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="730" height="200" viewBox="0 0 730 200" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif">
+  <style>
+    .t { fill:#000; font-size:16px; font-weight:600; }
+    .s { fill:#666; font-size:13px; }
+    .b { fill:#000; font-size:14px; font-weight:600; text-anchor:middle; }
+    .c { fill:#666; font-size:13px; text-anchor:middle; }
+    .axis { stroke:#000; stroke-width:1.8; fill:none; }
+    .node { fill:#F5F5F5; stroke:#000; stroke-width:1.4; }
+  </style>
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#000"/>
+    </marker>
+  </defs>
+
+  <text class="t" x="8" y="26">Who can read a transfer, besides its counterparties</text>
+
+  <line class="axis" x1="30" y1="108" x2="700" y2="108" marker-end="url(#a)"/>
+  <text class="s" x="30" y="176">an organization</text>
+  <text class="s" x="612" y="176">nobody extra</text>
+
+  <rect class="node" x="40"  y="88" width="150" height="40" rx="6"/>
+  <text class="b" x="115" y="113">an operator</text>
+  <text class="c" x="115" y="64">SPC &#183; Zones &#183; Pente</text>
+
+  <rect class="node" x="216" y="88" width="150" height="40" rx="6"/>
+  <text class="b" x="291" y="113">attested hardware</text>
+  <text class="c" x="291" y="64">Arc</text>
+
+  <rect class="node" x="392" y="88" width="150" height="40" rx="6"/>
+  <text class="b" x="467" y="113">a key quorum</text>
+  <text class="c" x="467" y="64">Zama fhEVM</text>
+
+  <rect class="node" x="560" y="88" width="130" height="40" rx="6"/>
+  <text class="b" x="625" y="113">counterparties</text>
+  <text class="c" x="625" y="64">Railgun &#183; bongtu</text>
+</svg>
