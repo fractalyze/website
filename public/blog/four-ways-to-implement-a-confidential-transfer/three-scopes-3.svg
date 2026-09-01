@@ -37,7 +37,7 @@
   <line class="link" x1="123" y1="148" x2="123" y2="196" marker-start="url(#a)" marker-end="url(#a)"/>
   <rect class="base" x="26" y="200" width="194" height="34"/>
   <text class="t" x="123" y="222">Solana mainnet</text>
-  <text class="s" x="123" y="256">escrow in, SMT-proof out</text>
+  <text class="s" x="123" y="256">escrow in, Merkle-proof out</text>
 
   <!-- 2: Tempo Zones — a chain of its own -->
   <text class="t" x="366" y="28">parallel chain</text>
