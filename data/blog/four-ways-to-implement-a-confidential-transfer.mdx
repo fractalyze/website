@@ -17,19 +17,17 @@ One disclosure before the table: we build [bongtu](https://github.com/fractalyze
 
 ## What Each System Hides, and From Whom
 
-The single most useful question to ask of a confidential-transfer design is not "what does it hide?" but "who can still read it?". Ordered by that question, the seven systems fall onto a spectrum:
-
-![Who can read a transfer, besides its counterparties: an operator, attested hardware, a key quorum, or nobody](/blog/four-ways-to-implement-a-confidential-transfer/trust-spectrum.svg)
+The single most useful question to ask of a confidential-transfer design is not "what does it hide?" but "who can still read it?". The answers run from an entire organization down to nobody at all:
 
 | | mechanism | hidden from the public | who holds plaintext | disclosure path | status |
 |---|---|---|---|---|---|
-| [Solana Private Channels](https://github.com/solana-foundation/solana-private-channels) | permissioned payment channel | everything inside the channel; deposits and withdrawals are public | channel operator | the operator's own records | devnet, unaudited |
-| [Tempo Zones](https://tempo.xyz/blog/introducing-tempo-zones/) | operator-run parallel chain | everything inside the zone; a deposit's recipient is encrypted | sender, recipient, zone operator | operator visibility, plus L1 token policies | testnet |
-| [Pente](https://lfdt-paladin.github.io/paladin/head/architecture/pente/) | per-contract private EVM | contract state and logic; the base ledger gets masked commitments | privacy-group members and endorsers | membership itself | open-source framework |
-| [Arc](https://docs.arc.io/arc/concepts/opt-in-privacy) | TEE execution | the entire transaction: calldata, results, logs | validator enclaves | authorized RPC queries | documented, not yet live |
-| [Zama fhEVM](https://docs.zama.org/protocol/protocol/overview) | FHE with a threshold KMS | amounts and balances; addresses stay public | no one by default; the KMS quorum can decrypt per ACL | ACL-gated decryption | mainnet on Ethereum since 2025-12 |
-| [Railgun](https://docs.railgun.org/) | ZK shielded pool | amounts and the transfer graph inside the pool | sender and recipient only | voluntary view keys, proofs of innocence | live since 2021 |
-| [bongtu](https://github.com/fractalyze/bongtu) | ZK shielded pool with enforced audit | amounts, graph, and recipient count | sender, recipient, designated auditor | auditor copy enforced inside the proof | testnet |
+| [Solana Private Channels](https://github.com/solana-foundation/solana-private-channels) | permissioned payment channel | everything inside; entry and exit are public | channel operator | operator records | devnet, unaudited |
+| [Tempo Zones](https://tempo.xyz/blog/introducing-tempo-zones/) | operator-run parallel chain | everything inside the zone | sender, recipient, operator | operator visibility | testnet |
+| [Pente](https://lfdt-paladin.github.io/paladin/head/architecture/pente/) | per-contract private EVM | contract state and logic | group members, endorsers | membership itself | open-source framework |
+| [Arc](https://docs.arc.io/arc/concepts/opt-in-privacy) | TEE execution | the entire transaction | validator enclaves | authorized RPC queries | documented, not yet live |
+| [Zama fhEVM](https://docs.zama.org/protocol/protocol/overview) | FHE + threshold KMS | amounts and balances | no one; KMS quorum can decrypt | ACL-gated decryption | Ethereum mainnet (2025-12) |
+| [Railgun](https://docs.railgun.org/) | ZK shielded pool | amounts and transfer graph | sender and recipient | voluntary view keys, PoI | live since 2021 |
+| [bongtu](https://github.com/fractalyze/bongtu) | shielded pool + enforced audit | amounts, graph, recipient count | sender, recipient, auditor | in-proof auditor copy | testnet |
 
 Two readings of the table before the sections. First, "hidden from the public" and "who holds plaintext" move together: the more a system hides, the more it matters who is on the short list of readers. Second, every row has a disclosure path. No serious system in 2026 ships privacy without one; the designs differ in whether disclosure is an organizational fact (an operator who sees everything), a granted permission (an ACL, a view key), or a validity condition (a proof the chain checks).
 
@@ -47,7 +45,9 @@ The oldest answer to "how do we keep a transfer confidential?" is to not publish
 
 [Pente](https://lfdt-paladin.github.io/paladin/head/architecture/pente/), part of the Linux Foundation's Paladin project, shrinks the scope to a single contract. Each privacy group gets its own ephemeral EVM (Besu, loaded per transaction and discarded), with its own genesis and its own world state. State transitions are endorsed by the group's members and recorded on the base ledger only as masked commitments, so the chain carries proof that something valid happened between the members without carrying what. This is the lineage that started with Quorum's private transactions in 2016, rebuilt.
 
-The trade is uniform across the class. What you get: full EVM or SVM programmability, instant finality, negligible per-transfer cost, and compliance that requires no cryptography at all, because an operator or member list already sees everything. What you give up: the privacy boundary is organizational, not cryptographic. A breach, a compelled disclosure, or a malicious insider at the operator is a full privacy failure, and users who cannot trust that organization have no fallback. Against outside observers these systems hide everything; against the party running them, nothing.
+The three differ in what actually leaves the public chain. A Zone moves the most: it is a chain of its own, producing blocks and holding persistent state, anchored to Tempo for assets and token policy. Solana Private Channels moves the runtime but not the chain: the SVM executes against an operator's database with no consensus behind it, which is why its one chain-grade guarantee sits at the exit. Pente moves the least: the base chain remains the ledger, accounts are UTXO-like states that transactions spend and create through masked commitments, and only execution and the plaintext live off-chain, distributed to the members. That last choice has a quiet consequence. The chain stores salted hashes, so if every member loses the off-chain data, the state is unrecoverable by construction; hiding data by not publishing it makes keeping it available the group's own job.
+
+The trade is otherwise uniform across the class. What you get: full EVM or SVM programmability, instant finality, negligible per-transfer cost, and compliance that requires no cryptography at all, because an operator or member list already sees everything. What you give up: the privacy boundary is organizational, not cryptographic. A breach, a compelled disclosure, or a malicious insider at the operator is a full privacy failure, and users who cannot trust that organization have no fallback. Against outside observers these systems hide everything; against the party running them, nothing.
 
 ## Trusted Hardware: Arc
 
