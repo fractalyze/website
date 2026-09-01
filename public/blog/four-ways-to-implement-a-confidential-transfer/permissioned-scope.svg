@@ -1,60 +1,91 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="730" height="268" viewBox="0 0 730 268" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif">
+<svg xmlns="http://www.w3.org/2000/svg" width="730" height="286" viewBox="0 0 730 286" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif">
   <style>
     .t { fill:#000; font-size:15px; font-weight:600; text-anchor:middle; }
     .s { fill:#666; font-size:13px; text-anchor:middle; }
+    .xs { fill:#666; font-size:11px; text-anchor:middle; }
     .scope { fill:#F5F5F5; stroke:#000; stroke-width:1.4; }
+    .eph { fill:#F5F5F5; stroke:#000; stroke-width:1.4; stroke-dasharray:6 4; }
     .base { fill:none; stroke:#000; stroke-width:1.8; }
-    .tx { fill:#fff; stroke:#000; stroke-width:1.1; }
+    .cell { fill:#fff; stroke:#000; stroke-width:1.1; }
+    .cm { fill:#000; }
     .link { stroke:#000; stroke-width:1.4; fill:none; }
+    .wire { stroke:#000; stroke-width:1.1; fill:none; }
     .split { stroke:#E0E0E0; stroke-width:1.5; }
   </style>
   <defs>
     <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
       <path d="M0,0 L10,5 L0,10 z" fill="#000"/>
     </marker>
-    <g id="txs">
-      <rect class="tx" x="0"  y="0" width="34" height="16"/>
-      <rect class="tx" x="42" y="0" width="34" height="16"/>
-      <rect class="tx" x="84" y="0" width="34" height="16"/>
-    </g>
   </defs>
 
-  <line class="split" x1="246" y1="14" x2="246" y2="254"/>
-  <line class="split" x1="486" y1="14" x2="486" y2="254"/>
+  <line class="split" x1="246" y1="14" x2="246" y2="272"/>
+  <line class="split" x1="486" y1="14" x2="486" y2="272"/>
 
-  <!-- SPC -->
+  <!-- 1: SPC — an operator's runtime, no chain -->
   <text class="t" x="123" y="28">payment channel</text>
   <text class="s" x="123" y="48">Solana Private Channels</text>
-  <rect class="scope" x="26" y="62" width="194" height="88" rx="8"/>
-  <use href="#txs" x="64" y="80"/>
-  <text class="s" x="123" y="120">operator runs it,</text>
-  <text class="s" x="123" y="138">sees every transfer</text>
-  <line class="link" x1="123" y1="150" x2="123" y2="188" marker-start="url(#a)" marker-end="url(#a)"/>
-  <rect class="base" x="26" y="192" width="194" height="34"/>
-  <text class="t" x="123" y="214">Solana mainnet</text>
-  <text class="s" x="123" y="248">escrow in, SMT-proof out</text>
+  <rect class="scope" x="26" y="62" width="194" height="86" rx="8"/>
+  <rect class="cell" x="60"  y="78" width="24" height="18"/>
+  <line class="wire" x1="84" y1="87" x2="94" y2="87"/>
+  <rect class="cell" x="94"  y="78" width="24" height="18"/>
+  <line class="wire" x1="118" y1="87" x2="128" y2="87"/>
+  <rect class="cell" x="128" y="78" width="24" height="18"/>
+  <line class="wire" x1="152" y1="87" x2="162" y2="87"/>
+  <rect class="cell" x="162" y="78" width="24" height="18"/>
+  <text class="s" x="123" y="118">the operator's pipeline,</text>
+  <text class="s" x="123" y="134">state in a database</text>
+  <line class="link" x1="104" y1="148" x2="104" y2="196" marker-end="url(#a)"/>
+  <line class="link" x1="142" y1="196" x2="142" y2="148" marker-end="url(#a)"/>
+  <text class="xs" x="82" y="176">in</text>
+  <text class="xs" x="166" y="176">out</text>
+  <rect class="base" x="26" y="200" width="194" height="34"/>
+  <text class="t" x="123" y="222">Solana mainnet</text>
+  <text class="s" x="123" y="256">escrow in, SMT-proof out</text>
 
-  <!-- Tempo Zones -->
+  <!-- 2: Tempo Zones — a chain of its own -->
   <text class="t" x="366" y="28">parallel chain</text>
   <text class="s" x="366" y="48">Tempo Zones</text>
-  <rect class="scope" x="269" y="62" width="194" height="88" rx="8"/>
-  <use href="#txs" x="307" y="80"/>
-  <text class="s" x="366" y="120">sender, recipient,</text>
-  <text class="s" x="366" y="138">and the zone operator</text>
-  <line class="link" x1="366" y1="150" x2="366" y2="188" marker-start="url(#a)" marker-end="url(#a)"/>
-  <rect class="base" x="269" y="192" width="194" height="34"/>
-  <text class="t" x="366" y="214">Tempo L1</text>
-  <text class="s" x="366" y="248">funds stay in an L1 contract</text>
+  <rect class="scope" x="269" y="62" width="194" height="86" rx="8"/>
+  <rect class="cell" x="291" y="76" width="30" height="22"/>
+  <line class="wire" x1="321" y1="87" x2="331" y2="87" marker-end="url(#a)"/>
+  <rect class="cell" x="331" y="76" width="30" height="22"/>
+  <line class="wire" x1="361" y1="87" x2="371" y2="87" marker-end="url(#a)"/>
+  <rect class="cell" x="371" y="76" width="30" height="22"/>
+  <line class="wire" x1="401" y1="87" x2="411" y2="87" marker-end="url(#a)"/>
+  <rect class="cell" x="411" y="76" width="30" height="22"/>
+  <text class="s" x="366" y="118">its own blocks,</text>
+  <text class="s" x="366" y="134">its own persistent state</text>
+  <line class="link" x1="366" y1="148" x2="366" y2="196" marker-start="url(#a)" marker-end="url(#a)"/>
+  <text class="xs" x="404" y="176">bridge</text>
+  <rect class="base" x="269" y="200" width="194" height="34"/>
+  <text class="t" x="366" y="222">Tempo L1</text>
+  <text class="s" x="366" y="256">funds stay in an L1 contract</text>
 
-  <!-- Pente -->
+  <!-- 3: Pente — no chain, no runtime: members, an EVM per tx, commitments -->
   <text class="t" x="608" y="28">privacy group</text>
   <text class="s" x="608" y="48">Pente</text>
-  <rect class="scope" x="511" y="62" width="194" height="88" rx="8"/>
-  <use href="#txs" x="549" y="80"/>
-  <text class="s" x="608" y="120">an EVM per group,</text>
-  <text class="s" x="608" y="138">members + endorsers only</text>
-  <line class="link" x1="608" y1="150" x2="608" y2="188" marker-start="url(#a)" marker-end="url(#a)"/>
-  <rect class="base" x="511" y="192" width="194" height="34"/>
-  <text class="t" x="608" y="214">base EVM ledger</text>
-  <text class="s" x="608" y="248">masked commitments only</text>
+  <circle class="cell" cx="560" cy="74" r="10"/>
+  <text class="xs" x="560" y="78" fill="#000">A</text>
+  <circle class="cell" cx="608" cy="68" r="10"/>
+  <text class="xs" x="608" y="72" fill="#000">B</text>
+  <circle class="cell" cx="656" cy="74" r="10"/>
+  <text class="xs" x="656" y="78" fill="#000">C</text>
+  <line class="wire" x1="564" y1="84" x2="588" y2="96"/>
+  <line class="wire" x1="608" y1="78" x2="608" y2="96"/>
+  <line class="wire" x1="652" y1="84" x2="628" y2="96"/>
+  <rect class="eph" x="536" y="96" width="144" height="40" rx="8"/>
+  <text class="s" x="608" y="114" fill="#000">ephemeral EVM</text>
+  <text class="xs" x="608" y="129">spun up per tx, discarded</text>
+  <line class="link" x1="608" y1="136" x2="608" y2="180" marker-end="url(#a)"/>
+  <text class="xs" x="655" y="162">endorsed M-of-N</text>
+  <g class="cm">
+    <rect x="572" y="186" width="12" height="12"/>
+    <rect x="590" y="186" width="12" height="12"/>
+    <rect x="608" y="186" width="12" height="12"/>
+    <rect x="626" y="186" width="12" height="12"/>
+  </g>
+  <rect class="base" x="511" y="200" width="194" height="34"/>
+  <text class="t" x="608" y="222">base EVM ledger</text>
+  <text class="s" x="608" y="256">commitments only;</text>
+  <text class="s" x="608" y="272">plaintext stays with members</text>
 </svg>
