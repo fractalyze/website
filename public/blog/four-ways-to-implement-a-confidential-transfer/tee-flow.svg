@@ -13,13 +13,13 @@
     </marker>
   </defs>
 
-  <rect class="box" x="16" y="66" width="168" height="76" rx="8"/>
-  <text class="t" x="100" y="96">encrypted tx</text>
-  <text class="s" x="100" y="118">X-Wing KEM</text>
-  <text class="s" x="100" y="134">(X25519 + ML-KEM-768)</text>
+  <rect class="box" x="12" y="66" width="184" height="76" rx="8"/>
+  <text class="t" x="104" y="96">encrypted tx</text>
+  <text class="s" x="104" y="118">X-Wing KEM</text>
+  <text class="s" x="104" y="134">(X25519 + ML-KEM-768)</text>
 
-  <line class="arrow" x1="184" y1="104" x2="248" y2="104" marker-end="url(#a)"/>
-  <text class="s" x="216" y="92">calldata</text>
+  <line class="arrow" x1="196" y1="104" x2="248" y2="104" marker-end="url(#a)"/>
+  <text class="s" x="222" y="90">calldata</text>
 
   <rect class="open" x="252" y="66" width="180" height="76" rx="8"/>
   <text class="t" x="342" y="96">privacy precompile</text>
