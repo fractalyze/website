@@ -31,6 +31,8 @@ The single most useful question to ask of a confidential-transfer design is not 
 
 Two readings of the table before the sections. First, "hidden from the public" and "who holds plaintext" move together: the more a system hides, the more it matters who is on the short list of readers. Second, every row has a disclosure path. No serious system in 2026 ships privacy without one; the designs differ in whether disclosure is an organizational fact (an operator who sees everything), a granted permission (an ACL, a view key), or a validity condition (a proof the chain checks).
 
+There is also a single problem underneath all four classes. A transfer has to be executed by someone, and on a public chain that someone is a validator nobody chose to trust. Each class is one answer to that. Permissioned execution replaces the validator with an operator you did choose. A TEE lets the untrusted validator execute plaintext, inside hardware that locks the validator itself out. FHE hands the validator only ciphertext. A shielded pool never shows the executor anything: the sender computes the transfer, and the chain only checks the proof. Of the three cryptographic answers, the TEE is the odd one out, because it is the only one where plaintext still materializes on an untrusted party's machine, guarded by hardware rather than mathematics.
+
 The four sections below take the classes in the table's order.
 
 ## Permissioned Execution: Solana Private Channels, Tempo Zones, Pente
@@ -89,7 +91,7 @@ The four classes are not rivals for one job. Each exists because a different req
 |---|---|---|
 | private settlement among parties who already trust one organization | permissioned execution | the operator reads everything; a breach there exposes it all |
 | hidden amounts on a public chain, composable and live today | FHE | the transfer graph stays public |
-| the whole transaction hidden on a public chain | TEE execution | hardware and attestation trust, and nothing has shipped yet |
+| the whole transaction hidden on a public chain | TEE execution | plaintext still exists on validators' machines, guarded by hardware alone; nothing has shipped yet |
 | the transfer graph hidden, and no party at all able to read | a ZK shielded pool | proving cost, and disclosure has to be designed in |
 | a disclosure guarantee a regulator can rely on, at payout scale | a shielded pool with enforced disclosure | someone must be, and stay, the designated auditor |
 
