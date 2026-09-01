@@ -53,7 +53,7 @@ The trade is otherwise uniform across the class. What you get: full EVM or SVM p
 
 Arc, Circle's payments L1, takes the opposite bet: keep execution on the shared public chain, but make the plaintext exist only inside hardware the validators cannot open. The design is [documented](https://docs.arc.io/arc/concepts/opt-in-privacy); Circle states that privacy features are on the roadmap and not yet available on Arc, so unlike every other row in the table this one describes a specification, not a running system.
 
-![An encrypted transaction enters as calldata; plaintext exists only inside the attested validator enclave](/blog/four-ways-to-implement-a-confidential-transfer/tee-flow.svg)
+![An encrypted transaction enters as calldata; plaintext exists only inside the attested validator enclave](/blog/four-ways-to-implement-a-confidential-transfer/tee-flow-2.svg)
 
 The mechanism: a user encrypts an ordinary EVM transaction to the network's public key using a hybrid post-quantum KEM (X-Wing: X25519 plus ML-KEM-768) and submits the ciphertext as calldata to a precompile. Publicly, that is all there is: one precompile call with a fixed gas cost, no event logs, sanitized revert reasons, and introspection opcodes that return zero to callers without a trust grant. Validators running inside hardware enclaves decrypt, execute, and re-encrypt the resulting state. The master secret key is Shamir-shared and can only be reconstructed inside attested enclaves, never on a validator host. Reading your own results means an authorized query to an RPC node, verified by an in-enclave light client.
 

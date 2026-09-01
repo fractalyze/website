@@ -28,12 +28,12 @@
 
   <line class="arrow" x1="432" y1="104" x2="496" y2="104" marker-end="url(#a)"/>
 
-  <rect class="enclave" x="500" y="46" width="214" height="116" rx="10"/>
-  <text class="t" x="607" y="76">validator enclave</text>
-  <text class="s" x="607" y="100">decrypt, execute,</text>
-  <text class="s" x="607" y="116">re-encrypt state</text>
-  <text class="s" x="607" y="144">key: Shamir shares, rebuilt</text>
-  <text class="s" x="607" y="158">only inside attested enclaves</text>
+  <rect class="enclave" x="500" y="40" width="214" height="132" rx="10"/>
+  <text class="t" x="607" y="70">validator enclave</text>
+  <text class="s" x="607" y="94">decrypt, execute,</text>
+  <text class="s" x="607" y="110">re-encrypt state</text>
+  <text class="s" x="607" y="138">key: Shamir shares, rebuilt</text>
+  <text class="s" x="607" y="154">only inside attested enclaves</text>
 
   <text class="s" x="365" y="204">everything left of the enclave is ciphertext; plaintext exists only inside the attested boundary</text>
 </svg>
