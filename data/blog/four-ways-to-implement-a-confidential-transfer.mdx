@@ -83,12 +83,10 @@ The two systems mark the ends of the disclosure axis within one class. Voluntary
 
 ## Which Design Fits Which Requirement
 
-Having walked the four classes, the comparison collapses to a short decision list.
+Having walked the four classes, the comparison collapses to three questions.
 
-If every counterparty already trusts one organization, use permissioned execution. A bank settling between its own customers, a consortium clearing among members: the operator sees everything anyway, so paying for cryptographic hiding buys nothing. This class is the cheapest, the most programmable, and the easiest to make compliant, because the audit trail is the operator's database.
-
-If you need hidden state on a public chain that outsiders can build on, the choice today is FHE, and, once it ships, TEE execution. They solve the same problem with different residual trust: a key quorum you hope does not collude, or a hardware vendor and attestation chain you hope holds. Arc hides more per transaction (the whole call, not just amounts) but does not exist yet; fhEVM is live but leaves the transfer graph public.
-
-If no single party may be able to read transfers, not an operator, not a vendor, not a quorum, only a shielded pool does it. This is also the only class where hiding the transfer graph is a design property rather than a roadmap item. Within the class, pick by disclosure: view keys where users answer to nobody by default, in-proof enforced disclosure where a regulator or institution must be structurally unable to be cut out.
+- **Do all counterparties already trust one organization** (a bank and its customers, a consortium)? Permissioned execution: cheapest, fully programmable, and the audit trail is the operator's database.
+- **Need hidden state on a public chain others can build on?** FHE today, TEEs when they ship. Same problem, different residual trust: a key quorum you hope does not collude, or hardware you hope holds. fhEVM is live but leaves the graph public; Arc hides the whole call but does not exist yet.
+- **May nobody at all be able to read transfers?** Only a shielded pool, and it is the only class that hides the transfer graph. Within it, pick by disclosure: voluntary view keys, or an in-proof auditor copy that cannot be cut out.
 
 That last combination, pool-grade privacy with disclosure the chain itself enforces at payroll scale, is the corner we build in, and the [bongtu post](/blog/confidential-stablecoin-infrastructure) walks it end to end. But the broader point of this comparison is the opposite of a pitch: four classes exist because four different requirement sets exist. The table's columns, not anyone's marketing, are the spec sheet. Decide who may hold your plaintext and what disclosure you owe, and the class picks itself. If you are working out which row you are in, [talk to us](mailto:contact@fractalyze.io).
