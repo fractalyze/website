@@ -25,7 +25,7 @@ The single most useful question to ask of a confidential-transfer design is not 
 | permissioned execution | [Tempo Zones](https://tempo.xyz/blog/introducing-tempo-zones/) | everything inside the zone; moving assets in and out on Tempo L1 is public | the sender, the recipient, and the zone operator |
 | permissioned execution | [Pente](https://lfdt-paladin.github.io/paladin/head/architecture/pente/) | the private contract's state and logic; the base chain sees only masked commitments | the privacy group's members |
 | trusted hardware | [Arc](https://docs.arc.io/arc/concepts/opt-in-privacy) | the entire transaction: calldata, results, logs | validator enclaves; not the validators running them |
-| FHE | [Zama fhEVM](https://docs.zama.org/protocol/protocol/overview) | amounts; sender and recipient addresses stay public | no one, though a threshold KMS quorum can decrypt where the ACL allows |
+| FHE | [Zama fhEVM](https://docs.zama.org/protocol/protocol/overview) | amounts | no one, though a threshold KMS quorum can decrypt where the ACL allows |
 | ZK shielded pool | [Railgun](https://docs.railgun.org/) | amounts, sender, and recipient | the sender and the recipient |
 | ZK shielded pool | [bongtu](https://github.com/fractalyze/bongtu) | amounts, sender, and recipient | the sender, the recipient, and the designated auditor |
 
