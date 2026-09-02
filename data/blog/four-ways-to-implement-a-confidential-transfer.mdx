@@ -26,7 +26,7 @@ The single most useful question to ask of a confidential-transfer design is not 
 | permissioned execution | [Pente](https://lfdt-paladin.github.io/paladin/head/architecture/pente/) | the private contract's state and logic; the base chain sees only masked commitments | the privacy group's members |
 | trusted hardware | [Arc](https://docs.arc.io/arc/concepts/opt-in-privacy) | the entire transaction: calldata, results, logs | validator enclaves; not the validators running them |
 | FHE | [Zama fhEVM](https://docs.zama.org/protocol/protocol/overview) | amounts; sender and recipient addresses stay public | no one, though a threshold KMS quorum can decrypt where the ACL allows |
-| ZK shielded pool | [Railgun](https://docs.railgun.org/) | amounts, sender, and recipient; entering and leaving the pool is public | the sender and the recipient |
+| ZK shielded pool | [Railgun](https://docs.railgun.org/) | amounts, sender, and recipient | the sender and the recipient |
 | ZK shielded pool | [bongtu](https://github.com/fractalyze/bongtu) | amounts, sender, and recipient | the sender, the recipient, and the designated auditor |
 
 Two readings of the table before the sections. First, "hidden from the public" and "who holds plaintext" move together: the more a system hides, the more it matters who is on the short list of readers. Second, every row has a disclosure path. No serious system in 2026 ships privacy without one; the designs differ in whether disclosure is an organizational fact (an operator who sees everything), a granted permission (an ACL, a view key), or a validity condition (a proof the chain checks).
@@ -73,7 +73,7 @@ The honest reading of that design is that FHE moves the trust rather than elimin
 
 ## Zero-Knowledge Shielded Pools: Railgun and bongtu
 
-The fourth class hides the most and trusts the least. In a shielded pool, money inside the pool exists as note commitments in a Merkle tree; a transfer publishes new commitments, nullifiers for the notes it spends, and a zero-knowledge proof that the books balance. The public ledger carries no amounts and no addresses, and, unlike every class above, there is no operator, enclave, or quorum that can read a transfer: only the sender and recipient can.
+The fourth class hides the most and trusts the least. In a shielded pool, money inside the pool exists as note commitments in a Merkle tree; a transfer publishes new commitments, nullifiers for the notes it spends, and a zero-knowledge proof that the books balance. The public ledger carries no amounts and no addresses; what stays public, in every pool design, is money entering and leaving the pool. And unlike every class above, there is no operator, enclave, or quorum that can read a transfer: only the sender and recipient can.
 
 ![The same pool design with opposite disclosure: a view key shared by choice, or an auditor copy the proof itself enforces](/blog/four-ways-to-implement-a-confidential-transfer/shielded-disclosure.svg)
 
