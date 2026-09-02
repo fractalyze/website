@@ -1,0 +1,102 @@
+---
+title: 'Four Ways to Implement a Confidential Transfer'
+date: '2026-08-31'
+tags: ['confidential-transfers', 'privacy', 'stablecoin', 'tee', 'fhe', 'zkp', 'shielded-pool', 'railgun', 'zama', 'arc', 'tempo', 'paladin', 'bongtu']
+draft: false
+category: 'Tech'
+summary: 'Tempo, Arc, Solana Private Channels, Pente, Zama, Railgun, and bongtu all promise confidential transfers, and they are built four different ways: permissioned execution, trusted hardware, FHE, and shielded pools. What each one hides, who still sees plaintext, and which requirement each design actually serves.'
+authors: ['Jun']
+image: '/blog/covers/whiteboard-session.webp'
+---
+
+A standard token transfer publishes four things: the amount, the sender, the recipient, and the fact that it happened. Over the past year almost every serious payments chain has shipped or announced a way to hide some of that. Stripe's Tempo added [Zones](https://tempo.xyz/blog/introducing-tempo-zones/), Circle's Arc documented [TEE-backed confidential transactions](https://docs.arc.io/arc/concepts/opt-in-privacy), the Solana Foundation published [Private Channels](https://github.com/solana-foundation/solana-private-channels), Zama took its [FHE protocol](https://docs.zama.org/protocol/protocol/overview) to Ethereum mainnet, and shielded pools like [Railgun](https://docs.railgun.org/) kept processing volume through all of it.
+
+These systems are routinely presented as competitors. Mostly they are not, because they are not answers to the same question. Each one hides a different subset of the transfer, and each one hands the plaintext to a different party. This post compares seven implementations across the four classes they fall into: permissioned execution (Solana Private Channels, Tempo Zones, Pente), trusted hardware (Arc), fully homomorphic encryption (Zama's fhEVM), and zero-knowledge shielded pools (Railgun and bongtu).
+
+One disclosure before the table: we build [bongtu](https://github.com/fractalyze/bongtu), so read the shielded-pool section knowing that. Every claim below is checked against the project's documentation or source, linked as it appears.
+
+## What Each System Hides, and From Whom
+
+The single most useful question to ask of a confidential-transfer design is not "what does it hide?" but "who can still read it?". The answers run from an entire organization down to nobody at all:
+
+| class | system | hidden from the public | who holds plaintext |
+|---|---|---|---|
+| permissioned execution | [Solana Private Channels](https://github.com/solana-foundation/solana-private-channels) | everything inside the channel; deposits to and withdrawals from Solana mainnet are public | the channel operator |
+| permissioned execution | [Tempo Zones](https://tempo.xyz/blog/introducing-tempo-zones/) | everything inside the zone; moving assets in and out on Tempo L1 is public | the sender, the recipient, and the zone operator |
+| permissioned execution | [Pente](https://lfdt-paladin.github.io/paladin/head/architecture/pente/) | the private contract's state and logic; the base chain sees only masked commitments | the privacy group's members |
+| trusted hardware | [Arc](https://docs.arc.io/arc/concepts/opt-in-privacy) | the entire transaction: calldata, results, logs | validator enclaves; not the validators running them |
+| FHE | [Zama fhEVM](https://docs.zama.org/protocol/protocol/overview) | amounts | no one, though a threshold KMS quorum can decrypt where the ACL allows |
+| ZK shielded pool | [Railgun](https://docs.railgun.org/) | amounts, sender, and recipient | the sender and the recipient |
+| ZK shielded pool | [bongtu](https://github.com/fractalyze/bongtu) | amounts, sender, and recipient | the sender, the recipient, and the designated auditor |
+
+Two readings of the table before the sections. First, "hidden from the public" and "who holds plaintext" move together: the more a system hides, the more it matters who is on the short list of readers. Second, every row has a disclosure path. No serious system in 2026 ships privacy without one; the designs differ in whether disclosure is an organizational fact (an operator who sees everything), a granted permission (an ACL, a view key), or a validity condition (a proof the chain checks).
+
+There is also a single problem underneath all four classes. A transfer has to be executed by someone, and on a public chain that someone is a validator nobody chose to trust. Each class is one answer to that. Permissioned execution replaces the validator with an operator you did choose. A TEE lets the untrusted validator execute plaintext, inside hardware that locks the validator itself out. FHE hands the validator only ciphertext. A shielded pool never shows the executor anything: the sender computes the transfer, and the chain only checks the proof. Of the three cryptographic answers, the TEE is the odd one out, because it is the only one where plaintext still materializes on an untrusted party's machine, guarded by hardware rather than mathematics.
+
+The four sections below take the classes in the table's order.
+
+## Permissioned Execution: Solana Private Channels, Tempo Zones, Pente
+
+The oldest answer to "how do we keep a transfer confidential?" is to not publish it. All three systems in this class run transfers inside a scope the public cannot read, anchor value to a public chain, and let an operator or a member list define who sees what. They differ in the size of the scope.
+
+![A payment channel runs the operator's pipeline over a database; a Zone runs a chain of its own; a Pente group spins up an EVM per transaction and writes only commitments to the base ledger](/blog/four-ways-to-implement-a-confidential-transfer/three-scopes-3.svg)
+
+[Solana Private Channels](https://github.com/solana-foundation/solana-private-channels) is a payment channel: a private, operator-run execution environment that speaks standard Solana. Users lock SPL tokens in an [escrow program](https://github.com/solana-foundation/solana-private-channels/blob/main/docs/ESCROW_PROGRAM.md) on mainnet; inside the channel, transfers clear in about 100 ms with no fees, through a five-stage pipeline (SigVerify, Dedup, Sequencer, Executor, Settler) backed by PostgreSQL rather than a chain. Withdrawals burn channel tokens and release escrow against a sparse-Merkle-tree proof, so exit does not depend on trusting the operator's bookkeeping. Everything else does: the operator sequences every transfer, sees every balance, and enforces whatever compliance rules the deployment configures. The repo says plainly that the code is unaudited and under active development.
+
+[Tempo Zones](https://tempo.xyz/blog/introducing-tempo-zones/) widen the scope to a chain. A zone is a parallel blockchain anchored to Tempo mainnet: any TIP-20 token can move in, transfers inside are visible only to sender, recipient, and the zone operator, and balance reads are enforced at the RPC by a signature from the account's own key. Two details are easy to miss. Funds stay in a contract on mainnet, so the operator can see and suspend activity but cannot spend user balances. And a deposit's recipient address is encrypted on its way in, so mainnet observers do not learn where funds went inside the zone, while the operator can decrypt it. The zone software is [open source](https://github.com/tempoxyz/zones) and permissionless to run.
+
+[Pente](https://lfdt-paladin.github.io/paladin/head/architecture/pente/), part of the Linux Foundation's Paladin project, shrinks the scope to a single contract. Each privacy group gets its own ephemeral EVM (Besu, loaded per transaction and discarded), with its own genesis and its own world state. State transitions are endorsed by the group's members and recorded on the base ledger only as masked commitments, so the chain carries proof that something valid happened between the members without carrying what. This is the lineage that started with Quorum's private transactions in 2016, rebuilt.
+
+The three differ in what actually leaves the public chain. A Zone moves the most: it is a chain of its own, producing blocks and holding persistent state, anchored to Tempo for assets and token policy. Solana Private Channels moves the runtime but not the chain: the SVM executes against an operator's database with no consensus behind it, which is why its one chain-grade guarantee sits at the exit. Pente moves the least: the base chain remains the ledger, accounts are UTXO-like states that transactions spend and create through masked commitments, and only execution and the plaintext live off-chain, distributed to the members. That last choice has a quiet consequence. The chain stores salted hashes, so if every member loses the off-chain data, the state is unrecoverable by construction; hiding data by not publishing it makes keeping it available the group's own job.
+
+The trade is otherwise uniform across the class. What you get: full EVM or SVM programmability, instant finality, negligible per-transfer cost, and compliance that requires no cryptography at all, because an operator or member list already sees everything. What you give up: the privacy boundary is organizational, not cryptographic. A breach, a compelled disclosure, or a malicious insider at the operator is a full privacy failure, and users who cannot trust that organization have no fallback. Against outside observers these systems hide everything; against the party running them, nothing.
+
+## Trusted Hardware: Arc
+
+Arc, Circle's payments L1, takes the opposite bet: keep execution on the shared public chain, but make the plaintext exist only inside hardware the validators cannot open. The design is [documented](https://docs.arc.io/arc/concepts/opt-in-privacy); Circle states that privacy features are on the roadmap and not yet available on Arc, so unlike every other row in the table this one describes a specification, not a running system.
+
+![An encrypted transaction enters as calldata; plaintext exists only inside the attested validator enclave](/blog/four-ways-to-implement-a-confidential-transfer/tee-flow-2.svg)
+
+The mechanism: a user encrypts an ordinary EVM transaction to the network's public key using a hybrid post-quantum KEM (X-Wing: X25519 plus ML-KEM-768) and submits the ciphertext as calldata to a precompile. Publicly, that is all there is: one precompile call with a fixed gas cost, no event logs, sanitized revert reasons, and introspection opcodes that return zero to callers without a trust grant. Validators running inside hardware enclaves decrypt, execute, and re-encrypt the resulting state. The master secret key is Shamir-shared and can only be reconstructed inside attested enclaves, never on a validator host. Reading your own results means an authorized query to an RPC node, verified by an in-enclave light client.
+
+What this buys is the strongest programmability story of the four classes: arbitrary private contracts, composable with public ones in the same block, at near-native execution speed, with no per-operation cryptographic blowup. What it costs is that the trust anchor becomes the enclave: the CPU vendor's silicon, the attestation policy, and the assumption that the TEE holds against an attacker with physical access or the next side-channel paper. TEEs have a long public record of both production use and published breaks, which is why Arc itself frames the enclave as the first backend of a modular system, naming MPC, FHE, and ZK as candidates to swap in as they mature.
+
+## Fully Homomorphic Encryption: Zama fhEVM
+
+Zama's [fhEVM](https://docs.zama.org/protocol/protocol/overview) removes the hardware assumption: balances live on a public chain as ciphertext, and the chain computes on them without anyone decrypting.
+
+![The host chain manipulates handles while coprocessors compute on ciphertext; decryption goes through an ACL and a threshold KMS](/blog/four-ways-to-implement-a-confidential-transfer/fhe-flow.svg)
+
+The architecture is symbolic execution. A confidential ERC-20 replaces `uint64` balances with encrypted `euint64` values, but the host chain never runs FHE math: contract calls record the requested operation, return a handle to the future result, and emit an event. Off-chain coprocessors pick up the event, run the actual TFHE computation on ciphertext, and post the result. Decryption is a separate, permissioned path: an on-chain ACL records who may read which handle, and the decryption key itself is held by no single party. It is split across the operators of a key-management service that runs threshold MPC, so decrypting a value for an authorized reader takes a quorum, and every decryption request is publicly visible.
+
+The honest reading of that design is that FHE moves the trust rather than eliminating it. Computation needs no trusted party at all, which is the genuine advance: any number of parties can transact against the same encrypted state on a chain none of them control. But everything encrypts to one global public key, so the KMS quorum is a standing party that could decrypt whatever the ACL permits, and the confidentiality of every balance rests on that quorum not colluding. The other boundary to know: in the confidential token as shipped, amounts and balances are hidden while sender and recipient addresses stay public, so the transfer graph remains visible. And FHE arithmetic is orders of magnitude more expensive than native execution, which is why the coprocessor model exists at all. In exchange, this is the one class running on Ethereum mainnet today (since December 2025, with confidential ERC-7984 token wrappers for existing ERC-20s) with hidden state and no operator who sees transfers in the clear.
+
+## Zero-Knowledge Shielded Pools: Railgun and bongtu
+
+The fourth class hides the most and trusts the least. In a shielded pool, money inside the pool exists as note commitments in a Merkle tree; a transfer publishes new commitments, nullifiers for the notes it spends, and a zero-knowledge proof that the books balance. The public ledger carries no amounts and no addresses; what stays public, in every pool design, is money entering and leaving the pool. And unlike every class above, there is no operator, enclave, or quorum that can read a transfer: only the sender and recipient can.
+
+![The same pool design with opposite disclosure: a view key shared by choice, or an auditor copy the proof itself enforces](/blog/four-ways-to-implement-a-confidential-transfer/shielded-disclosure.svg)
+
+[Railgun](https://docs.railgun.org/) is the longest-running production example, live on Ethereum mainnet since 2021 as a smart-contract system with no separate chain. Its answer to compliance is voluntary: users hold [view keys](https://docs.railgun.org/wiki/learn/wallets-and-keys) they can hand to an accountant or a counterparty, and the ecosystem operates [Private Proofs of Innocence](https://docs.railgun.org/wiki/assurance/private-proofs-of-innocence), which screen incoming funds so a user can prove their deposit is not from a flagged source without revealing which deposit is theirs. There is no protocol-level auditor role: an accountant with your view key can audit you, but only because you handed the key over, and only for as long as you cooperate.
+
+[bongtu](https://github.com/fractalyze/bongtu), our system, keeps the pool model and inverts the disclosure. Every payout encrypts a copy of each transfer to a designated auditor key, and the zero-knowledge proof itself commits to those ciphertexts, with the contract checking the commitment in the same transaction that moves the money. A transfer that omits or garbles the auditor's copy is not a policy violation to be caught later; it is an invalid transaction. The same proof machinery is what makes 256-recipient payouts land as one transaction. We wrote up the design, the measured gas, and the comparison against Zeto, Railgun, zkBob, and Token-2022 in [an earlier post](/blog/confidential-stablecoin-infrastructure), so we will not repeat it here.
+
+The two systems mark the ends of the disclosure axis within one class, and the word auditor does different work at each end: in Railgun an auditor is whoever a user chooses to show, appointed by handing over a key; in bongtu the auditor is a party the deployment designates, whose copy the proof cannot omit. Voluntary disclosure preserves maximal user sovereignty and asks the compliant to opt in; its structural limit is that the one sender an institution worries about is exactly the one who opts out. Enforced disclosure makes the auditor's copy a validity condition; its structural limit is that someone must be the auditor, and choosing and rotating that party well becomes part of the design. The costs shared by the whole class are real too: proofs take real compute to produce, wallets need infrastructure to find their own notes, and a circuit upgrade is a re-audit, not a patch.
+
+## Which Design Fits Which Requirement
+
+The four classes are not rivals for one job. Each exists because a different requirement set does, and each one gives something up that the others keep. Find your row:
+
+| you need | take | and accept |
+|---|---|---|
+| private settlement among parties who already trust one organization | permissioned execution | the operator reads everything; a breach there exposes it all |
+| hidden amounts on a public chain, composable and live today | FHE | the transfer graph stays public |
+| the whole transaction hidden on a public chain | a chain built around enclaves (Arc, once live) | plaintext still exists on validators' machines, guarded by hardware alone |
+| the transfer graph hidden, and no party at all able to read | a ZK shielded pool | proving cost, and disclosure has to be designed in |
+| a disclosure guarantee a regulator can rely on, at payout scale | a shielded pool with enforced disclosure | someone must be, and stay, the designated auditor |
+
+The rows also differ in what adopting them means. A shielded pool is a contract you deploy on the chain you already use, FHE is a protocol an existing chain can host, and permissioned execution is infrastructure you run yourself. Validator-level TEE execution is a property of a whole chain, which is why it has always shipped as one (Secret, Oasis, now Arc): choosing that row means choosing the chain.
+
+In practice the field has largely sorted itself along one more line: how well-specified the workload is. Payments and settlement sit at one end, and there the pool model is the veteran, not the exotic option: commitment-and-nullifier designs have run in production since Zcash in 2016 and as Ethereum contracts since 2021, a transfer is one fixed statement that one audited circuit covers indefinitely, and it is the only class where the two parties need no third party at all. At the other end sit workloads broader than moving value, business processes, bespoke rules, logic that changes often. In a pool every new rule is a circuit change and a re-audit, so what gets deployed there in practice is permissioned execution, accepting a trusted operator in exchange for ordinary programmability.
+
+The last row is the corner we build in, and the [bongtu post](/blog/confidential-stablecoin-infrastructure) walks it end to end. But the point of the comparison is the opposite of a pitch: every row of that table gives something up, and the marketing never names it. Decide who may hold your plaintext, whether the graph may show, and what disclosure you owe, and the class picks itself. If you are working out which row you are in, [talk to us](mailto:contact@fractalyze.io).

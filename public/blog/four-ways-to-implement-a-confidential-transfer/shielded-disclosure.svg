@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="730" height="248" viewBox="0 0 730 248" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif">
+  <style>
+    .t { fill:#000; font-size:15px; font-weight:600; text-anchor:middle; }
+    .s { fill:#666; font-size:13px; text-anchor:middle; }
+    .pool { fill:#F5F5F5; stroke:#000; stroke-width:1.4; }
+    .open { fill:#fff; stroke:#000; stroke-width:1.4; }
+    .leaf { fill:#fff; stroke:#000; stroke-width:1.1; }
+    .arrow { stroke:#000; stroke-width:1.8; fill:none; }
+    .dash { stroke:#000; stroke-width:1.5; fill:none; stroke-dasharray:5 4; }
+  </style>
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#000"/>
+    </marker>
+    <marker id="d" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#666"/>
+    </marker>
+  </defs>
+
+  <rect class="pool" x="20" y="34" width="300" height="170" rx="10"/>
+  <text class="t" x="170" y="62">shielded pool</text>
+  <g class="leaf">
+    <rect x="72"  y="84" width="26" height="18"/><rect x="106" y="84" width="26" height="18"/>
+    <rect x="140" y="84" width="26" height="18"/><rect x="174" y="84" width="26" height="18"/>
+    <rect x="208" y="84" width="26" height="18"/><rect x="242" y="84" width="26" height="18"/>
+  </g>
+  <text class="s" x="170" y="126">note commitments in a Merkle tree</text>
+  <text class="s" x="170" y="150">a transfer publishes: new commitments,</text>
+  <text class="s" x="170" y="166">spent-note nullifiers, one proof</text>
+  <text class="s" x="170" y="190">no amounts, no addresses</text>
+
+  <line class="dash" x1="320" y1="92" x2="458" y2="72" marker-end="url(#d)" stroke="#666"/>
+  <rect class="open" x="462" y="46" width="252" height="58" rx="8"/>
+  <text class="t" x="588" y="70">view key, shared by choice</text>
+  <text class="s" x="588" y="90">Railgun: the sender can opt out</text>
+
+  <line class="arrow" x1="320" y1="150" x2="458" y2="170" marker-end="url(#a)"/>
+  <rect class="open" x="462" y="144" width="252" height="58" rx="8"/>
+  <text class="t" x="588" y="168">auditor copy, checked in-proof</text>
+  <text class="s" x="588" y="188">bongtu: skip it and the tx is invalid</text>
+
+  <text class="s" x="365" y="234">same pool design, opposite disclosure: one is etiquette, the other is a validity condition</text>
+</svg>
