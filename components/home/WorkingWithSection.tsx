@@ -61,9 +61,12 @@ const partners = [
     // the mark reads on their own white site, where the white face is the page
     // itself. Already a single black, so it takes no filter.
     src: '/logo/partners/bricksum-mono.svg',
-    // The lockup's cap height is 56% of its box, so 36px puts the wordmark at
-    // ~20px, between the EF caption and KODA's 24px letters.
-    height: 'h-[27px] md:h-[36px]',
+    // The wordmark's cap height is 56% of the lockup box, so 28px puts the
+    // letters at ~16px. That is under KODA's 24px, and deliberately so: the
+    // symbol standing proud of the letters adds mass no bare wordmark has, and
+    // the wide letterforms carry more ink per cap-pixel than KODA's. Sized by
+    // eye against the row, not by matching cap heights.
+    height: 'h-[21px] md:h-[28px]',
   },
 ];
 
