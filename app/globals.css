@@ -35,9 +35,8 @@ html {
      * 10.09px, which is where the 10px floor comes from.
      *
      * Nothing here can be traded for a larger floor. Closing the gutters
-     * entirely would only buy 11.5px, and holding the root at 12 instead makes
-     * the home title 628px wide in the 507px its row leaves — the size it would
-     * have to drop to is below the size the tablet draws it at.
+     * entirely would only buy 11.5px, and a root held at 12 overflows the
+     * 1024 viewport by the same arithmetic.
      */
     font-size: clamp(10px, calc(100vw / 120), 16px);
   }

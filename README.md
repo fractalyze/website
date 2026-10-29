@@ -1,6 +1,6 @@
 # Fractalyze Website
 
-The official website for Fractalyze — the computing layer for cryptography.
+The official website for Fractalyze — taste-tuned models for AI character apps.
 
 ## Project Structure
 
