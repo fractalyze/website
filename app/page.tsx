@@ -1,5 +1,5 @@
 import {ContactButton} from '@/components/ContactButton';
-import {socialNetworks} from '@/components/icons/SocialIcons';
+import {SocialLinks} from '@/components/icons/SocialIcons';
 import founders from '@/data/founders';
 import siteMetadata from '@/data/siteMetadata';
 
@@ -40,21 +40,12 @@ export default function Home() {
                   <p className="text-body-sm text-muted">{founder.title}</p>
                 </div>
                 <p className="flex-grow text-body-sm text-ink">{founder.blurb}</p>
-                <ul className="flex items-center gap-4 text-subtle">
-                  {socialNetworks.map(({key, label, Icon}) => (
-                    <li key={key}>
-                      <a
-                        href={founder.links[key]}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        aria-label={`${founder.name} on ${label}`}
-                        className="block transition-colors hover:text-ink"
-                      >
-                        <Icon className="h-5 w-5" />
-                      </a>
-                    </li>
-                  ))}
-                </ul>
+                <SocialLinks
+                  hrefs={founder.links}
+                  owner={founder.name}
+                  className="gap-4"
+                  iconClassName="h-5 w-5"
+                />
               </li>
             ))}
           </ul>

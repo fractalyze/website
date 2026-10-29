@@ -1,39 +1,14 @@
 import siteMetadata from '@/data/siteMetadata';
-import {socialNetworks} from './icons/SocialIcons';
+import {SocialLinks} from './icons/SocialIcons';
 
 export function Footer() {
-  const social = socialNetworks.map((entry) => ({
-    ...entry,
-    href: siteMetadata.social?.[entry.key] ?? '',
-  }));
-
   return (
     // px-section is 6.25rem, which the 16px root below the desktop breakpoint
     // makes 100px a side — a third of a 360px screen gone to gutters, under a
     // page whose own gutters are 24px.
     <footer className="bg-paper gutter py-12 md:py-16 xl:py-20">
       <div className="mx-auto flex max-w-content flex-col gap-8">
-        <ul className="flex items-center gap-5 text-subtle">
-          {social.map(({key, label, Icon, href}) =>
-            href ? (
-              <li key={key}>
-                <a
-                  href={href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label={label}
-                  className="block transition-colors hover:text-ink"
-                >
-                  <Icon />
-                </a>
-              </li>
-            ) : (
-              <li key={key} aria-hidden>
-                <Icon />
-              </li>
-            )
-          )}
-        </ul>
+        <SocialLinks hrefs={siteMetadata.social} className="gap-5" />
 
         <div className="flex flex-col gap-2 border-t border-line py-5">
           <a
