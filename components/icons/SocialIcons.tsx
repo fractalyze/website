@@ -4,6 +4,13 @@ type IconProps = {
 
 const base = 'h-6 w-6';
 
+// The networks a profile link can point at, in the order the site draws them.
+export const socialNetworks = [
+  {key: 'linkedin', label: 'LinkedIn', Icon: LinkedInIcon},
+  {key: 'x', label: 'X', Icon: XIcon},
+  {key: 'github', label: 'GitHub', Icon: GitHubIcon},
+] as const;
+
 export function LinkedInIcon({className}: IconProps) {
   return (
     <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden className={className ?? base}>

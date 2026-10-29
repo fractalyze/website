@@ -1,14 +1,8 @@
 import siteMetadata from '@/data/siteMetadata';
-import {GitHubIcon, LinkedInIcon, XIcon} from './icons/SocialIcons';
-
-const socialIcons = [
-  {key: 'linkedin', label: 'LinkedIn', Icon: LinkedInIcon},
-  {key: 'x', label: 'X', Icon: XIcon},
-  {key: 'github', label: 'GitHub', Icon: GitHubIcon},
-] as const;
+import {socialNetworks} from './icons/SocialIcons';
 
 export function Footer() {
-  const social = socialIcons.map((entry) => ({
+  const social = socialNetworks.map((entry) => ({
     ...entry,
     href: siteMetadata.social?.[entry.key] ?? '',
   }));

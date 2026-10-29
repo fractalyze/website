@@ -1,13 +1,7 @@
 import {ContactButton} from '@/components/ContactButton';
-import {GitHubIcon, LinkedInIcon, XIcon} from '@/components/icons/SocialIcons';
+import {socialNetworks} from '@/components/icons/SocialIcons';
 import founders from '@/data/founders';
 import siteMetadata from '@/data/siteMetadata';
-
-const linkIcons = [
-  {key: 'linkedin', label: 'LinkedIn', Icon: LinkedInIcon},
-  {key: 'x', label: 'X', Icon: XIcon},
-  {key: 'github', label: 'GitHub', Icon: GitHubIcon},
-] as const;
 
 export default function Home() {
   return (
@@ -47,7 +41,7 @@ export default function Home() {
                 </div>
                 <p className="flex-grow text-body-sm text-ink">{founder.blurb}</p>
                 <ul className="flex items-center gap-4 text-subtle">
-                  {linkIcons.map(({key, label, Icon}) => (
+                  {socialNetworks.map(({key, label, Icon}) => (
                     <li key={key}>
                       <a
                         href={founder.links[key]}

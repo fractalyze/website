@@ -1,5 +1,4 @@
-// The order and titles follow the founders' equity order. Each blurb carries no
-// figure a founder has not confirmed for a public page.
+// Listed in the founders' equity order.
 const founders = [
   {
     name: 'Jooman Han',
